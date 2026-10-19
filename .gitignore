@@ -1,0 +1,40 @@
+# Build products and local runtimes
+.dotnet/
+.local/
+**/bin/
+**/obj/
+artifacts/
+TestResults/
+**/TestResults/
+*.user
+*.suo
+.vs/
+.idea/
+.vscode/
+# Native runtime is prepared separately; never commit binaries
+AnimeApp/Assets/Native/*.dll
+# Local OAuth / Cloudflare configuration
+.wrangler/
+**/.wrangler/
+**/node_modules/
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+installer/oauth-public.json
+installer/.upgrade-test.iss
+# Personal state and temporary output
+*.db
+*.db-*
+*.sqlite*
+*.log
+*.dmp
+credentials.dat
+tokens.dat
+appearance.json
+*.awtheme
+.app-process-id
+.refactor.ps1
+PROJECT_STATE.md
+aion2-diagnostics-*/

@@ -1,0 +1,19 @@
+Third-party video components
+
+libmpv-2.dll: shinchiro/mpv-winbuild-cmake, release 20261010,
+asset mpv-dev-x86_64-20261010-git-b2c255c13e.7z.
+https://github.com/shinchiro/mpv-winbuild-cmake/releases/tag/20261010
+SHA256 (extracted DLL): 34780746A0273A4FCAE42DFE262A28984A426A238939474AFD3A1561B450BBEF
+mpv source revision: https://github.com/mpv-player/mpv/tree/b2c255c13e
+Build recipes/dependency sources: https://github.com/shinchiro/mpv-winbuild-cmake
+License: GNU GPL, included as mpv-GPL.txt. This development build is for local testing.
+Before distributing an installer, package corresponding sources/build instructions and
+all dependency license notices for the exact binary build; do not omit this requirement.
+
+Anime4K shaders: bloc97/Anime4K v4.0.1 (release asset Anime4K_v4.0.zip).
+https://github.com/bloc97/Anime4K/releases/tag/v4.0.1
+Mode B shader chain from the upstream Windows mpv high-end configuration.
+MIT license is in Shaders/LICENSE.txt. Shader copyright headers are preserved.
+
+VLC / LibVLCSharp: NuGet VideoLAN.LibVLC.Windows 3.0.24 and LibVLCSharp 3.10.1.
+Existing VLC runtime and its upstream notices remain bundled.

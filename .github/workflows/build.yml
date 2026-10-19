@@ -1,0 +1,26 @@
+name: Build and tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Prepare native playback runtime
+        shell: pwsh
+        run: ./tools/Prepare-Native.ps1
+      - name: Restore
+        run: dotnet restore AnimeApp.slnx
+      - name: Build
+        run: dotnet build AnimeApp.slnx -c Release --no-restore
+      - name: Offline tests
+        run: dotnet test AnimeApp.Tests/AnimeApp.Tests.csproj -c Release --no-build --filter "Category!=Live&Category!=Native&Category!=AccountLive"

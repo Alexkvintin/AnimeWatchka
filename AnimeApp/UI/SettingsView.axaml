@@ -1,0 +1,116 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="using:AnimeApp.UI" x:Class="AnimeApp.UI.SettingsView">
+  <ScrollViewer>
+    <StackPanel Spacing="20">
+      <Border Classes="panel">
+        <StackPanel Spacing="14">
+          <TextBlock Text="Shikimori" Classes="h2" />
+          <TextBlock Text="{Binding Account}" Foreground="{DynamicResource AccentBrush}" />
+          <Button Classes="primary" Content="Подключить Shikimori" Command="{Binding Settings.AuthorizeCommand}" IsVisible="{Binding !Settings.IsConnected}"/>
+          <StackPanel IsVisible="{Binding Settings.Authorizing}" Spacing="12">
+            <TextBlock Text="Шаг 1 из 2 · Разрешите AnimeWatchka доступ к вашему списку на открытой странице Shikimori." TextWrapping="Wrap"/>
+            <Button Content="Открыть страницу ещё раз ↗" Command="{Binding Settings.AuthorizeCommand}"/>
+            <TextBlock IsVisible="{Binding Settings.ManualAuthorization}" Text="Вставьте выданный Shikimori код"/>
+            <TextBox IsVisible="{Binding Settings.ManualAuthorization}" PasswordChar="●" Text="{Binding Settings.AuthCode}" Watermark="Код авторизации"/>
+            <Button IsVisible="{Binding Settings.ManualAuthorization}" Classes="primary" Content="Завершить подключение" Command="{Binding Settings.ConnectCommand}"/>
+          </StackPanel>
+          <Button Content="Отключить аккаунт" Command="{Binding Settings.DisconnectCommand}" IsVisible="{Binding Settings.IsConnected}"/>
+          <Expander IsVisible="{Binding Settings.DeveloperSettings}" Header="OAuth приложение Shikimori" IsExpanded="{Binding Settings.EditingCredentials}">
+            <StackPanel Spacing="10">
+              <TextBlock Text="{Binding Settings.CredentialStatus}" TextWrapping="Wrap"/>
+              <Button Content="Изменить credentials" Command="{Binding Settings.EditCredentialsCommand}"/>
+              <StackPanel IsVisible="{Binding Settings.EditingCredentials}" Spacing="8">
+                <TextBlock Text="Client ID"/><TextBox Text="{Binding Settings.ClientId}" Watermark="Client ID"/>
+                <TextBlock Text="Client Secret"/><TextBox PasswordChar="●" Text="{Binding Settings.ClientSecret}" Watermark="Client Secret (пусто — оставить сохранённый для того же Client ID)"/>
+                <TextBlock Text="Redirect URI"/><TextBox Text="{Binding Settings.RedirectUri}"/>
+                <TextBlock Text="Хранится в Windows DPAPI. Изменение данных отключит текущий аккаунт; его библиотека останется на компьютере." Classes="muted" TextWrapping="Wrap"/>
+                <Button Content="Сохранить" Classes="primary" Command="{Binding Settings.SaveCredentialsCommand}"/>
+                <Button Content="Удалить сохранённые credentials" Command="{Binding Settings.DeleteCredentialsCommand}"/>
+              </StackPanel>
+            </StackPanel>
+          </Expander>          <WrapPanel>
+            <Button Content="Синхронизировать" Command="{Binding Settings.SynchronizeCommand}" />
+            <TextBlock Text="{Binding PendingCount, StringFormat='  В очереди: {0}'}" VerticalAlignment="Center" />
+          </WrapPanel>
+          <ItemsControl ItemsSource="{Binding Settings.UnlinkedProgress}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel Spacing="8"><TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,8" Classes="muted"/><Button Content="Связать с Shikimori…" Command="{Binding $parent[Window].DataContext.Settings.FindUnlinkedCommand}" CommandParameter="{Binding}"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+          <TextBlock Text="{Binding Settings.RecoveryMessage}" TextWrapping="Wrap"/>
+          <ItemsControl ItemsSource="{Binding Settings.RecoveryCandidates}"><ItemsControl.ItemTemplate><DataTemplate><Button Command="{Binding $parent[Window].DataContext.Settings.RestoreUnlinkedCommand}" CommandParameter="{Binding}" Margin="0,4"><StackPanel><TextBlock Text="{Binding Title}" TextWrapping="Wrap"/><TextBlock Text="{Binding Metadata}" Classes="muted"/></StackPanel></Button></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+          <Expander Header="Конфликты по тайтлам">
+            <StackPanel Spacing="12">
+              <TextBlock Text="Сначала синхронизируйте библиотеку. Выберите, какой прогресс сохранить для каждого конфликтующего тайтла." TextWrapping="Wrap" Classes="muted"/>
+              <ItemsControl ItemsSource="{Binding Settings.Conflicts}"><ItemsControl.ItemTemplate><DataTemplate>
+                <Border Classes="panel" Margin="0,0,0,12"><StackPanel Spacing="8">
+                  <TextBlock Text="{Binding Title}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+                  <TextBlock Text="{Binding LocalText}" TextWrapping="Wrap"/><TextBlock Text="{Binding RemoteText}" TextWrapping="Wrap"/>
+                  <WrapPanel><Button Content="Использовать Shikimori" Command="{Binding $parent[Window].DataContext.Settings.UseShikimoriCommand}" CommandParameter="{Binding}"/><Button Content="Оставить локальный прогресс" Command="{Binding $parent[Window].DataContext.Settings.KeepLocalCommand}" CommandParameter="{Binding}" Margin="8,0"/></WrapPanel>
+                </StackPanel></Border>
+              </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+            </StackPanel>
+          </Expander>
+        </StackPanel>
+      </Border>
+      <Border Classes="panel">
+        <StackPanel Spacing="14">
+          <TextBlock Text="Источники" Classes="h2" />
+          <Button Content="Украинские озвучки · каталог Mikai ↗" Command="{Binding Settings.OpenMikaiCommand}" />
+          <Button Content="Первоначальная настройка" Command="{Binding Settings.OpenWizardCommand}"/>
+          <TextBlock Text="Языки по порядку предпочтения (например uk,ru,any)"/>
+          <TextBox Text="{Binding Settings.PreferredLanguages}"/>
+          <Expander Header="+ Добавить источник"><StackPanel Spacing="10">
+            <TextBox Text="{Binding Settings.SourceUrl}" Watermark="https://example.com/страница"/>
+            <Button Content="Проверить" Command="{Binding Settings.ProbeSourceCommand}"/>
+            <TextBlock Text="{Binding Settings.ProbeMessage}" TextWrapping="Wrap"/>
+            <TextBox Text="{Binding Settings.SourceName}" Watermark="Название"/>
+            <ComboBox ItemsSource="{Binding Settings.Languages}" SelectedItem="{Binding Settings.SourceLanguage}"/>
+            <Button Content="Добавить Web Source" Command="{Binding Settings.AddSourceCommand}" IsEnabled="{Binding Settings.CanAddSource}"/>
+            <Expander Header="Расширенно: шаблон HTML-адаптера"><StackPanel Spacing="8">
+              <TextBlock Text="Адрес, название и язык берутся из полей выше." TextWrapping="Wrap"/>
+              <TextBox Text="{Binding Settings.TemplateSearch}" Watermark="https://example.com/search?q={query}"/>
+              <TextBox Text="{Binding Settings.TemplateRelease}" Watermark="CSS-селектор ссылок на релизы"/>
+              <TextBox Text="{Binding Settings.TemplateEpisodes}" Watermark="CSS-селектор ссылок на серии"/>
+              <TextBox Text="{Binding Settings.TemplatePoster}" Watermark="CSS-селектор постера"/>
+              <TextBox Text="{Binding Settings.TemplateVideo}" Watermark="CSS-селектор HTML5 video/source"/>
+              <TextBox Text="{Binding Settings.TemplateQuery}" Watermark="Название для проверки поиска"/>
+              <Button Content="Тест адаптера" Command="{Binding Settings.TestTemplateCommand}"/>
+              <TextBlock Text="{Binding Settings.TemplateMessage}" TextWrapping="Wrap"/>
+              <Button Content="Сохранить адаптер" Command="{Binding Settings.SaveTemplateCommand}" IsEnabled="{Binding Settings.TemplateVerified}"/>
+            </StackPanel></Expander>
+          </StackPanel></Expander>
+          <TextBlock Text="Перетащите главный источник наверх." Classes="muted"/>
+          <ui:SourceOrderView DataContext="{Binding Settings}"/>
+          <Button Content="Проверить доступность" Command="{Binding Settings.CheckProvidersCommand}" />
+        </StackPanel>
+      </Border>
+      <Border Classes="panel">
+        <StackPanel Spacing="12">
+          <TextBlock Text="Просмотр" Classes="h2" />
+          <CheckBox Content="Автоматически отмечать просмотренные серии" IsChecked="{Binding Settings.AutoMark}" />
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Порог просмотра, %" VerticalAlignment="Center" />
+            <NumericUpDown Width="110" Value="{Binding Settings.Threshold}" Minimum="1" Maximum="100" FormatString="0" />
+          </StackPanel>
+          <CheckBox Content="Автоматически обновлять Shikimori" IsChecked="{Binding Settings.AutoSync}" />
+          <CheckBox Content="Сохранять позицию просмотра" IsChecked="{Binding Settings.SavePosition}" />
+          <CheckBox Content="Совместимый проигрыватель для старых видеокарт" IsChecked="{Binding Settings.PlayerCompatibility}"/>
+          <TextBlock Text="Включите при ошибке Vulkan или чёрном экране. Применяется при следующем открытии плеера. Улучшение изображения недоступно; нагрузка на процессор может увеличиться." Classes="muted" TextWrapping="Wrap"/>
+          <TextBlock Text="Масштабирование видео (для следующего запуска плеера)"/>
+          <ComboBox ItemsSource="{Binding Settings.ScalingModes}" SelectedItem="{Binding Settings.Scaling}"/>
+          <TextBlock Text="Доступность улучшения зависит от видеокарты. Фактический режим — в информации плеера." Classes="muted" TextWrapping="Wrap"/>
+          <TextBlock Text="Качество по умолчанию" />
+          <ComboBox ItemsSource="{Binding Settings.Qualities}" SelectedItem="{Binding Settings.Quality}" />
+          <TextBlock Text="Папка локальной библиотеки (подпапка = релиз)" />
+          <TextBox Text="{Binding Settings.LocalFolder}" Watermark="D:\Anime" />
+          <CheckBox Content="При закрытии сворачивать в трей" IsChecked="{Binding Settings.CloseToTray}"/><TextBlock Text="Просмотр ставится на паузу. Полный выход — через меню значка в трее." Classes="muted" TextWrapping="Wrap"/>
+          <CheckBox Content="Автоматически продолжать с сохранённой позиции" IsChecked="{Binding Settings.AutoResume}"/><TextBlock Text="Автоотметка учитывает реально проигранные участки. Перемотка сама по себе не засчитывает просмотр. Следующая серия запускается по кнопке или пробелом после окончания." TextWrapping="Wrap" Classes="muted"/>
+          <Button Classes="primary" Content="Сохранить настройки" Command="{Binding Settings.SaveSettingsCommand}" />
+        </StackPanel>
+      </Border>
+      <Border Classes="panel"><StackPanel Spacing="12"><TextBlock Text="Данные" Classes="h2"/><TextBlock Text="{Binding Settings.DataPath}" TextWrapping="Wrap"/><TextBlock Text="Кэш постеров ограничен 400 МБ" Classes="muted"/><Button Content="Очистить кэш постеров" Command="{Binding Settings.ClearPostersCommand}"/><Button Content="Открыть папку логов" Command="{Binding Settings.OpenLogsCommand}"/></StackPanel></Border>
+      <Border Classes="panel"><StackPanel Spacing="12"><TextBlock Text="О приложении" Classes="h2"/><TextBlock Text="{Binding Settings.Version}"/><Expander Header="Что нового" IsExpanded="False"><TextBlock Text="{Binding Settings.ReleaseNotes}" TextWrapping="Wrap"/></Expander></StackPanel></Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>
+
+
+
+
+

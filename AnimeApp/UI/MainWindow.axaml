@@ -1,0 +1,157 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="using:AnimeApp.UI" x:Class="AnimeApp.UI.MainWindow" x:Name="Root" Width="1380" Height="900" MinWidth="1000" MinHeight="520" Title="AnimeWatchka">
+  <Grid ColumnDefinitions="230,*" RowDefinitions="*,Auto">
+    <Border Grid.ColumnSpan="2" Grid.RowSpan="2" Background="{DynamicResource AtmosphereBrush}" IsHitTestVisible="False"/>
+    <Image Grid.ColumnSpan="2" Grid.RowSpan="2" Source="{Binding Appearance.Background}" Stretch="UniformToFill" Opacity="{Binding Appearance.BackgroundOpacity}" Effect="{Binding Appearance.BackgroundEffect}" IsHitTestVisible="False"/>
+    <Border Background="{DynamicResource SidebarBrush}" BorderBrush="{DynamicResource OutlineBrush}" BorderThickness="0,0,1,0" Padding="16,20" Grid.RowSpan="2">
+      <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Top" Spacing="18" Margin="0,0,0,24">
+          <TextBlock Text="♡  AnimeWatchka" FontSize="21" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}"/>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Button Content="☀" Padding="10" ToolTip.Tip="Светлая тема" Command="{Binding Appearance.SelectThemeCommand}" CommandParameter="light"/>
+            <Button Content="☾" Padding="10" ToolTip.Tip="Тёмная тема" Command="{Binding Appearance.SelectThemeCommand}" CommandParameter="dark"/>
+            <Button Content="♡" Padding="10" ToolTip.Tip="Луми" Command="{Binding Appearance.SelectThemeCommand}" CommandParameter="lumi"/>
+            <Button Content="🎨" Padding="10" ToolTip.Tip="Палитра и фон" Command="{Binding Appearance.EditCommand}"/>
+          </StackPanel>
+        </StackPanel>
+        <ui:CharacterImage x:Name="LumiMascot" DockPanel.Dock="Bottom" Fallback="{Binding LumiImage}" CharacterPath="{Binding Appearance.CharacterPath}" Height="180" IsHitTestVisible="False" IsVisible="{Binding Appearance.ShowCharacter}" Margin="0,8"/>
+        <ScrollViewer x:Name="SidebarNavigation" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,12">
+        <StackPanel>
+          <Button Classes="nav" Content="⌂   Моя коллекция" Command="{Binding NavigateCommand}" CommandParameter="Главная" />
+          <Button Classes="nav" Content="▷   Смотрю" Command="{Binding NavigateCommand}" CommandParameter="Смотрю" />
+          <Button Classes="nav" Content="＋   Запланировано" Command="{Binding NavigateCommand}" CommandParameter="Запланировано" />
+          <Button Classes="nav" Content="▦   Онгоинги" Command="{Binding NavigateCommand}" CommandParameter="Онгоинги" />
+          <Button Classes="nav" Content="◷   История" Command="{Binding NavigateCommand}" CommandParameter="История" />
+          <Button Classes="nav" Content="⌕   Поиск" Command="{Binding NavigateCommand}" CommandParameter="Поиск" />
+          <Button Classes="nav" Content="⚙   Настройки" Command="{Binding NavigateCommand}" CommandParameter="Настройки" />
+          <Border Height="1" Background="{DynamicResource ButtonBrush}" Margin="10,22" />
+          <TextBlock Text="МОЯ КОЛЛЕКЦИЯ" Classes="muted" FontSize="10" Margin="15,0,0,10" />
+          <Button Classes="nav" Content="Завершено" Command="{Binding NavigateCommand}" CommandParameter="Завершено" />
+          <Button Classes="nav" Content="Отложено" Command="{Binding NavigateCommand}" CommandParameter="Отложено" />
+          <Button Classes="nav" Content="Брошено" Command="{Binding NavigateCommand}" CommandParameter="Брошено" />
+          <Button Classes="nav" Content="Пересматриваю" Command="{Binding NavigateCommand}" CommandParameter="Пересматриваю" />
+          <Button Content="↓  Скачанное…" Click="OpenDownloaded" Background="Transparent" HorizontalAlignment="Stretch"/>
+          <Button Content="Удалить недокачанные…" Click="CleanInterruptedDownloads" IsEnabled="{Binding !Sources.Downloading}" Background="Transparent" FontSize="11" HorizontalAlignment="Stretch"/>
+        </StackPanel>
+        </ScrollViewer>
+      </DockPanel>
+    </Border>
+    <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*" Margin="24,20,24,12">
+      <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,24">
+        <Grid ColumnDefinitions="*,Auto" MaxWidth="600" HorizontalAlignment="Left">
+          <TextBox Width="400" Watermark="Поиск аниме в Shikimori…" Text="{Binding Query}" KeyDown="SearchKeyDown" />
+          <Button Grid.Column="1" Content="Найти" Command="{Binding SearchCommand}" Margin="8,0,0,0" />
+        </Grid>
+        <Button Grid.Column="1" Command="{Binding ManageAccountCommand}" Padding="10,6">
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <Border Width="32" Height="32" CornerRadius="8" ClipToBounds="True" IsVisible="{Binding HasAccountAvatar}"><ui:PosterImage Url="{Binding AccountAvatar}" Stretch="UniformToFill"/></Border>
+            <TextBlock Text="{Binding Account}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+      </Grid>
+      <StackPanel Grid.Row="1" Spacing="6" Margin="0,0,0,24">
+        <Grid ColumnDefinitions="Auto,*"><Button Content="←" Command="{Binding GoBackCommand}" IsEnabled="{Binding CanGoBack}" ToolTip.Tip="Назад · Alt+←" Margin="0,0,12,0"/><TextBlock Grid.Column="1" x:Name="PageHeading" Text="{Binding PageTitle}" ToolTip.Tip="{Binding PageTitle}" TextTrimming="{x:Static ui:HeartTrimming.Instance}" MaxLines="1" VerticalAlignment="Center" FontSize="34" FontWeight="SemiBold" /></Grid>
+        <TextBlock Text="{Binding Subtitle}" Classes="muted" />
+        <WrapPanel IsVisible="{Binding IsSearch}" Margin="0,12,0,0">
+          <TextBox Width="100" Watermark="Год от" Text="{Binding YearFrom}" Margin="0,0,8,0"/><TextBox Width="100" Watermark="Год до" Text="{Binding YearTo}" Margin="0,0,8,0"/>
+          <ComboBox Width="125" ItemsSource="{Binding SearchKinds}" SelectedItem="{Binding SearchKind}" PlaceholderText="Любой тип" Margin="0,0,8,0"/>
+          <ComboBox Width="150" ItemsSource="{Binding SearchStatuses}" SelectedItem="{Binding SearchStatus}" PlaceholderText="Любой статус" Margin="0,0,8,0"/>
+          <ComboBox Width="140" ItemsSource="{Binding SearchSeasons}" SelectedItem="{Binding SearchSeason}" PlaceholderText="Любой сезон" Margin="0,0,8,0"/>
+          <Button Content="Найти" Command="{Binding SearchCommand}"/>
+        </WrapPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12" IsVisible="{Binding ShowLibraryYear}" Margin="0,8,0,0"><Button Content="Каталог по годам" Command="{Binding OpenCatalogCommand}"/><TextBlock Text="Год в библиотеке" VerticalAlignment="Center"/><ComboBox Width="120" ItemsSource="{Binding LibraryYears}" SelectedItem="{Binding LibraryYear}"/><ComboBox Width="240" ItemsSource="{Binding LibrarySorts}" SelectedItem="{Binding LibrarySort}" ToolTip.Tip="Недавно добавленные — по дате Shikimori. Тайтлы без даты идут в конце; история просмотра учитывает это устройство."/></StackPanel>
+      </StackPanel>
+      <ui:LibraryView Grid.Row="2" IsVisible="{Binding IsLibrary}" />
+      <ui:DetailsView Grid.Row="2" IsVisible="{Binding IsDetails}" />
+      <ui:SettingsView Grid.Row="2" IsVisible="{Binding IsSettings}" />
+      <ui:HistoryView Grid.Row="2" IsVisible="{Binding IsHistory}" />
+      <Grid Grid.Row="2" IsVisible="{Binding IsSchedule}" RowDefinitions="Auto,Auto,*">
+        <WrapPanel Orientation="Horizontal">
+          <ComboBox ItemsSource="{Binding Schedule.ProviderChoices}" SelectedItem="{Binding Schedule.SelectedSource}" IsVisible="{Binding Schedule.IsSourceMode}" MinWidth="170" Margin="0,0,8,8"/>
+          <ComboBox ItemsSource="{Binding Schedule.Days}" SelectedItem="{Binding Schedule.SelectedDay}" MinWidth="150" Margin="0,0,8,8"/>
+          <ComboBox ItemsSource="{Binding Schedule.Statuses}" SelectedItem="{Binding Schedule.StatusFilter}" MinWidth="130" Margin="0,0,8,8"/>
+          <CheckBox Content="Только моя библиотека" IsChecked="{Binding Schedule.OnlyLibrary}" Margin="0,0,12,8"/>
+          <Button Content="Обновить" Command="{Binding Schedule.ForceRefreshCommand}"/>
+        </WrapPanel>
+        <TextBlock Grid.Row="1" Text="{Binding Schedule.Message}" TextWrapping="Wrap" Margin="0,12"/>
+        <ListBox Grid.Row="2" Background="Transparent" BorderThickness="0" ItemsSource="{Binding Schedule.Items}"><ListBox.ItemTemplate><DataTemplate>
+          <Border Classes="panel" Margin="0,4"><Grid ColumnDefinitions="64,*,Auto">
+            <Button Command="{Binding $parent[Window].DataContext.OpenScheduleCommand}" CommandParameter="{Binding}" IsEnabled="{Binding CanOpen}" Background="Transparent" Padding="0" HorizontalAlignment="Stretch"><Border Background="{DynamicResource ButtonBrush}" CornerRadius="6" ClipToBounds="True"><Grid><TextBlock Text="▶" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource MutedBrush}"/><ui:PosterImage Url="{Binding Poster}" FallbackUrl="{Binding PosterFallback}" Height="90" Stretch="UniformToFill"/></Grid></Border></Button>
+            <StackPanel Grid.Column="1" Margin="14,0" Spacing="5"><Button Command="{Binding $parent[Window].DataContext.OpenScheduleCommand}" CommandParameter="{Binding}" IsEnabled="{Binding CanOpen}" Background="Transparent" Padding="0" HorizontalAlignment="Left"><TextBlock Text="{Binding Anime.Title}" FontWeight="SemiBold" TextWrapping="Wrap"/></Button><TextBlock Text="{Binding SourcesLabel}" Foreground="{DynamicResource MutedBrush}"/><TextBlock Text="{Binding Expected}" TextWrapping="Wrap"/><TextBlock Text="{Binding Availability}" Foreground="{DynamicResource AccentBrush}" TextWrapping="Wrap"/></StackPanel>
+            <Button Grid.Column="2" Content="{Binding ActionLabel}" IsEnabled="{Binding CanOpen}" Command="{Binding $parent[Window].DataContext.OpenScheduleCommand}" CommandParameter="{Binding}" VerticalAlignment="Center"/>
+          </Grid></Border>
+        </DataTemplate></ListBox.ItemTemplate></ListBox>
+      </Grid>
+    </Grid>
+    <Border Grid.Column="1" Grid.Row="1" Background="{DynamicResource PanelBrush}" Padding="24,12">
+      <StackPanel Spacing="6">
+        <StackPanel IsVisible="{Binding Sources.HasDownloadStatus}" Spacing="4">
+          <TextBlock Text="{Binding Sources.DownloadStatus}" TextWrapping="Wrap" FontSize="12"/>
+          <ProgressBar IsVisible="{Binding Sources.Downloading}" IsIndeterminate="{Binding Sources.DownloadIndeterminate}" Value="{Binding Sources.DownloadPercent}" Maximum="100" Height="3"/>
+          <WrapPanel><Button Content="Отменить скачивание" Command="{Binding Sources.CancelDownloadCommand}" IsVisible="{Binding Sources.Downloading}" Margin="0,0,8,0"/><Button Content="Открыть скачанное…" Click="OpenDownloaded" Margin="0,0,8,0"/><Button Content="Папка загрузок" Command="{Binding Sources.OpenDownloadFolderCommand}"/></WrapPanel>
+        </StackPanel>
+        <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" Height="2" />
+        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource MutedBrush}" />
+      </StackPanel>
+    </Border>
+    <Border Grid.ColumnSpan="2" Grid.RowSpan="2" Background="{DynamicResource CanvasBrush}" IsVisible="{Binding Settings.WizardVisible}" Padding="50">
+      <StackPanel MaxWidth="720" VerticalAlignment="Center" Spacing="20">
+        <TextBlock Text="Добро пожаловать в AnimeWatchka" FontSize="30" TextWrapping="Wrap"/>
+        <StackPanel IsVisible="{Binding !Settings.WizardSources}" Spacing="16">
+          <TextBlock Text="Откуда брать вашу аниме-библиотеку?" FontSize="20"/>
+          <ComboBox ItemsSource="{Binding Settings.MetadataChoices}" SelectedItem="{Binding Settings.SelectedMetadata}"/>
+          <TextBlock Text="MyAnimeList подготовлен в архитектуре; подключение пока недоступно." Classes="muted" TextWrapping="Wrap"/>
+          <Button Content="Далее" Command="{Binding Settings.WizardNextCommand}" IsEnabled="{Binding Settings.SelectedMetadata.Supported}" Classes="primary"/>
+        </StackPanel>
+        <StackPanel IsVisible="{Binding Settings.WizardSources}" Spacing="14">
+          <TextBlock Text="Включите источники. Перетащите главный наверх." FontSize="20" TextWrapping="Wrap"/>
+          <ui:SourceOrderView DataContext="{Binding Settings}"/>
+          <Expander Header="+ Добавить источник"><StackPanel Spacing="8"><TextBox Text="{Binding Settings.SourceUrl}" Watermark="https://example.com"/><Button Content="Проверить" Command="{Binding Settings.ProbeSourceCommand}"/><TextBlock Text="{Binding Settings.ProbeMessage}" TextWrapping="Wrap"/><TextBox Text="{Binding Settings.SourceName}" Watermark="Название"/><Button Content="Добавить Web Source" Command="{Binding Settings.AddSourceCommand}" IsEnabled="{Binding Settings.CanAddSource}"/></StackPanel></Expander>
+          <Button Content="Начать просмотр" Command="{Binding Settings.FinishWizardCommand}" Classes="primary"/>
+        </StackPanel>
+      </StackPanel>
+    </Border>
+    <Border Grid.Column="1" Grid.RowSpan="2" IsVisible="{Binding Appearance.EditorVisible}" Classes="panel" Background="{DynamicResource EditorBrush}" Width="440" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="20" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1">
+      <ScrollViewer MaxHeight="650" HorizontalScrollBarVisibility="Disabled"><StackPanel Spacing="12" Margin="0,0,18,0">
+        <Grid ColumnDefinitions="*,Auto"><TextBlock Text="Оформление" Classes="h2"/><Button Grid.Column="1" Content="✕" Command="{Binding Appearance.EditCommand}"/></Grid>
+        <TextBlock Text="{Binding Appearance.Error}" TextWrapping="Wrap" FontSize="12"/>
+        <TextBlock Text="Мои пресеты" FontWeight="SemiBold"/>
+        <TextBlock Text="Сохранить — записать текущее оформление в слот или заменить прежнее." Classes="muted" TextWrapping="Wrap"/>
+        <Grid ColumnDefinitions="*,Auto,Auto"><TextBlock Text="Пресет 1" VerticalAlignment="Center"/><Button Grid.Column="1" Content="Применить" Command="{Binding Appearance.LoadPresetCommand}" CommandParameter="1" IsEnabled="{Binding Appearance.HasPreset1}" Margin="0,0,6,0"/><Button Grid.Column="2" Content="Сохранить" Command="{Binding Appearance.SavePresetCommand}" CommandParameter="1"/></Grid>
+        <Grid ColumnDefinitions="*,Auto,Auto"><TextBlock Text="Пресет 2" VerticalAlignment="Center"/><Button Grid.Column="1" Content="Применить" Command="{Binding Appearance.LoadPresetCommand}" CommandParameter="2" IsEnabled="{Binding Appearance.HasPreset2}" Margin="0,0,6,0"/><Button Grid.Column="2" Content="Сохранить" Command="{Binding Appearance.SavePresetCommand}" CommandParameter="2"/></Grid>
+        <Grid ColumnDefinitions="*,Auto,Auto"><TextBlock Text="Пресет 3" VerticalAlignment="Center"/><Button Grid.Column="1" Content="Применить" Command="{Binding Appearance.LoadPresetCommand}" CommandParameter="3" IsEnabled="{Binding Appearance.HasPreset3}" Margin="0,0,6,0"/><Button Grid.Column="2" Content="Сохранить" Command="{Binding Appearance.SavePresetCommand}" CommandParameter="3"/></Grid>
+        <WrapPanel><Button Content="Экспорт…" Click="ExportTheme" Margin="0,0,6,0"/><Button Content="Импорт…" Click="ImportTheme"/></WrapPanel>
+        <TextBlock Text="Файл .awtheme содержит оформление и изображения. Его также можно перетащить в окно приложения." Classes="muted" TextWrapping="Wrap"/>
+        <TextBlock Text="Персонаж" FontWeight="SemiBold"/>
+        <Button Content="Выбрать PNG или GIF…" Click="ChooseCharacter"/>
+        <Button Content="Вернуть персонажа темы" Command="{Binding Appearance.ResetCharacterCommand}"/>
+        <TextBlock Text="PNG сохраняет прозрачность, GIF воспроизводится. До 24 МБ; большие анимации нужно уменьшить." Classes="muted" TextWrapping="Wrap"/>
+        <TextBlock Text="Готовые темы" FontWeight="SemiBold"/>
+        <WrapPanel>
+          <Button Content="☀ Светлая" Command="{Binding Appearance.SelectThemeCommand}" CommandParameter="light" Margin="0,0,6,6"/>
+          <Button Content="☾ Тёмная" Command="{Binding Appearance.SelectThemeCommand}" CommandParameter="dark" Margin="0,0,6,6"/>
+          <Button Content="♡ Луми" Command="{Binding Appearance.SelectThemeCommand}" CommandParameter="lumi" Margin="0,0,6,6"/>
+          <Button Content="● Лес" Background="#1A3028" Foreground="#8FD5AF" Command="{Binding Appearance.SelectThemeCommand}" CommandParameter="forest" Margin="0,0,6,6"/>
+          <Button Content="● Песок" Background="#FFF9F0" Foreground="#8B563B" Command="{Binding Appearance.SelectThemeCommand}" CommandParameter="sand" Margin="0,0,6,6"/>
+        </WrapPanel>
+        <TextBlock Text="Выбор темы заменяет текущие цвета и фон. Ниже можно настроить их вручную." Classes="muted" TextWrapping="Wrap"/>
+        <TextBlock Text="Цвет акцента"/><ui:RgbColorEditor Value="{Binding Appearance.Accent, Mode=TwoWay}"/>
+        <TextBlock Text="Карточки и меню"/><ui:RgbColorEditor Value="{Binding Appearance.Surface, Mode=TwoWay}"/>
+        <TextBlock Text="Основной фон"/><ui:RgbColorEditor Value="{Binding Appearance.Canvas, Mode=TwoWay}"/>
+        <TextBlock Text="Текст"/><ui:RgbColorEditor Value="{Binding Appearance.TextColor, Mode=TwoWay}"/>
+        <TextBlock Text="Изменения сохраняются автоматически" Classes="muted" FontSize="11"/>
+        <Button Content="Выбрать изображение фона…" Click="ChooseBackground"/>
+        <TextBlock Text="Видимость фона"/><Slider Minimum="0" Maximum="1" Value="{Binding Appearance.BackgroundOpacity}"/>
+        <TextBlock Text="Непрозрачность панелей"/><Slider Minimum="0.35" Maximum="1" Value="{Binding Appearance.PanelOpacity}"/><TextBlock Text="Размытие"/><Slider Minimum="0" Maximum="40" Value="{Binding Appearance.Blur}"/>
+        <Button Content="Убрать изображение" Command="{Binding Appearance.ClearBackgroundCommand}"/>
+
+      </StackPanel></ScrollViewer>
+    </Border>
+    <Border Grid.ColumnSpan="2" Grid.RowSpan="2" BorderBrush="{DynamicResource OutlineBrush}" BorderThickness="1" CornerRadius="12" IsHitTestVisible="False"/>
+  </Grid>
+</Window>
+
+
+
+
+
+

@@ -1,0 +1,72 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="using:AnimeApp.UI" x:Class="AnimeApp.UI.DetailsView">
+  <UserControl.Resources><ui:StatusLabelConverter x:Key="StatusLabel"/></UserControl.Resources>
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Spacing="22">
+      <Grid ColumnDefinitions="230,*">
+        <Border CornerRadius="16" Background="{DynamicResource ButtonBrush}" Height="325" ClipToBounds="True">
+          <ui:PosterImage Url="{Binding SelectedAnime.Poster}" Stretch="UniformToFill" />
+        </Border>
+        <StackPanel Grid.Column="1" Margin="28,0,0,0" Spacing="14">
+          <TextBlock Text="{Binding SelectedAnime.Title}" FontSize="30" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding SelectedAnime.Name}" Classes="muted" />
+          <TextBlock Text="{Binding SelectedAnime.EnglishName}" Classes="muted" />
+          <TextBlock Text="{Binding SelectedAnime.JapaneseName}" Classes="muted" />
+          <TextBlock Text="{Binding SelectedAnime.Metadata}" Foreground="{DynamicResource AccentBrush}" />
+          <TextBlock Text="{Binding SelectedAnime.Description}" TextWrapping="Wrap" MaxHeight="160" />
+          <TextBlock Text="{Binding SelectedAnime.Progress}" />
+        </StackPanel>
+      </Grid>
+      <Border Classes="panel">
+        <StackPanel Spacing="14">
+          <TextBlock Text="Серии" Classes="h2" />
+
+          <ComboBox ItemsSource="{Binding Sources.EnabledProviders}" SelectedItem="{Binding Sources.SelectedProvider}" MinWidth="220" />
+
+
+          <StackPanel IsVisible="{Binding Sources.IsChoosing}" Spacing="12">
+            <StackPanel IsVisible="{Binding Sources.ShowCandidates}" Spacing="12">
+            <Grid ColumnDefinitions="*,Auto"><TextBox Text="{Binding Sources.SourceQuery}" Watermark="Название релиза"/><Button Grid.Column="1" Content="Найти в источнике" Command="{Binding Sources.SearchSourceCommand}" Margin="10,0,0,0"/></Grid>
+            <ComboBox ItemsSource="{Binding Sources.Suggestions}" SelectedItem="{Binding Sources.SelectedSuggestion}" HorizontalAlignment="Stretch" PlaceholderText="Предлагаемые совпадения"><ComboBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding Label}" TextWrapping="Wrap"/><TextBlock Text="{Binding Explanation}" Classes="muted"/></StackPanel></DataTemplate></ComboBox.ItemTemplate></ComboBox>
+            <ComboBox ItemsSource="{Binding Sources.Releases}" SelectedItem="{Binding Sources.SelectedRelease}" HorizontalAlignment="Stretch" PlaceholderText="Все результаты поиска"/>
+            </StackPanel>
+            <Button Content="Выбрать другой релиз" Command="{Binding Sources.ChangeReleaseCommand}" IsVisible="{Binding !Sources.ShowCandidates}"/>
+            <Button Classes="primary" Content="Открыть серии" Command="{Binding Sources.LinkSourceCommand}"/>
+          </StackPanel>
+          <Button Content="⋯" HorizontalAlignment="Right"><Button.Flyout><MenuFlyout>
+            <MenuItem Header="Сменить релиз" Command="{Binding Sources.ChangeReleaseCommand}"/>
+            <MenuItem Header="Перепривязать" Command="{Binding Sources.ChangeReleaseCommand}"/>
+            <MenuItem Header="Удалить связь" Command="{Binding Sources.RemoveMappingCommand}" IsEnabled="{Binding Sources.IsLinked}"/>
+            <MenuItem Header="Открыть страницу источника" Command="{Binding Sources.OpenReleaseCommand}"/>
+          </MenuFlyout></Button.Flyout></Button>
+
+          <TextBlock Text="✓ просмотрено    •    время — сохранённая позиция    •    рамка — выбранная серия" Classes="muted" TextWrapping="Wrap"/>
+          <ItemsControl ItemsSource="{Binding Sources.EpisodeTiles}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Button ToolTip.Tip="{Binding Hint}" Command="{Binding $parent[Window].DataContext.Sources.SelectEpisodeCommand}" CommandParameter="{Binding Episode}" Classes.watched="{Binding Watched}" Classes.current="{Binding Current}" Classes.partial="{Binding Partial}" Margin="0,0,8,8" MinWidth="76" MinHeight="64" Padding="12,8"><StackPanel Spacing="4" HorizontalAlignment="Center"><TextBlock Text="{Binding Label}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/><TextBlock Text="{Binding ResumeText}" IsVisible="{Binding Partial}" FontSize="11" HorizontalAlignment="Center"/></StackPanel></Button></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+          <TextBlock Text="{Binding Sources.SelectedEpisode.Title}"/>
+          <Button Classes="primary" Content="▶ Смотреть выбранную серию" Command="{Binding Sources.PlayCommand}"/>
+          <WrapPanel><ComboBox ItemsSource="{Binding Sources.DownloadQualities}" SelectedItem="{Binding Sources.DownloadQuality}" Width="100" Margin="0,0,8,0" ToolTip.Tip="Качество скачивания: ближайший доступный поток, если выбранного нет"/><Button Content="Скачать серию…" Click="DownloadEpisode" IsEnabled="{Binding !Sources.Downloading}"/></WrapPanel>
+          <TextBlock Text="Сохраняется отдельная папка серии. Не перемещайте фрагменты HLS отдельно от неё." Classes="muted" TextWrapping="Wrap"/>
+        </StackPanel>
+      </Border>
+      <Border Classes="panel">
+        <StackPanel Spacing="14">
+          <TextBlock Text="Мой прогресс" Classes="h2" />
+          <TextBlock IsVisible="{Binding !CanEditProgress}" Text="Прогресс Shikimori будет доступен после сопоставления тайтла. История просмотра сохраняется на компьютере." TextWrapping="Wrap" Classes="muted"/>
+          <WrapPanel>
+            <ComboBox Width="180" ItemsSource="{Binding UserStatuses}" SelectedItem="{Binding UserStatus}"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={StaticResource StatusLabel}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox>
+            <NumericUpDown Width="130" Minimum="0" Value="{Binding Watched}" Margin="12,0" FormatString="0" />
+            <Button Classes="primary" Content="Сохранить прогресс" Command="{Binding SaveProgressCommand}" IsEnabled="{Binding CanEditProgress}" />
+          </WrapPanel>
+          <WrapPanel><TextBlock Text="Моя оценка (0 — без оценки)" VerticalAlignment="Center" Margin="0,0,12,0"/><ComboBox ItemsSource="{Binding Scores}" SelectedItem="{Binding SelectedRating}" IsEnabled="{Binding CanEditProgress}" Width="75"/>
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+      <TextBlock Text="Другие сезоны" Classes="h2"/>
+      <TextBlock Text="{Binding RelationsMessage}" Classes="muted"/>
+      <ItemsControl ItemsSource="{Binding Seasons}"><ItemsControl.ItemTemplate><DataTemplate><Button Content="{Binding Label}" Command="{Binding $parent[Window].DataContext.OpenRelatedCommand}" CommandParameter="{Binding Anime}" Margin="0,4"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+      <TextBlock Text="Связанное · фильмы, OVA, specials и другие истории" Classes="h2"/>
+      <ItemsControl ItemsSource="{Binding Related}"><ItemsControl.ItemTemplate><DataTemplate><Button Content="{Binding Label}" Command="{Binding $parent[Window].DataContext.OpenRelatedCommand}" CommandParameter="{Binding Anime}" Margin="0,4"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>
+
+

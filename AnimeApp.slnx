@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="AnimeApp.Tests/AnimeApp.Tests.csproj" />
+  <Project Path="AnimeApp/AnimeApp.csproj" />
+</Solution>

@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="using:AnimeApp.UI" x:Class="AnimeApp.UI.HistoryView">
+  <ScrollViewer><StackPanel Spacing="16">
+    <TextBlock Text="Сохранённые серии и позиции · время на этом компьютере" Classes="muted"/>
+    <ItemsControl ItemsSource="{Binding HistoryItems}"><ItemsControl.ItemTemplate><DataTemplate>
+      <Border Classes="panel" Margin="0,0,0,12"><Grid ColumnDefinitions="70,*,Auto">
+        <Border Height="100" CornerRadius="8" ClipToBounds="True"><ui:PosterImage Url="{Binding Poster}" Stretch="UniformToFill"/></Border>
+        <StackPanel Grid.Column="1" Spacing="7" Margin="16,0"><TextBlock Text="{Binding Title}" FontSize="18" TextWrapping="Wrap"/><TextBlock Text="{Binding Episode}"/><TextBlock Text="{Binding SourceName}" Classes="muted"/><TextBlock Text="{Binding Date}" Classes="muted" FontSize="12"/></StackPanel>
+        <StackPanel Grid.Column="2" Spacing="8"><TextBlock Text="{Binding Progress}"/><TextBlock Text="{Binding State}" Classes="muted"/><Button Content="{Binding Action}" Command="{Binding $parent[Window].DataContext.OpenHistoryCommand}" CommandParameter="{Binding Entry}"/></StackPanel>
+      </Grid></Border>
+    </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+  </StackPanel></ScrollViewer>
+</UserControl>

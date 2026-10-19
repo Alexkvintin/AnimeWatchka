@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="using:AnimeApp.UI" x:Class="AnimeApp.UI.LibraryView">
+  <Grid>
+      <Border Classes="panel" IsVisible="{Binding IsEmpty}" MinHeight="260">
+        <StackPanel VerticalAlignment="Center" Spacing="18" MaxWidth="600">
+          <ui:CharacterImage Fallback="{Binding LumiImage}" CharacterPath="{Binding Appearance.CharacterPath}" Height="190" IsVisible="{Binding Appearance.ShowCharacter}"/><TextBlock Text="Пока пусто" FontSize="28" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding EmptyText}" TextWrapping="Wrap" Classes="muted" FontSize="16" />
+          <Button Classes="primary" Content="Открыть каталог" Command="{Binding NavigateCommand}" CommandParameter="Поиск" />
+        </StackPanel>
+      </Border>
+      <ListBox ItemsSource="{Binding Rows}" IsVisible="{Binding !IsEmpty}" Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+       <ListBox.Styles><Style Selector="ListBoxItem"><Setter Property="Padding" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/></Style></ListBox.Styles>
+       <ListBox.ItemsPanel><ItemsPanelTemplate><VirtualizingStackPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
+       <ListBox.ItemTemplate><DataTemplate><ItemsControl ItemsSource="{Binding}">
+        <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border Width="210" Margin="0,0,18,24" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource OutlineBrush}" BorderThickness="1" CornerRadius="16">
+              <StackPanel Width="210">
+                <Button Height="250" Padding="0" Background="Transparent" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" CornerRadius="14,14,0,0" ClipToBounds="True" Command="{Binding $parent[Window].DataContext.OpenAnimeCommand}" CommandParameter="{Binding}">
+                  <Grid>
+                    <TextBlock Text="◒" Foreground="#789485" FontSize="76" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <ui:PosterImage Url="{Binding Poster}" Stretch="UniformToFill" />
+                  </Grid>
+                </Button>
+                <StackPanel Margin="15" Spacing="9">
+                  <Button Classes="titleLink" Padding="0" Background="Transparent" HorizontalContentAlignment="Stretch" Command="{Binding $parent[Window].DataContext.OpenAnimeCommand}" CommandParameter="{Binding}" ToolTip.Tip="{Binding Title}"><TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap" MaxHeight="44"/></Button>
+                  <TextBlock Text="{Binding RatingLabel}" IsVisible="{Binding $parent[Window].DataContext.IsSearch}" Foreground="{DynamicResource AccentBrush}"/>
+                  <TextBlock Text="{Binding Metadata}" FontSize="11" Classes="muted" />
+                  <ProgressBar Value="{Binding EpisodesWatched}" Maximum="{Binding EpisodesTotal}" Height="3" Foreground="{DynamicResource AccentBrush}" />
+                  <TextBlock Text="{Binding Progress}" FontSize="12" />
+                                    <StackPanel IsVisible="{Binding $parent[Window].DataContext.IsHome}" Spacing="8">
+                    
+                    
+                    <Button Content="{Binding Continuation.Label}" Classes="primary" IsVisible="{Binding HasContinuation}" Command="{Binding $parent[Window].DataContext.ContinueAnimeCommand}" CommandParameter="{Binding}"/>
+                  </StackPanel>
+                  <Button IsVisible="{Binding !HasContinuation}" Content="Открыть карточку →" Command="{Binding $parent[Window].DataContext.OpenAnimeCommand}" CommandParameter="{Binding}"/>
+                </StackPanel>
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl></DataTemplate></ListBox.ItemTemplate></ListBox>
+  </Grid>
+</UserControl>
+

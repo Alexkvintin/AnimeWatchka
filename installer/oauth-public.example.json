@@ -1,0 +1,1 @@
+{"ClientId":"YOUR_SHIKIMORI_CLIENT_ID","TokenBrokerUrl":"https://YOUR-WORKER.workers.dev/token","RedirectUri":"http://127.0.0.1:17842/callback/"}

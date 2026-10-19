@@ -1,0 +1,6 @@
+<Project>
+  <!-- We host WebView2 Core in Avalonia; WPF/WinForms assemblies are not used. -->
+  <Target Name="UseWebViewCoreOnly" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup><Reference Remove="@(Reference)" Condition="'%(Reference.Filename)' == 'Microsoft.Web.WebView2.Wpf' Or '%(Reference.Filename)' == 'Microsoft.Web.WebView2.WinForms'" /></ItemGroup>
+  </Target>
+</Project>
