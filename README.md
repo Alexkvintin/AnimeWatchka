@@ -102,7 +102,7 @@
 - Просмотр загруженных серий без интернета.
 
 На текущем этапе поддерживается загрузка одной серии за раз. Дополнительные ограничения перечислены ниже.
-<img width="2560" height="1392" alt="image" src="https://github.com/user-attachments/assets/3bb19a05-9212-467c-a308-83f13b490829" />
+<img width="2560" height="1391" alt="{3DBB8F8F-5886-4F88-8B81-86EF2369F853}" src="https://github.com/user-attachments/assets/ce295f3d-34a1-46af-a23f-94d396a17268" />
 
 ### 🎨 Персонализация оформления
 
