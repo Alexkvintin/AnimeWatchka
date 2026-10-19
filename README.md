@@ -247,7 +247,6 @@ VLC, Avalonia и другие зависимости восстанавлива�
 
 ## 📚 Документация
 
-- [Планы разработки и следующие шаги](docs/ROADMAP.md)
 - [История изменений](CHANGELOG.md)
 - [Участие в разработке](CONTRIBUTING.md)
 - [Сторонние компоненты и лицензии](AnimeApp/Assets/Licenses/THIRD-PARTY.txt)
