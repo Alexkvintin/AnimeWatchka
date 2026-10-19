@@ -34,7 +34,7 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
     public bool IsConnected => host.UserId > 0;
     public string DataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AnimeApp");
     public string Version => "AnimeWatchka · " + typeof(SettingsViewModel).Assembly.GetName().Version!.ToString(3);
-    public string ReleaseNotes => "0.1.16\n• Скачивание выбранной серии с выбором качества и отменой.\n• Офлайн-просмотр MP4/WebM/MKV и обычных HLS-серий внутри приложения.\n• Прогресс скачивания виден при переходах между разделами.\n• Очистка незавершённых загрузок после сбоя; готовые серии сохраняются.";
+    public string ReleaseNotes => "0.1.17\n• Загрузка сезона одной кнопкой и постоянная папка в настройках.\n• Раздел «Скачанное», отметки серий и запуск с диска по озвучке.\n• Параллельная загрузка HLS-фрагментов с повтором сетевых ошибок.";
 
     [RelayCommand]
     private Task ClearPosters() => host.Run(async () =>
@@ -109,6 +109,8 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
         }
 
         await InitializeSources();
+        var downloads = await repository.Setting<DownloadPreferences>("downloads") ?? new();
+        AutomaticDownloads = downloads.Automatic; CustomDownloadFolder = downloads.Folder;
         PlayerCompatibility = await repository.Setting<bool>("player-compatibility");
         CloseToTray = await repository.Setting<bool>("close-to-tray");
         var s = await repository.Setting<AppSettings>("playback") ?? new();
@@ -312,5 +314,8 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
         host.Message = "Проверка источников завершена.";
     });
 }
+
+
+
 
 

@@ -61,7 +61,8 @@ public sealed class App : Application
                 }
 
                 IAnimeProvider provider = request.ProviderId == "downloads" ? new DownloadedEpisodeProvider() : services.GetRequiredService<ProviderRegistry>().Get(request.ProviderId);
-                var episodes = await provider.GetEpisodes(request.ReleaseId, ct);
+                var episodes = request.Source.Kind == PlaybackKind.LocalFile && request.ProviderId != "downloads" && vm.Sources.SelectedRelease?.Id == request.ReleaseId && vm.Sources.SelectedProvider?.Id == request.ProviderId
+                    ? vm.Sources.Episodes.ToArray() : await provider.GetEpisodes(request.ReleaseId, ct);
                 var scaling = await services.GetRequiredService<LibraryRepository>().Setting<string>("video-scaling", ct) ?? "linear";
                 var compatibility = await services.GetRequiredService<LibraryRepository>().Setting<bool>("player-compatibility", ct);
                 var engine = PlayerEngineFactory.Create(request.Source.Kind, scaling, compatibility);
@@ -135,4 +136,5 @@ public sealed class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 }
+
 

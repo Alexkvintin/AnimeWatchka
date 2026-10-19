@@ -398,6 +398,7 @@ public sealed partial class SourcesViewModel : ObservableObject
             Episodes.Add(e);
         var resume = history.FirstOrDefault(h => h.AnimeId == anime?.ShikimoriId && h.ProviderId == provider.Id && h.ReleaseId == release.Id && !h.Completed && h.Position > 0);
         SelectedEpisode = Episodes.FirstOrDefault(e => e.Id == resume?.EpisodeId) ?? Episodes.FirstOrDefault(e => e.Number > host.Watched) ?? Episodes.FirstOrDefault();
+        await RefreshDownloads();
         RefreshTiles(history);
     }
 
@@ -412,7 +413,8 @@ public sealed partial class SourcesViewModel : ObservableObject
             var partial = !watched && h?.Position > 0;
             var number = e.Number > 0 ? e.Number.ToString() : e.Title;
             if (Episodes.Count(other => other.Number == e.Number) > 1) number = e.Title;
-            var suffix = watched ? " ✓" : "";
+            var downloaded = DownloadLibrary.Find(savedEpisodes, SelectedProvider?.Id ?? "", SelectedRelease?.Id ?? "", e.Id) is not null;
+            var suffix = (downloaded ? " ↓" : "") + (watched ? " ✓" : "");
             var resumeText = partial ? "С " + TimeSpan.FromSeconds(h!.Position).ToString(h.Position >= 3600 ? @"h\:mm\:ss" : @"mm\:ss") : "";
             EpisodeTiles.Add(new(e, number + suffix, e.Title + (partial ? $" · продолжить с {h!.Position:0} сек." : ""), watched, e.Id == SelectedEpisode?.Id, partial, resumeText));
         }
@@ -435,7 +437,7 @@ public sealed partial class SourcesViewModel : ObservableObject
             throw new InvalidOperationException("Выберите релиз и серию.");
         if (host.SelectedAnime.ShikimoriId > 0 && !(await repository.Library(host.UserId)).Any(a => a.ShikimoriId == host.SelectedAnime.ShikimoriId))
             await repository.Cache(host.UserId, [host.SelectedAnime]);
-        var source = await SelectedProvider.Provider.GetPlayback(SelectedRelease.Id, SelectedEpisode);
+        var source = await DownloadLibrary.Resolve(repository, SelectedProvider.Provider, SelectedRelease.Id, SelectedEpisode);
         var last = (await repository.History(host.UserId)).FirstOrDefault(h => h.AnimeId == host.SelectedAnime.ShikimoriId && h.ProviderId == SelectedProvider.Id && h.ReleaseId == SelectedRelease.Id && h.EpisodeId == SelectedEpisode.Id && !h.Completed);
         await playback.Start(new(host.UserId, host.SelectedAnime.ShikimoriId, host.SelectedAnime.Title, SelectedProvider.Id, SelectedRelease.Id, SelectedEpisode.Id, SelectedEpisode.Number, source, last?.Position ?? 0, host.SelectedAnime.ShikimoriId > 0 && SelectedEpisode.CountsTowardProgress));
         host.Message = "Просмотр открыт в AnimeApp";
@@ -449,3 +451,4 @@ public sealed partial class SourcesViewModel : ObservableObject
         await new SystemPlaybackLauncher().Open(new(host.UserId, host.SelectedAnime?.ShikimoriId ?? 0, "", SelectedProvider?.Id ?? "", SelectedRelease.Id, "", 0, new(PlaybackKind.WebPage, SelectedRelease.Url)));
     });
 }
+

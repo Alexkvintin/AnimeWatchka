@@ -1,4 +1,4 @@
-#define AppVersion "0.1.16"
+#define AppVersion "0.1.17"
 [Setup]
 AppId={{7C63C651-80B9-4404-80EF-07D4959C8409}
 AppName=AnimeWatchka
@@ -24,7 +24,7 @@ CloseApplications=yes
 CloseApplicationsFilter=*.exe,*.dll
 SetupLogging=yes
 RestartApplications=no
-VersionInfoVersion=0.1.16.0
+VersionInfoVersion=0.1.17.0
 
 [Languages]
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
@@ -35,7 +35,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "Создать ярлык на рабочем столе"; GroupDescription: "Ярлыки:"
 
 [Files]
-Source: "..\artifacts\installer-payload\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.pdb,*.db,*.db-shm,*.db-wal,*.log,credentials.dat,tokens.dat,libvlc\win-x86\*,libvlc\win-arm64\*"
+Source: "..\artifacts\installer-payload\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "Downloads\*,*.pdb,*.db,*.db-shm,*.db-wal,*.log,credentials.dat,tokens.dat,libvlc\win-x86\*,libvlc\win-arm64\*"
 Source: "..\.local\tools\MicrosoftEdgeWebview2Setup.exe"; Flags: dontcopy
 
 [Icons]
@@ -68,4 +68,6 @@ begin
       Result := 'Для веб-плеера нужен Microsoft WebView2. Проверьте подключение к интернету и повторите установку.';
   end;
 end;
+
+
 

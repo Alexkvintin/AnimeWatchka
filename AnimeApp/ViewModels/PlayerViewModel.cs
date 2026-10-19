@@ -372,10 +372,10 @@ public sealed partial class PlayerViewModel : ObservableObject
             Engine.Pause();
             await Save();
             var e = Episodes[index];
-            var source = await provider.GetPlayback(Request.ReleaseId, e);
+            var source = await DownloadLibrary.Resolve(repository, provider, Request.ReleaseId, e);
             if (closed)
                 return;
-            if (source.Kind != Request.Source.Kind)
+            if ((source.Kind == PlaybackKind.WebPage) != (Request.Source.Kind == PlaybackKind.WebPage))
                 throw new InvalidOperationException("Следующая серия требует другого проигрывателя. Откройте её со страницы аниме.");
             Request = Request with
             {
@@ -435,3 +435,4 @@ public sealed partial class PlayerViewModel : ObservableObject
         }
     }
 }
+

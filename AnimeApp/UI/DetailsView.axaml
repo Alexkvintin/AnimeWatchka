@@ -39,12 +39,12 @@
             <MenuItem Header="Открыть страницу источника" Command="{Binding Sources.OpenReleaseCommand}"/>
           </MenuFlyout></Button.Flyout></Button>
 
-          <TextBlock Text="✓ просмотрено    •    время — сохранённая позиция    •    рамка — выбранная серия" Classes="muted" TextWrapping="Wrap"/>
+          <TextBlock Text="↓ скачано    •    ✓ просмотрено    •    время — сохранённая позиция    •    рамка — выбранная серия" Classes="muted" TextWrapping="Wrap"/>
           <ItemsControl ItemsSource="{Binding Sources.EpisodeTiles}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Button ToolTip.Tip="{Binding Hint}" Command="{Binding $parent[Window].DataContext.Sources.SelectEpisodeCommand}" CommandParameter="{Binding Episode}" Classes.watched="{Binding Watched}" Classes.current="{Binding Current}" Classes.partial="{Binding Partial}" Margin="0,0,8,8" MinWidth="76" MinHeight="64" Padding="12,8"><StackPanel Spacing="4" HorizontalAlignment="Center"><TextBlock Text="{Binding Label}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/><TextBlock Text="{Binding ResumeText}" IsVisible="{Binding Partial}" FontSize="11" HorizontalAlignment="Center"/></StackPanel></Button></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
           <TextBlock Text="{Binding Sources.SelectedEpisode.Title}"/>
           <Button Classes="primary" Content="▶ Смотреть выбранную серию" Command="{Binding Sources.PlayCommand}"/>
-          <WrapPanel><ComboBox ItemsSource="{Binding Sources.DownloadQualities}" SelectedItem="{Binding Sources.DownloadQuality}" Width="100" Margin="0,0,8,0" ToolTip.Tip="Качество скачивания: ближайший доступный поток, если выбранного нет"/><Button Content="Скачать серию…" Click="DownloadEpisode" IsEnabled="{Binding !Sources.Downloading}"/></WrapPanel>
-          <TextBlock Text="Сохраняется отдельная папка серии. Не перемещайте фрагменты HLS отдельно от неё." Classes="muted" TextWrapping="Wrap"/>
+          <WrapPanel><ComboBox ItemsSource="{Binding Sources.DownloadQualities}" SelectedItem="{Binding Sources.DownloadQuality}" Width="100" Margin="0,0,8,0" ToolTip.Tip="Качество скачивания: ближайший доступный поток, если выбранного нет"/><Button Content="Скачать серию" Command="{Binding Sources.DownloadEpisodeCommand}" IsEnabled="{Binding !Sources.Downloading}" Margin="0,0,8,0"/><Button Content="Скачать весь сезон" Command="{Binding Sources.DownloadSeasonCommand}" IsEnabled="{Binding !Sources.Downloading}"/></WrapPanel>
+          <TextBlock Text="Сезон: все доступные серии выбранной озвучки. Готовые серии пропускаются. Папка меняется в настройках." Classes="muted" TextWrapping="Wrap"/>
         </StackPanel>
       </Border>
       <Border Classes="panel">
@@ -68,5 +68,6 @@
     </StackPanel>
   </ScrollViewer>
 </UserControl>
+
 
 

@@ -1,56 +1,84 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using AnimeApp.Services.Playback;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace AnimeApp.ViewModels;
 public sealed partial class SourcesViewModel
 {
-    private static readonly HttpClient DownloadHttp = new(new HttpClientHandler { AllowAutoRedirect = true }) { Timeout = TimeSpan.FromMinutes(2) };
+    private static readonly HttpClient DownloadHttp = new(new HttpClientHandler { AllowAutoRedirect = true, MaxConnectionsPerServer = 4 }) { Timeout = TimeSpan.FromMinutes(2) };
     private CancellationTokenSource? downloadCancellation;
+    private IReadOnlyList<DownloadEntry> savedEpisodes = [];
     [ObservableProperty] private bool downloading;
     [ObservableProperty] private string downloadStatus = "";
     [ObservableProperty] private double downloadPercent;
     [ObservableProperty] private bool downloadIndeterminate = true;
     [ObservableProperty] private string downloadQuality = "720p";
+    [ObservableProperty] private bool downloadsVisible;
+    public ObservableCollection<DownloadEntry> Downloads { get; } = [];
     public string[] DownloadQualities { get; } = ["480p", "720p", "1080p", "Auto"];
     public bool HasDownloadStatus => !string.IsNullOrEmpty(DownloadStatus);
     partial void OnDownloadStatusChanged(string value) => OnPropertyChanged(nameof(HasDownloadStatus));
     public string DownloadFolder { get; private set; } = "";
     [RelayCommand] private void CancelDownload() => downloadCancellation?.Cancel();
-    [RelayCommand] private void OpenDownloadFolder()
+    [RelayCommand] private void CloseDownloads() => DownloadsVisible = false;
+    private async Task<string> DownloadRoot() => (await repository.Setting<DownloadPreferences>("downloads") ?? new()).Root;
+    public async Task RefreshDownloads()
     {
-        if (Directory.Exists(DownloadFolder)) Process.Start(new ProcessStartInfo(DownloadFolder) { UseShellExecute = true });
+        DownloadFolder = await DownloadRoot();
+        savedEpisodes = await Task.Run(() => DownloadLibrary.Read(DownloadFolder));
+        Downloads.Clear();
+        foreach (var entry in savedEpisodes.OrderBy(e => e.Data.Title).ThenBy(e => e.Data.Episode)) Downloads.Add(entry);
+        RefreshTiles();
     }
-    public async Task DownloadSelected(string folder)
+    [RelayCommand] private Task ShowDownloads() => host.Run(async () => { await RefreshDownloads(); DownloadsVisible = true; });
+    [RelayCommand] private Task OpenDownloadFolder() => host.Run(async () =>
+    {
+        DownloadFolder = await DownloadRoot(); Directory.CreateDirectory(DownloadFolder);
+        Process.Start(new ProcessStartInfo(DownloadFolder) { UseShellExecute = true });
+    });
+    [RelayCommand] private Task PlayDownloaded(DownloadEntry? entry) => entry is null ? Task.CompletedTask : OpenDownloaded(entry.Directory);
+    [RelayCommand] private Task DownloadEpisode() => DownloadSelection(false);
+    [RelayCommand] private Task DownloadSeason() => DownloadSelection(true);
+    private async Task DownloadSelection(bool season)
     {
         if (Downloading) return;
-        var provider = SelectedProvider; var release = SelectedRelease; var episode = SelectedEpisode; var anime = host.SelectedAnime;
-        if (provider is null || release is null || episode is null || anime is null) { DownloadStatus = "Выберите релиз и серию."; return; }
-        DownloadFolder = folder; Downloading = true; DownloadPercent = 0; DownloadIndeterminate = true;
+        var provider = SelectedProvider; var release = SelectedRelease; var anime = host.SelectedAnime;
+        var episodes = season ? Episodes.Where(e => e.Available).ToArray() : SelectedEpisode is { Available: true } selected ? [selected] : [];
+        if (provider is null || release is null || anime is null || episodes.Length == 0) { DownloadStatus = "Выберите релиз с доступными сериями."; return; }
+        Downloading = true; DownloadPercent = 0; DownloadIndeterminate = true;
         using var cancellation = new CancellationTokenSource(); downloadCancellation = cancellation;
-        var quality = DownloadQuality;
-        var label = $"{anime.Title} · {provider.Name} · серия {episode.Number}";
-        DownloadStatus = label + " · получение адреса…";
+        var label = $"{anime.Title} · {provider.Name}";
+        DownloadStatus = label + " · подготовка…";
         var lastUpdate = DateTime.MinValue;
-        var progress = new Progress<DownloadProgress>(p => {
+        var progress = new Progress<SeasonProgress>(p => {
             if (!Downloading || downloadCancellation != cancellation) return;
-            if ((DateTime.UtcNow - lastUpdate).TotalMilliseconds < 200 && p.Percent < 100) return;
-            lastUpdate = DateTime.UtcNow; DownloadPercent = p.Percent; DownloadIndeterminate = p.Total is null && p.TotalParts == 0;
-            DownloadStatus = label + " · " + p.Label;
+            if ((DateTime.UtcNow - lastUpdate).TotalMilliseconds < 150 && p.Transfer is not null) return;
+            lastUpdate = DateTime.UtcNow;
+            DownloadPercent = Math.Min(100, (p.Done + (p.Transfer?.Percent ?? 0) / 100) * 100 / p.Total);
+            DownloadIndeterminate = false;
+            DownloadStatus = $"{label} · готово {p.Done}/{p.Total} · серия {p.Episode}" + (p.Transfer is { } transfer ? " · " + transfer.Label : "");
         });
         try
         {
-            await repository.SaveSetting("download-folder", folder);
-            var source = await provider.Provider.GetPlayback(release.Id, episode, cancellation.Token);
-            var result = await new EpisodeDownloader(DownloadHttp).Download(source, folder, label, quality, progress, cancellation.Token, episode.Number);
+            DownloadFolder = await DownloadRoot(); Directory.CreateDirectory(DownloadFolder);
+            var probe = Path.Combine(DownloadFolder, ".write-test-" + Guid.NewGuid().ToString("N"));
+            using (new FileStream(probe, FileMode.CreateNew, FileAccess.Write, FileShare.None, 1, FileOptions.DeleteOnClose)) { }
+            var result = await new SeasonDownloader(DownloadHttp).Download(provider.Provider, release, episodes, DownloadFolder, anime.Title,
+                anime.ShikimoriId, DownloadQuality, progress, cancellation.Token);
             DownloadPercent = 100; DownloadIndeterminate = false;
-            DownloadStatus = label + " · сохранено. Открыть можно кнопкой «Открыть скачанное».";
+            DownloadStatus = $"{label} · скачано: {result.Downloaded}; уже на диске: {result.Skipped}." +
+                (result.Failed.Count > 0 ? " Не удалось скачать серии: " + string.Join(", ", result.Failed) + ". Повторите загрузку — готовые серии будут пропущены." : " Готово.");
         }
-        catch (OperationCanceledException) { DownloadStatus = cancellation.IsCancellationRequested ? "Скачивание отменено; временные файлы удалены." : "Источник слишком долго не отвечает. Повторите скачивание."; }
-        catch (Exception ex)
-        { DownloadStatus = ex is InvalidDataException ? ex.Message : "Не удалось скачать серию. Проверьте сеть, свободное место и доступ к папке; повторная попытка начнёт загрузку заново."; }
-        finally { Downloading = false; downloadCancellation = null; }
+        catch (OperationCanceledException) { DownloadStatus = "Скачивание отменено. Готовые серии сохранены, недокачанная серия удалена."; }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+        { DownloadStatus = "Не удалось записать файлы. Проверьте свободное место и выберите доступную папку в настройках → Место загрузки аниме."; }
+        finally
+        {
+            Downloading = false; downloadCancellation = null;
+            try { await RefreshDownloads(); } catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
+        }
     }
     public async Task OpenDownloaded(string directory)
     {
@@ -60,6 +88,6 @@ public sealed partial class SourcesViewModel
             await playback.Start(new(host.UserId, 0, result.Title, "downloads", directory, result.File, result.Episode, new(PlaybackKind.LocalFile, result.File), CountsTowardProgress: false));
         }
         catch (Exception ex) when (ex is IOException or InvalidDataException or System.Text.Json.JsonException or UnauthorizedAccessException or InvalidOperationException)
-        { DownloadStatus = "Это не завершённая загрузка AnimeWatchka или её файлы перемещены. Выберите папку самой серии."; }
+        { DownloadStatus = "Загрузка не завершена или файлы перемещены. Обновите раздел «Скачанное»."; }
     }
 }

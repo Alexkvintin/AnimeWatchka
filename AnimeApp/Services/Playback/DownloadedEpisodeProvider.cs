@@ -32,6 +32,36 @@ public sealed class DownloadedEpisodeProvider : IAnimeProvider
     public Task<ProviderAvailability> CheckAvailability(CancellationToken ct = default) => Task.FromResult(new ProviderAvailability(true, ""));
     public Task<IReadOnlyList<ProviderRelease>> Search(string q, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<ProviderRelease>>([]);
     public Task<ProviderRelease> GetRelease(string id, CancellationToken ct = default) => Task.FromResult(new ProviderRelease(id, Read(id).Title));
-    public Task<IReadOnlyList<ProviderEpisode>> GetEpisodes(string id, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<ProviderEpisode>>([new(Read(id).File, Read(id).Episode, Read(id).Title, CountsTowardProgress: false)]);
-    public Task<PlaybackSource> GetPlayback(string id, ProviderEpisode episode, CancellationToken ct = default) => Task.FromResult(new PlaybackSource(PlaybackKind.LocalFile, Read(id).File));
+    public Task<IReadOnlyList<ProviderEpisode>> GetEpisodes(string id, CancellationToken ct = default)
+    {
+        var current = Read(id);
+        var metadata = JsonSerializer.Deserialize<SavedEpisode>(File.ReadAllText(Path.Combine(id, "download.json")));
+        var result = new List<ProviderEpisode>();
+        if (metadata?.Identity is { } identity)
+        {
+            foreach (var folder in Directory.EnumerateDirectories(Path.GetDirectoryName(Path.GetFullPath(id))!, "AnimeWatchka - *"))
+            {
+                ct.ThrowIfCancellationRequested();
+                try
+                {
+                    var file = Path.Combine(folder, "download.json");
+                    if (!File.Exists(file) || new FileInfo(file).Length > 16384) continue;
+                    var saved = JsonSerializer.Deserialize<SavedEpisode>(File.ReadAllText(file));
+                    if (saved?.Identity?.ProviderId != identity.ProviderId || saved.Identity.ReleaseId != identity.ReleaseId) continue;
+                    var episode = Read(folder);
+                    result.Add(new(episode.File, episode.Episode, episode.Title, CountsTowardProgress: false));
+                }
+                catch (Exception ex) when (ex is InvalidDataException or IOException or UnauthorizedAccessException or JsonException) { }
+            }
+        }
+        if (result.Count == 0) result.Add(new(current.File, current.Episode, current.Title, CountsTowardProgress: false));
+        return Task.FromResult<IReadOnlyList<ProviderEpisode>>(result.OrderBy(e => e.Number).ToArray());
+    }
+    public async Task<PlaybackSource> GetPlayback(string id, ProviderEpisode episode, CancellationToken ct = default)
+    {
+        var available = await GetEpisodes(id, ct);
+        var selected = available.FirstOrDefault(e => e.Id == episode.Id) ?? throw new InvalidDataException("Серия не найдена в скачанном сезоне.");
+        return new(PlaybackKind.LocalFile, selected.Id);
+    }
 }
+

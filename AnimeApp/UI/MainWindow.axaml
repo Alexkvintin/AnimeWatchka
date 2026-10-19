@@ -29,7 +29,7 @@
           <Button Classes="nav" Content="Отложено" Command="{Binding NavigateCommand}" CommandParameter="Отложено" />
           <Button Classes="nav" Content="Брошено" Command="{Binding NavigateCommand}" CommandParameter="Брошено" />
           <Button Classes="nav" Content="Пересматриваю" Command="{Binding NavigateCommand}" CommandParameter="Пересматриваю" />
-          <Button Content="↓  Скачанное…" Click="OpenDownloaded" Background="Transparent" HorizontalAlignment="Stretch"/>
+          <Button Content="↓  Скачанное…" Command="{Binding Sources.ShowDownloadsCommand}" Background="Transparent" HorizontalAlignment="Stretch"/>
           <Button Content="Удалить недокачанные…" Click="CleanInterruptedDownloads" IsEnabled="{Binding !Sources.Downloading}" Background="Transparent" FontSize="11" HorizontalAlignment="Stretch"/>
         </StackPanel>
         </ScrollViewer>
@@ -87,7 +87,7 @@
         <StackPanel IsVisible="{Binding Sources.HasDownloadStatus}" Spacing="4">
           <TextBlock Text="{Binding Sources.DownloadStatus}" TextWrapping="Wrap" FontSize="12"/>
           <ProgressBar IsVisible="{Binding Sources.Downloading}" IsIndeterminate="{Binding Sources.DownloadIndeterminate}" Value="{Binding Sources.DownloadPercent}" Maximum="100" Height="3"/>
-          <WrapPanel><Button Content="Отменить скачивание" Command="{Binding Sources.CancelDownloadCommand}" IsVisible="{Binding Sources.Downloading}" Margin="0,0,8,0"/><Button Content="Открыть скачанное…" Click="OpenDownloaded" Margin="0,0,8,0"/><Button Content="Папка загрузок" Command="{Binding Sources.OpenDownloadFolderCommand}"/></WrapPanel>
+          <WrapPanel><Button Content="Отменить скачивание" Command="{Binding Sources.CancelDownloadCommand}" IsVisible="{Binding Sources.Downloading}" Margin="0,0,8,0"/><Button Content="Открыть скачанное…" Command="{Binding Sources.ShowDownloadsCommand}" Margin="0,0,8,0"/><Button Content="Папка загрузок" Command="{Binding Sources.OpenDownloadFolderCommand}"/></WrapPanel>
         </StackPanel>
         <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" Height="2" />
         <TextBlock Text="{Binding Message}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource MutedBrush}" />
@@ -146,9 +146,17 @@
 
       </StackPanel></ScrollViewer>
     </Border>
+    <Border Grid.ColumnSpan="2" Grid.RowSpan="2" Background="{DynamicResource CanvasBrush}" Margin="50" Padding="24" CornerRadius="20" IsVisible="{Binding Sources.DownloadsVisible}">
+      <Grid RowDefinitions="Auto,Auto,*"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="Скачанное" Classes="h2"/><Button Grid.Column="1" Content="Закрыть" Command="{Binding Sources.CloseDownloadsCommand}"/></Grid>
+      <WrapPanel Grid.Row="1" Margin="0,12"><Button Content="Обновить" Command="{Binding Sources.ShowDownloadsCommand}"/><Button Content="Папка загрузок" Command="{Binding Sources.OpenDownloadFolderCommand}" Margin="8,0"/><Button Content="Открыть старую загрузку…" Click="OpenDownloaded"/></WrapPanel>
+      <ScrollViewer Grid.Row="2"><ItemsControl ItemsSource="{Binding Sources.Downloads}"><ItemsControl.ItemTemplate><DataTemplate><Border Classes="panel" Margin="0,0,0,8"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="{Binding Data.Title}" TextWrapping="Wrap" VerticalAlignment="Center"/><Button Grid.Column="1" Content="▶ Смотреть с диска" Command="{Binding $parent[Window].DataContext.Sources.PlayDownloadedCommand}" CommandParameter="{Binding}" Margin="12,0,0,0"/></Grid></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></ScrollViewer>
+      </Grid>
+    </Border>
     <Border Grid.ColumnSpan="2" Grid.RowSpan="2" BorderBrush="{DynamicResource OutlineBrush}" BorderThickness="1" CornerRadius="12" IsHitTestVisible="False"/>
   </Grid>
 </Window>
+
+
 
 
 

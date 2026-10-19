@@ -82,6 +82,12 @@
       </Border>
       <Border Classes="panel">
         <StackPanel Spacing="12">
+          <TextBlock Text="Место загрузки аниме" Classes="h2" />
+          <CheckBox Content="Auto — папка Downloads рядом с приложением" IsChecked="{Binding Settings.AutomaticDownloads}"/>
+          <TextBlock Text="{Binding Settings.DownloadLocationMessage}" Classes="muted" TextWrapping="Wrap"/>
+          <StackPanel IsVisible="{Binding !Settings.AutomaticDownloads}" Spacing="8"><TextBox Text="{Binding Settings.CustomDownloadFolder}" Watermark="Пользовательский путь"/><Button Content="Выбрать папку…" Click="ChooseDownloadFolder"/></StackPanel>
+          <Button Content="Сохранить место загрузки" Command="{Binding Settings.SaveDownloadsCommand}"/>
+          <TextBlock Text="Внутри создаются папки тайтлов и озвучек. При смене места уже скачанные файлы остаются в прежней папке." Classes="muted" TextWrapping="Wrap"/>
           <TextBlock Text="Просмотр" Classes="h2" />
           <CheckBox Content="Автоматически отмечать просмотренные серии" IsChecked="{Binding Settings.AutoMark}" />
           <StackPanel Orientation="Horizontal" Spacing="12">
@@ -109,6 +115,7 @@
     </StackPanel>
   </ScrollViewer>
 </UserControl>
+
 
 
 

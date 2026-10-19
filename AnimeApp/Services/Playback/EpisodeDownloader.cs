@@ -41,7 +41,7 @@ public sealed class EpisodeDownloader(HttpClient http)
             ?? variants.OrderBy(v => v.Height > 0 ? v.Height : int.MaxValue).First();
     }
     private static Uri Https(string location) => Uri.TryCreate(location, UriKind.Absolute, out var u) && u.Scheme == "https" && string.IsNullOrEmpty(u.UserInfo) ? u : throw new InvalidDataException("Источник не предоставляет подходящий HTTPS-поток.");
-    public async Task<DownloadResult> Download(PlaybackSource source, string destination, string title, string quality, IProgress<DownloadProgress>? progress, CancellationToken ct, int episode = 1)
+    public async Task<DownloadResult> Download(PlaybackSource source, string destination, string title, string quality, IProgress<DownloadProgress>? progress, CancellationToken ct, int episode = 1, DownloadIdentity? identity = null)
     {
         if (source.Kind != PlaybackKind.DirectMedia || source.AudioTrack is not null || source.SubtitleTracks?.Count > 0)
             throw new InvalidDataException("Скачивание этого источника или отдельных дорожек пока не поддерживается.");
@@ -53,7 +53,7 @@ public sealed class EpisodeDownloader(HttpClient http)
         var staging = Path.Combine(destination, PendingName + id);
         var name = new string(title.Select(c => Path.GetInvalidFileNameChars().Contains(c) ? '_' : c).ToArray()).Trim().TrimEnd('.');
         if (name.Length > 90) name = name[..90];
-        var final = Path.Combine(destination, "AnimeWatchka - " + name + " - " + id[..8]);
+        var final = Path.Combine(destination, "AnimeWatchka - " + (identity is null ? name : $"Episode {episode:D3}") + " - " + id[..8]);
         Directory.CreateDirectory(staging);
         using var markerLock = new FileStream(Path.Combine(staging, "download.pending"), FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
         markerLock.Write(Encoding.UTF8.GetBytes("AnimeWatchka download v1")); markerLock.Flush();
@@ -80,7 +80,7 @@ public sealed class EpisodeDownloader(HttpClient http)
                 using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct); timeout.CancelAfter(TimeSpan.FromSeconds(45));
                 count = await input.ReadAsync(buffer, timeout.Token);
                 if (count == 0) break;
-                await output.WriteAsync(buffer.AsMemory(0, count), ct); received += count; bytes += count;
+                await output.WriteAsync(buffer.AsMemory(0, count), ct); received += count; Interlocked.Add(ref bytes, count);
                 progress?.Report(new(bytes, parts > 0 ? null : response.Content.Headers.ContentLength, part, parts));
             }
             if (received == 0 || response.Content.Headers.ContentLength is long expected && received != expected) throw new IOException("Неполный ответ сервера.");
@@ -131,10 +131,27 @@ public sealed class EpisodeDownloader(HttpClient http)
                     else if (line == "#EXTM3U" || line == "#EXT-X-ENDLIST" || line == "#EXT-X-DISCONTINUITY" || line == "#EXT-X-INDEPENDENT-SEGMENTS" || line.StartsWith("#EXTINF:") || line.StartsWith("#EXT-X-VERSION:") || line.StartsWith("#EXT-X-TARGETDURATION:") || line.StartsWith("#EXT-X-MEDIA-SEQUENCE:") || line.StartsWith("#EXT-X-DISCONTINUITY-SEQUENCE:")) local.Add(line);
                 }
                 if (!lines.Any(l => !l.StartsWith('#')) || resources.Count is 0 or > 20000) throw new InvalidDataException("Неподдерживаемый размер HLS-плейлиста.");
-                for (int i = 0; i < resources.Count; i++)
+                int completed = 0;
+                await Parallel.ForEachAsync(resources, new ParallelOptions { MaxDegreeOfParallelism = 4, CancellationToken = ct }, async (resource, token) =>
                 {
-                    using var part = await Get(resources[i].Url); await Copy(part, resources[i].Name, i, resources.Count); progress?.Report(new(bytes, null, i + 1, resources.Count));
-                }
+                    for (var attempt = 0; ; attempt++)
+                    {
+                        token.ThrowIfCancellationRequested();
+                        try
+                        {
+                            using var part = await Get(resource.Url);
+                            await Copy(part, resource.Name, Volatile.Read(ref completed), resources.Count);
+                            progress?.Report(new(Interlocked.Read(ref bytes), null, Interlocked.Increment(ref completed), resources.Count));
+                            break;
+                        }
+                        catch (Exception ex) when (attempt < 2 && !ct.IsCancellationRequested && (ex is IOException or HttpRequestException or OperationCanceledException))
+                        {
+                            var partial = Path.Combine(staging, resource.Name);
+                            if (File.Exists(partial)) { Interlocked.Add(ref bytes, -new FileInfo(partial).Length); File.Delete(partial); }
+                            await Task.Delay(TimeSpan.FromSeconds(attempt + 1), token);
+                        }
+                    }
+                });
                 media = "episode.m3u8";
                 await File.WriteAllLinesAsync(Path.Combine(staging, media), local, new UTF8Encoding(false), ct);
             }
@@ -150,7 +167,7 @@ public sealed class EpisodeDownloader(HttpClient http)
                     throw new InvalidDataException("Полученный файл не похож на видео. Попробуйте другой источник.");
             }
             ct.ThrowIfCancellationRequested();
-            await File.WriteAllTextAsync(Path.Combine(staging, "download.json"), JsonSerializer.Serialize(new { Title = title, Media = media, Episode = episode, Completed = DateTimeOffset.UtcNow }), ct);
+            await File.WriteAllTextAsync(Path.Combine(staging, "download.json"), JsonSerializer.Serialize(new SavedEpisode(title, media, episode, identity)), ct);
             markerLock.Dispose();
             File.Delete(Path.Combine(staging, "download.pending"));
             Directory.Move(staging, final);
@@ -159,3 +176,5 @@ public sealed class EpisodeDownloader(HttpClient http)
         finally { markerLock.Dispose(); if (Directory.Exists(staging)) Directory.Delete(staging, true); }
     }
 }
+
+
