@@ -109,7 +109,7 @@
 - Светлая и тёмная темы.
 - Дополнительные цветовые схемы.
 - Фирменное оформление с маскотом **Луми (Lumi)**.
-- Пользовательские изображения и GIF-персонажи.
+- Пользовательские изображения.
 - Настройка элементов интерфейса и цветовой палитры.
 - Три готовых пресета оформления.
 - Экспорт и импорт тем в формате `.awtheme`, включая встроенные изображения.
@@ -118,6 +118,7 @@
 <img width="2560" height="1392" alt="image" src="https://github.com/user-attachments/assets/7d1da4aa-215b-488f-ad1d-cc9f8eed8a2c" />
 <img width="2560" height="1392" alt="image" src="https://github.com/user-attachments/assets/9eb13e3b-92e6-48f7-9024-4ffb8c591f8b" />
 <img width="2560" height="1392" alt="image" src="https://github.com/user-attachments/assets/ffb9e9e6-4a79-4dc1-a26e-9e157511ab3c" />
+<img width="2560" height="1392" alt="image" src="https://github.com/user-attachments/assets/78b3eb5f-4bfb-465e-b0ea-8030d0234e21" />
 
 ## ⚠️ Важная информация о бета-версии
 
