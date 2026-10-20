@@ -157,6 +157,8 @@ public sealed partial class PlayerViewModel : ObservableObject
             CanComplete = false;
             Title = Request.Title;
             var episodeName = Request.Episode > 0 ? $"Серия {Request.Episode}" : Episodes.FirstOrDefault(e => e.Id == Request.EpisodeId)?.Title ?? "Спецвыпуск";
+            if (provider.Id == "subtitles")
+                episodeName = Episodes.FirstOrDefault(e => e.Id == Request.EpisodeId)?.Title ?? episodeName;
             EpisodeLabel = $"{provider.DisplayName}  •  {episodeName}  •  {Index + 1} из {Episodes.Count}";
             ShowResume = !settings.AutoResume && Request.ResumeSeconds > 3;
             OnPropertyChanged(nameof(ResumeLabel));
@@ -173,6 +175,9 @@ public sealed partial class PlayerViewModel : ObservableObject
             var max = Request.Source.Variants?.OrderByDescending(v => v.Height).FirstOrDefault();
             QualityInfo = $"{provider.DisplayName} · выбран поток: {variant?.Quality ?? "Auto"}" + (max is null ? "" : $" · максимум источника: {max.Quality}");
             await Engine.Open(source);
+            SubtitleDelay = 0;
+            SubtitleControls.Delay(Engine, 0);
+            RefreshSubtitles();
             Engine.SetVolume(Volume);
             Engine.SetSpeed(Speed);
             Status = "Загрузка видео…";
@@ -194,6 +199,7 @@ public sealed partial class PlayerViewModel : ObservableObject
         if (closed || Loading || qualityRecovery is not null)
             return;
         var s = Engine.Snapshot;
+        RefreshSubtitles();
         Position = s.Position;
         Duration = s.Duration;
         Playing = s.Playing;

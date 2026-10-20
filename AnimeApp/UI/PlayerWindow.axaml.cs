@@ -12,6 +12,19 @@ using LibVLCSharp.Avalonia;
 namespace AnimeApp.UI;
 public sealed partial class PlayerWindow : Window
 {
+    private async void OpenSubtitleFile(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var files = await StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
+            {
+                Title = "Открыть субтитры", AllowMultiple = false,
+                FileTypeFilter = [new("Субтитры") { Patterns = ["*.srt", "*.ass", "*.ssa", "*.vtt"] }]
+            });
+            if (files.Count > 0 && files[0].Path.IsFile) vm.OpenSubtitleFile(files[0].Path.LocalPath);
+        }
+        catch (Exception ex) { vm.ReportFailure(ex); }
+    }
     private readonly PlayerViewModel vm;
     private readonly DispatcherTimer timer = new()
     {
@@ -136,7 +149,7 @@ public sealed partial class PlayerWindow : Window
         hudTimer.Tick += (_, _) =>
         {
             var controlsHovered = this.FindControl<Border>("Controls")!.IsPointerOver;
-            if (controlsHovered || vm.ShowOptions || dragging) Fullscreen.Interact(DateTimeOffset.UtcNow);
+            if (controlsHovered || vm.ShowOptions || vm.ShowSubtitles || dragging) Fullscreen.Interact(DateTimeOffset.UtcNow);
             var visible = Fullscreen.ControlsVisible(DateTimeOffset.UtcNow);
             var controls = this.FindControl<Border>("Controls")!;
             if (controls.IsVisible != visible)

@@ -23,9 +23,17 @@
     <TextBlock Text="Звук" VerticalAlignment="Center" Margin="10,0,4,0"/><Slider Minimum="0" Maximum="100" Value="{Binding Volume}" Width="85" IsEnabled="{Binding CanControl}" AutomationProperties.Name="Громкость"/>
     <Button Content="+90 с" Command="{Binding SkipOpeningCommand}" ToolTip.Tip="Пропустить опенинг · O" IsEnabled="{Binding CanControl}" Margin="6,0"/>
     <ToggleButton x:Name="EnhancementToggle" Content="✦ Улучшение" IsChecked="{Binding ScalingEnabled}" IsEnabled="{Binding CanChangeScaling}" ToolTip.Tip="{Binding ScalingHint}" AutomationProperties.Name="Улучшение изображения" Margin="0,0,6,0"/>
+    <ToggleButton Content="CC" IsChecked="{Binding ShowSubtitles}" IsEnabled="{Binding CanUseSubtitles}" ToolTip.Tip="Субтитры" AutomationProperties.Name="Субтитры" Margin="0,0,6,0"/>
     <ToggleButton x:Name="OptionsToggle" Content="⚙" IsChecked="{Binding ShowOptions}" ToolTip.Tip="Настройки видео" AutomationProperties.Name="Настройки видео"/>
     <Button Content="{Binding ResumeLabel}" Command="{Binding ResumeCommand}" IsVisible="{Binding ShowResume}" Margin="6,0"/>
    </WrapPanel>
+   <ScrollViewer IsVisible="{Binding ShowSubtitles}" MaxHeight="190" VerticalScrollBarVisibility="Auto" Margin="0,6,0,0">
+    <StackPanel Spacing="8" Margin="4,8,16,8">
+     <WrapPanel><ComboBox ItemsSource="{Binding SubtitleTracks}" SelectedItem="{Binding SelectedSubtitle}" MinWidth="180" MaxWidth="430"/><Button Content="Открыть субтитры…" Click="OpenSubtitleFile" Margin="8,0"/></WrapPanel>
+     <WrapPanel><TextBlock Text="Задержка, секунды" VerticalAlignment="Center" Margin="0,0,12,0"/><NumericUpDown Value="{Binding SubtitleDelay}" Minimum="-120" Maximum="120" Increment="0.1" FormatString="0.0" Width="140"/></WrapPanel>
+     <TextBlock Text="{Binding SubtitleHint}" TextWrapping="Wrap" Classes="muted"/>
+    </StackPanel>
+   </ScrollViewer>
    <ScrollViewer IsVisible="{Binding ShowOptions}" MaxHeight="190" VerticalScrollBarVisibility="Auto" Margin="0,6,0,0">
     <StackPanel Spacing="12" Margin="4,8,16,8">
      <WrapPanel IsVisible="{Binding HasStreamQualities}" IsEnabled="{Binding !Loading}"><TextBlock Text="Качество видео" VerticalAlignment="Center" Margin="0,0,12,0"/><ComboBox ItemsSource="{Binding StreamQualities}" SelectedItem="{Binding SelectedStreamQuality}" Width="120"/><Button Content="Применить" Command="{Binding ApplyStreamQualityCommand}" Margin="8,0"/></WrapPanel>
