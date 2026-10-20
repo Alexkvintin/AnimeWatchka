@@ -34,7 +34,7 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
     public bool IsConnected => host.UserId > 0;
     public string DataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AnimeApp");
     public string Version => "AnimeWatchka · " + typeof(SettingsViewModel).Assembly.GetName().Version!.ToString(3);
-    public string ReleaseNotes => "0.1.17\n• Загрузка сезона одной кнопкой и постоянная папка в настройках.\n• Раздел «Скачанное», отметки серий и запуск с диска по озвучке.\n• Параллельная загрузка HLS-фрагментов с повтором сетевых ошибок.";
+    public string ReleaseNotes => "0.1.18\n• Добавлен источник AniDub с прямым воспроизведением поддерживаемых серий.\n• Для старых неподдерживаемых плееров показывается причина недоступности.";
 
     [RelayCommand]
     private Task ClearPosters() => host.Run(async () =>
