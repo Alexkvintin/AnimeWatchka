@@ -64,6 +64,7 @@ public sealed class Stage4UiTests
         var tokens = new Tokens();
         var api = new ShikimoriService(new(new Http()), new(), tokens);
         var vm = new MainViewModel(repo, api, new SyncService(repo, api), tokens, new PlaybackService(repo, new EmbeddedPlaybackLauncher()), new ProviderRegistry(providers), NullLogger<MainViewModel>.Instance);
+        await repo.SaveSetting("show-adult-content", true); // These UI fixtures do not provide age metadata.
         await vm.Initialize();
         vm.UserId = 7; vm.Settings.AutoSync = false; await vm.Reload();
         return (vm, repo);
@@ -74,6 +75,7 @@ public sealed class Stage4UiTests
     {
         var(vm, repo) = await Create();
         await repo.Cache(7, Enumerable.Range(1, 1200).Select(i => new Anime { ShikimoriId = i, Name = $"Anime {i}", UserStatus = "planned" }));
+        await repo.SaveSetting("show-adult-content", true); // These UI fixtures do not provide age metadata.
         await vm.Initialize();
         vm.UserId = 7; vm.Settings.AutoSync = false; await vm.Reload();
         vm.NavigateCommand.Execute("Запланировано");
@@ -288,6 +290,7 @@ public sealed class Stage4UiTests
         vm.Settings.SelectedMetadata = vm.Settings.MetadataChoices[0];
         await vm.Settings.FinishWizardCommand.ExecuteAsync(null);
         Assert.False(vm.Settings.WizardVisible);
+        await repo.SaveSetting("show-adult-content", true); // These UI fixtures do not provide age metadata.
         await vm.Initialize();
         vm.UserId = 7; vm.Settings.AutoSync = false; await vm.Reload();
         Assert.False(vm.Settings.WizardVisible);
@@ -329,11 +332,13 @@ public sealed class Stage4UiTests
     {
         var(vm, repo) = await Create();
         await repo.Cache(7, [new() { ShikimoriId = 1, Name = "Old", Year = 2020, UserStatus = "planned" }, new() { ShikimoriId = 2, Name = "New", Year = 2024, UserStatus = "planned" }]);
+        await repo.SaveSetting("show-adult-content", true); // These UI fixtures do not provide age metadata.
         await vm.Initialize();
         vm.UserId = 7; vm.Settings.AutoSync = false; await vm.Reload();
         vm.NavigateCommand.Execute("Запланировано");
         vm.LibraryYear = "2024";
         Assert.Equal("New", Assert.Single(vm.Items).Name);
+        await repo.SaveSetting("show-adult-content", true); // These UI fixtures do not provide age metadata.
         await vm.Initialize();
         vm.UserId = 7; vm.Settings.AutoSync = false; await vm.Reload();
         Assert.Equal("2024", vm.LibraryYear);

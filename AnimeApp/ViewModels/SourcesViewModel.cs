@@ -222,7 +222,7 @@ public sealed partial class SourcesViewModel : ObservableObject
         selectingSaved = false;
         await InitializeForAnime(ct);
         if (preferred is null && SelectedProvider is not null)
-            SourceMessage = "Автоматически подтвердить подходящий релиз с доступными сериями не удалось. Выберите источник или уточните название.";
+            SourceMessage = "В этой студии не найден подтверждённый релиз. Выберите другую студию.";
     }
 
     public async Task InitializeForAnime(CancellationToken external = default)
@@ -261,7 +261,7 @@ public sealed partial class SourcesViewModel : ObservableObject
         }
         else
         {
-            SourceMessage = "Подбираем релиз. Связь будет сохранена только после вашего подтверждения.";
+            SourceMessage = "Подбираем серии…";
             foreach (var s in await SuggestionsFor(provider.Provider, anime, ct))
             {
                 ct.ThrowIfCancellationRequested();
@@ -276,11 +276,6 @@ public sealed partial class SourcesViewModel : ObservableObject
                 var release = await provider.Provider.GetRelease(best.Release.Id, ct);
                 ct.ThrowIfCancellationRequested();
                 SelectedRelease = release;
-                if (!string.IsNullOrEmpty(release.Poster) && host.SelectedAnime is { } selected)
-                    host.SelectedAnime = selected with
-                    {
-                        Poster = release.Poster
-                    };
                 await LoadEpisodesCore(ct);
                 await repository.SaveMapping(new(anime.ShikimoriId, provider.Id, release.Id), ct);
                 IsLinked = true;
@@ -289,8 +284,9 @@ public sealed partial class SourcesViewModel : ObservableObject
             }
             else
             {
-                IsChoosing = true;
-                SourceMessage = "Выберите нужный сезон.";
+                SelectedRelease = null;
+                IsChoosing = false;
+                SourceMessage = "В этой студии не найден однозначно подходящий релиз. Выберите другую студию.";
             }
         }
     }

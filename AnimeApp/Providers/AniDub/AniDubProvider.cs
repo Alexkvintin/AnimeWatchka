@@ -69,10 +69,16 @@ public sealed class AniDubProvider(HttpClient http) : IAnimeProvider
     {
         var uri = ReleaseUri(id);
         using var doc = new HtmlParser().ParseDocument(await Html(uri.ToString(), ct));
-        var title = doc.QuerySelector("h1")?.TextContent.Trim() ?? "";
+        var title = doc.QuerySelector("h1, .fheader h2, h2")?.TextContent.Trim() ?? "";
         if (title.Length == 0) throw new ProviderException("AniDub не вернул карточку релиза.");
         var image = doc.QuerySelector(".fposter img")?.GetAttribute("src") ?? "";
-        return new(id, title, id, Poster: Uri.TryCreate(uri, image, out var poster) && poster.Scheme == "https" ? poster.ToString() : "");
+        var yearText = doc.QuerySelector("a[href*='/xfsearch/year/']")?.TextContent.Trim();
+        var count = Regex.Match(title, @"\[(\d+)\s+из\s+(\d+)\]", RegexOptions.IgnoreCase);
+        title = Regex.Replace(title, @"\s*\[\d+\s+из\s+\d+\].*$", "", RegexOptions.IgnoreCase).Trim();
+        return new(id, title, id, int.TryParse(yearText, out var year) ? year : null,
+            EpisodesTotal: count.Success ? int.Parse(count.Groups[2].Value) : null,
+            EpisodesAvailable: count.Success ? int.Parse(count.Groups[1].Value) : null,
+            Poster: Uri.TryCreate(uri, image, out var poster) && poster.Scheme == "https" ? poster.ToString() : "");
     }
     public static IReadOnlyList<ProviderEpisode> ParsePlaylist(string html, string releaseId, string page)
     {
@@ -119,7 +125,11 @@ public sealed class AniDubProvider(HttpClient http) : IAnimeProvider
             ?? throw new ProviderException("Серия не найдена в релизе AniDub.");
         if (!PlayerUri(selected.PageUrl, out var page)) throw new ProviderException("Некорректный адрес плеера AniDub.");
         if (page.Host == "video.sibnet.ru")
-            throw new ProviderException("Эта серия AniDub размещена в старом плеере Sibnet, который пока не поддерживается. Выберите другой источник.");
+        {
+            var location = ParseSibnet(await Html(page.ToString(), ct), page);
+            if (location is null) throw new ProviderException("Sibnet не предоставил прямое видео. Выберите другую студию.");
+            return new(PlaybackKind.DirectMedia, location, new Dictionary<string, string> { ["Referer"] = page.ToString() });
+        }
         if (!Regex.IsMatch(selected.Id, @"^/s\d+/[a-f0-9]+$"))
             throw new ProviderException("AniDub не предоставил прямой поток этой серии.");
         var stream = new Uri(page, "vid.php?v=" + Uri.EscapeDataString(selected.Id));
@@ -133,5 +143,14 @@ public sealed class AniDubProvider(HttpClient http) : IAnimeProvider
         var variants = manifest.Contains("#EXT-X-MEDIA:") ? [] : QualityNegotiation.ParseMaster(manifest, stream);
         return new(PlaybackKind.DirectMedia, QualityNegotiation.Select(variants)?.Location ?? stream.ToString(),
             new Dictionary<string, string> { ["Referer"] = page.ToString() }, variants);
+    }
+    public static string? ParseSibnet(string html, Uri page)
+    {
+        var match = Regex.Match(html, """player\.src\s*\(\s*\[\s*\{\s*src\s*:\s*["']([^"']+)["']""",
+            RegexOptions.None, TimeSpan.FromSeconds(1));
+        if (!match.Success || !Uri.TryCreate(page, match.Groups[1].Value, out var uri) ||
+            uri.Scheme != "https" || uri.Host != "video.sibnet.ru" || uri.UserInfo.Length > 0 ||
+            !uri.AbsolutePath.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase)) return null;
+        return uri.ToString();
     }
 }

@@ -110,7 +110,7 @@ public sealed partial class ScheduleViewModel(IScheduleProvider provider, Librar
 
             var visible = new List<ScheduleItem>();
             // Show provider rows immediately; metadata enrichment must not blank the calendar.
-            if (!only && !general)
+            if (!only && !general && provider is not AnimeApp.Services.Shikimori.ShikimoriService { ShowAdultContent: false })
             {
                 foreach (var initial in ForDay(all, day).Where(i => filter == "Все" || (filter == "Уже вышли" ? i.Released : !i.Released)))
                     Items.Add(initial);
@@ -182,6 +182,11 @@ public sealed partial class ScheduleViewModel(IScheduleProvider provider, Librar
 
             ct.ThrowIfCancellationRequested();
             Items.Clear();
+            if (provider is IMetadataProvider contentMetadata)
+            {
+                var permitted = (await contentMetadata.FilterContent(visible.Select(i => i.Anime), ct)).Select(a => a.Identity).ToHashSet();
+                visible.RemoveAll(i => !permitted.Contains(i.Identity));
+            }
             foreach (var item in source == "all" && !general ? Group(visible) : visible)
                 Items.Add(item);
             Message = (general ? "Общее расписание · календарь Shikimori, не расписание озвучки." : "Только подтверждённые релизы выбранного источника. ") + $" Показано: {Items.Count}.";

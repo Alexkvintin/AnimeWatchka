@@ -7,6 +7,23 @@ using Xunit;
 namespace AnimeApp.Tests;
 public sealed class AniDubTests
 {
+    [Fact]
+    public async Task LegacyCardKeepsRealTitleAndEpisodeCount()
+    {
+        using var http = new HttpClient(new Handler(_ => "<h2>Fullmetal Alchemist: Brotherhood [64 из 64]</h2><a href='/xfsearch/year/2009/'>2009</a>"));
+        var card = await new AniDubProvider(http).GetRelease(Release);
+        Assert.Equal("Fullmetal Alchemist: Brotherhood", card.Title);
+        Assert.Equal(64, card.EpisodesTotal);
+        Assert.Equal(2009, card.Year);
+    }
+    [Fact]
+    public void SibnetReadsOnlyMainVideoOnExpectedHost()
+    {
+        var page = new Uri("https://video.sibnet.ru/shell.php?videoid=1");
+        Assert.Equal("https://video.sibnet.ru/v/123.mp4", AniDubProvider.ParseSibnet("player.src([{src: \"/v/123.mp4\", type: \"video/mp4\"}]);", page));
+        Assert.Null(AniDubProvider.ParseSibnet("player.src([{src: 'https://example.com/123.mp4'}]);", page));
+        Assert.Null(AniDubProvider.ParseSibnet("var advert = '/v/123.mp4';", page));
+    }
     const string Release = "https://online.anidub.com/123-test.html";
     const string Page = "https://player26.ladonyvesna2005.info/index.php?v=/s12/abcd&playlist";
     const string Playlist = """window.PLAYER_CONTEXT = {"episodes":[{"link":"/s12/abcd","label":"1 серия"},{"link":"/s11/ef01","label":"2 серия"},{"link":"https://example.com","label":"3 серия"}]};""";

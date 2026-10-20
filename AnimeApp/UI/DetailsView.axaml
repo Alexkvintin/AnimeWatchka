@@ -23,22 +23,7 @@
           <ComboBox ItemsSource="{Binding Sources.EnabledProviders}" SelectedItem="{Binding Sources.SelectedProvider}" MinWidth="220" />
 
 
-          <StackPanel IsVisible="{Binding Sources.IsChoosing}" Spacing="12">
-            <StackPanel IsVisible="{Binding Sources.ShowCandidates}" Spacing="12">
-            <Grid ColumnDefinitions="*,Auto"><TextBox Text="{Binding Sources.SourceQuery}" Watermark="Название релиза"/><Button Grid.Column="1" Content="Найти в источнике" Command="{Binding Sources.SearchSourceCommand}" Margin="10,0,0,0"/></Grid>
-            <ComboBox ItemsSource="{Binding Sources.Suggestions}" SelectedItem="{Binding Sources.SelectedSuggestion}" HorizontalAlignment="Stretch" PlaceholderText="Предлагаемые совпадения"><ComboBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding Label}" TextWrapping="Wrap"/><TextBlock Text="{Binding Explanation}" Classes="muted"/></StackPanel></DataTemplate></ComboBox.ItemTemplate></ComboBox>
-            <ComboBox ItemsSource="{Binding Sources.Releases}" SelectedItem="{Binding Sources.SelectedRelease}" HorizontalAlignment="Stretch" PlaceholderText="Все результаты поиска"/>
-            </StackPanel>
-            <Button Content="Выбрать другой релиз" Command="{Binding Sources.ChangeReleaseCommand}" IsVisible="{Binding !Sources.ShowCandidates}"/>
-            <Button Classes="primary" Content="Открыть серии" Command="{Binding Sources.LinkSourceCommand}"/>
-          </StackPanel>
-          <Button Content="⋯" HorizontalAlignment="Right"><Button.Flyout><MenuFlyout>
-            <MenuItem Header="Сменить релиз" Command="{Binding Sources.ChangeReleaseCommand}"/>
-            <MenuItem Header="Перепривязать" Command="{Binding Sources.ChangeReleaseCommand}"/>
-            <MenuItem Header="Удалить связь" Command="{Binding Sources.RemoveMappingCommand}" IsEnabled="{Binding Sources.IsLinked}"/>
-            <MenuItem Header="Открыть страницу источника" Command="{Binding Sources.OpenReleaseCommand}"/>
-          </MenuFlyout></Button.Flyout></Button>
-
+          <TextBlock Text="{Binding Sources.SourceMessage}" TextWrapping="Wrap" Classes="muted"/>
           <TextBlock Text="↓ скачано    •    ✓ просмотрено    •    время — сохранённая позиция    •    рамка — выбранная серия" Classes="muted" TextWrapping="Wrap"/>
           <ItemsControl ItemsSource="{Binding Sources.EpisodeTiles}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Button ToolTip.Tip="{Binding Hint}" Command="{Binding $parent[Window].DataContext.Sources.SelectEpisodeCommand}" CommandParameter="{Binding Episode}" Classes.watched="{Binding Watched}" Classes.current="{Binding Current}" Classes.partial="{Binding Partial}" Margin="0,0,8,8" MinWidth="76" MinHeight="64" Padding="12,8"><StackPanel Spacing="4" HorizontalAlignment="Center"><TextBlock Text="{Binding Label}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/><TextBlock Text="{Binding ResumeText}" IsVisible="{Binding Partial}" FontSize="11" HorizontalAlignment="Center"/></StackPanel></Button></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
           <TextBlock Text="{Binding Sources.SelectedEpisode.Title}"/>

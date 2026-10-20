@@ -1,6 +1,11 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="using:AnimeApp.UI" x:Class="AnimeApp.UI.SettingsView">
   <ScrollViewer>
     <StackPanel Spacing="20">
+      <Border Classes="panel"><StackPanel Spacing="12">
+        <TextBlock Text="Контент" Classes="h2"/>
+        <ToggleSwitch Content="Отображать 18+" IsChecked="{Binding Settings.ShowAdultContent}"/>
+        <TextBlock Text="По умолчанию скрыты эротические тайтлы и тайтлы с неподтверждённым возрастным рейтингом." Classes="muted" TextWrapping="Wrap"/>
+      </StackPanel></Border>
       <Border Classes="panel">
         <StackPanel Spacing="14">
           <TextBlock Text="Shikimori" Classes="h2" />

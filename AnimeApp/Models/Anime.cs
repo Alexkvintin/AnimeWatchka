@@ -14,6 +14,7 @@ public record Anime
     public int? Year { get; init; }
     public int? AirMonth { get; init; }
     public string Status { get; init; } = "";
+    public string AgeRating { get; init; } = "";
     public string Kind { get; init; } = "";
     public int EpisodesTotal { get; init; }
     public int EpisodesWatched { get; init; }

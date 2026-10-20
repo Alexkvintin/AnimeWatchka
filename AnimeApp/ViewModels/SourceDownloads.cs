@@ -29,7 +29,8 @@ public sealed partial class SourcesViewModel
         DownloadFolder = await DownloadRoot();
         savedEpisodes = await Task.Run(() => DownloadLibrary.Read(DownloadFolder));
         Downloads.Clear();
-        foreach (var entry in savedEpisodes.OrderBy(e => e.Data.Title).ThenBy(e => e.Data.Episode)) Downloads.Add(entry);
+        var permitted = (await host.FilterContent(savedEpisodes.Select(e => new AnimeApp.Models.Anime { ShikimoriId = e.Data.Identity?.AnimeId ?? 0 }))).Select(a => a.ShikimoriId).ToHashSet();
+        foreach (var entry in savedEpisodes.Where(e => permitted.Contains(e.Data.Identity?.AnimeId ?? 0)).OrderBy(e => e.Data.Title).ThenBy(e => e.Data.Episode)) Downloads.Add(entry);
         RefreshTiles();
     }
     [RelayCommand] private Task ShowDownloads() => host.Run(async () => { await RefreshDownloads(); DownloadsVisible = true; });
@@ -53,7 +54,7 @@ public sealed partial class SourcesViewModel
         DownloadStatus = label + " · подготовка…";
         var lastUpdate = DateTime.MinValue;
         var progress = new Progress<SeasonProgress>(p => {
-            if (!Downloading || downloadCancellation != cancellation) return;
+            if (!Downloading || downloadCancellation != cancellation || cancellation.IsCancellationRequested) return;
             if ((DateTime.UtcNow - lastUpdate).TotalMilliseconds < 150 && p.Transfer is not null) return;
             lastUpdate = DateTime.UtcNow;
             DownloadPercent = Math.Min(100, (p.Done + (p.Transfer?.Percent ?? 0) / 100) * 100 / p.Total);
@@ -67,6 +68,7 @@ public sealed partial class SourcesViewModel
             using (new FileStream(probe, FileMode.CreateNew, FileAccess.Write, FileShare.None, 1, FileOptions.DeleteOnClose)) { }
             var result = await new SeasonDownloader(DownloadHttp).Download(provider.Provider, release, episodes, DownloadFolder, anime.Title,
                 anime.ShikimoriId, DownloadQuality, progress, cancellation.Token);
+            cancellation.Token.ThrowIfCancellationRequested();
             DownloadPercent = 100; DownloadIndeterminate = false;
             DownloadStatus = $"{label} · скачано: {result.Downloaded}; уже на диске: {result.Skipped}." +
                 (result.Failed.Count > 0 ? " Не удалось скачать серии: " + string.Join(", ", result.Failed) + ". Повторите загрузку — готовые серии будут пропущены." : " Готово.");

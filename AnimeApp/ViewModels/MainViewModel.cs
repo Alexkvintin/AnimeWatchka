@@ -358,7 +358,10 @@ public sealed partial class MainViewModel : ObservableObject
         var user = UserId;
         var snapshot = user > 0 ? await repository.Library(user) : [];
         if (UserId != user) return;
-        library = snapshot;
+        var adultEnabled = Settings.ShowAdultContent;
+        var permittedSnapshot = await api.FilterContent(snapshot);
+        if (UserId != user || adultEnabled != Settings.ShowAdultContent) return;
+        library = permittedSnapshot.ToList();
         var previousYear = LibraryYear;
         LibraryYears.Clear();
         LibraryYears.Add("Все");
@@ -366,12 +369,13 @@ public sealed partial class MainViewModel : ObservableObject
             LibraryYears.Add(year.ToString());
         LibraryYear = LibraryYears.Contains(previousYear) ? previousYear : "Все";
         Settings.UnlinkedProgress.Clear();
-        if (UserId > 0)
+        if (UserId > 0 && Settings.ShowAdultContent)
             foreach (var entry in await repository.Unlinked(UserId)) Settings.UnlinkedProgress.Add(entry);
         PendingCount = UserId > 0 ? (await repository.Pending(UserId)).Count : 0;
         Settings.RefreshConflicts();
         History.Clear();
         foreach (var e in UserId > 0 ? await repository.History(UserId) : [])
+            if (Settings.ShowAdultContent || library.Any(a => a.ShikimoriId == e.AnimeId))
             History.Add(e);
         HistoryItems.Clear();
         foreach (var e in History)
@@ -591,6 +595,11 @@ public sealed partial class MainViewModel : ObservableObject
     {
         if (anime is null)
             return;
+        if ((await api.FilterContent([anime])).Count == 0)
+        {
+            Message = "Тайтл скрыт настройкой «Отображать 18+» или его возрастной рейтинг не подтверждён.";
+            return;
+        }
         var ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         CardReady = ready.Task;
         RememberPage();
@@ -614,7 +623,7 @@ public sealed partial class MainViewModel : ObservableObject
             Sources.Releases.Clear();
             Sources.SelectedRelease = null;
             Sources.SelectedEpisode = null;
-            var sourceTask = release is not null && providerId is not null ? Sources.UseRelease(providerId, release, ct) : Sources.SelectForAnime(ct);
+            var sourceTask = release is not null && providerId is not null ? Sources.UseRelease(providerId, release, ct) : Task.CompletedTask;
             try
             {
                 if (anime.ShikimoriId <= 0)
@@ -663,7 +672,8 @@ public sealed partial class MainViewModel : ObservableObject
             {
                 var relations = await api.Relations(anime.Identity, ct);
                 ct.ThrowIfCancellationRequested();
-                foreach (var r in relations)
+                var permitted = (await api.FilterContent(relations.Select(r => r.Anime), ct)).Select(a => a.Identity).ToHashSet();
+                foreach (var r in relations.Where(r => permitted.Contains(r.Anime.Identity)))
                     (r.IsSeason ? Seasons : Related).Add(r);
             }
             catch (IOException)
@@ -673,6 +683,7 @@ public sealed partial class MainViewModel : ObservableObject
 
             ct.ThrowIfCancellationRequested();
             await sourceTask;
+            if (release is null || providerId is null) await Sources.SelectForAnime(ct);
         }
         catch (OperationCanceledException)
         {

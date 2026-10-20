@@ -30,6 +30,8 @@ public interface IMetadataProvider
     Task<Anime> Details(AnimeIdentity identity, CancellationToken ct = default) => identity.Provider == MetadataId && long.TryParse(identity.Id, out var id) ? Details(id, ct) : throw new ArgumentException("Тайтл принадлежит другому источнику метаданных.");
     Task<IReadOnlyList<AnimeRelation>> Relations(AnimeIdentity identity, CancellationToken ct = default) => identity.Provider == MetadataId && long.TryParse(identity.Id, out var id) ? Relations(id, ct) : throw new ArgumentException("Тайтл принадлежит другому источнику метаданных.");
     Task<List<Anime>> Search(string query, CancellationToken ct = default);
+    Task<IReadOnlyList<Anime>> FilterContent(IEnumerable<Anime> anime, CancellationToken ct = default)
+        => Task.FromResult<IReadOnlyList<Anime>>(anime.ToArray());
     Task<IReadOnlyDictionary<long, string>> Posters(IEnumerable<long> ids, CancellationToken ct = default) => Task.FromResult<IReadOnlyDictionary<long, string>>(new Dictionary<long, string>());
     bool SupportsSearchFilters => false;
 

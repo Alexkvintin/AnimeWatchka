@@ -121,6 +121,7 @@ public sealed class LibrarySyncRegressionTests
         await repo.Cache(7, [missing]);
         var api = new ShikimoriService(new(new Http()), new(), tokens);
         var vm = new MainViewModel(repo, api, new(repo, api), tokens, new(repo, new Launcher()), new ProviderRegistry([]), NullLogger<MainViewModel>.Instance);
+        await repo.SaveSetting("show-adult-content", true); // These UI fixtures do not provide age metadata.
         await vm.Initialize();
         vm.UserId = 7; await vm.Reload();
         await vm.PosterRefresh;
@@ -178,6 +179,7 @@ public sealed class LibrarySyncRegressionTests
         var http = new Http(); var tokens = new Tokens();
         var api = new ShikimoriService(new(http), new(), tokens);
         var vm = new MainViewModel(repo, api, new(repo, api), tokens, new(repo, new Launcher()), new ProviderRegistry([]), NullLogger<MainViewModel>.Instance);
+        await repo.SaveSetting("show-adult-content", true); // These UI fixtures do not provide age metadata.
         await vm.Initialize();
         vm.UserId = 7; await vm.Reload();
         Assert.Equal("Моя коллекция", vm.PageTitle);
@@ -202,6 +204,7 @@ public sealed class LibrarySyncRegressionTests
         var repo = await Repository(); var tokens = new Tokens();
         var api = new ShikimoriService(new(new Http()), new(), tokens);
         var vm = new MainViewModel(repo, api, new(repo, api), tokens, new(repo, new Launcher()), new ProviderRegistry([]), NullLogger<MainViewModel>.Instance);
+        await repo.SaveSetting("show-adult-content", true); // These UI fixtures do not provide age metadata.
         await vm.Initialize();
         vm.UserId = 7; await vm.Reload();
         await vm.NavigateCommand.ExecuteAsync("Аниме");

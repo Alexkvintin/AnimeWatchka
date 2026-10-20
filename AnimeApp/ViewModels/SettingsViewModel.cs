@@ -15,6 +15,17 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
 {
     [ObservableProperty]
     private bool playerCompatibility;
+    [ObservableProperty] private bool showAdultContent;
+    private bool loadingContentSetting;
+    partial void OnShowAdultContentChanged(bool value)
+    {
+        api.ShowAdultContent = value;
+        if (!loadingContentSetting) _ = host.Run(async () =>
+        {
+            await repository.SaveSetting("show-adult-content", value);
+            await host.RefreshContentVisibility();
+        });
+    }
     public bool ManualAuthorization => !BrowserCallback.Supported(api.RedirectUri);
     public bool DeveloperSettings => Environment.GetEnvironmentVariable("ANIMEAPP_DEVELOPER_SETTINGS") == "1";
     [RelayCommand]
@@ -34,7 +45,7 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
     public bool IsConnected => host.UserId > 0;
     public string DataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AnimeApp");
     public string Version => "AnimeWatchka · " + typeof(SettingsViewModel).Assembly.GetName().Version!.ToString(3);
-    public string ReleaseNotes => "0.1.18\n• Добавлен источник AniDub с прямым воспроизведением поддерживаемых серий.\n• Для старых неподдерживаемых плееров показывается причина недоступности.";
+    public string ReleaseNotes => "0.1.19\n• Серии подбираются автоматически после выбора студии.\n• Переключатель «Отображать 18+» выключен по умолчанию.\n• AniDub временно убран из доступных источников.";
 
     [RelayCommand]
     private Task ClearPosters() => host.Run(async () =>
@@ -102,6 +113,10 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
 
     public async Task Initialize()
     {
+        loadingContentSetting = true;
+        ShowAdultContent = await repository.Setting<bool>("show-adult-content");
+        api.ShowAdultContent = ShowAdultContent;
+        loadingContentSetting = false;
         if (api.Credentials is not null)
         {
             await api.Credentials.Reload();
@@ -203,7 +218,7 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
         }
 
         Conflicts.Clear();
-        foreach (var c in sync.Conflicts.Where(x => x.Change.UserId == host.UserId))
+        foreach (var c in sync.Conflicts.Where(x => x.Change.UserId == host.UserId && host.IsVisibleTitle(x.Change.AnimeId)))
             Conflicts.Add(c);
     }
 

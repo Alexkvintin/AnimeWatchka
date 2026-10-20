@@ -42,6 +42,7 @@ public sealed class UiTests
         var api = new ShikimoriService(http, new(), token);
         var launcher = new TestLauncher();
         var vm = new MainViewModel(repo, api, new SyncService(repo, api), token, new PlaybackService(repo, launcher), new ProviderRegistry([new LocalFilesProvider(repo)]), NullLogger<MainViewModel>.Instance);
+        await repo.SaveSetting("show-adult-content", true); // These UI fixtures do not provide age metadata.
         await vm.Initialize();
         vm.UserId = 7; vm.Settings.AutoSync = false; await vm.Reload();
         var w = new MainWindow
@@ -59,6 +60,7 @@ public sealed class UiTests
         for (var wait = 0; wait < 100 && vm.SelectedAnime?.Description != "Description"; wait++) { await Task.Delay(10); Dispatcher.UIThread.RunJobs(); }
         Assert.True(w.GetVisualDescendants().OfType<DetailsView>().Single().IsVisible);
         Assert.Equal("Description", vm.SelectedAnime!.Description);
+        await vm.CardReady.WaitAsync(TimeSpan.FromSeconds(10));
         vm.Watched = 3;
         await vm.SaveProgressCommand.ExecuteAsync(null);
         Assert.Equal(3, Assert.Single(await repo.Library(7)).EpisodesWatched);
@@ -116,7 +118,9 @@ public sealed class UiTests
     {
         using var services = App.CreateServices(Path.Combine(Path.GetTempPath(), "AnimeAppTests", Guid.NewGuid().ToString()));
         await services.GetRequiredService<DatabaseService>().Initialize();
+        var repo = services.GetRequiredService<LibraryRepository>();
         var vm = services.GetRequiredService<MainViewModel>();
+        await repo.SaveSetting("show-adult-content", true); // These UI fixtures do not provide age metadata.
         await vm.Initialize();
         vm.UserId = 7; vm.Settings.AutoSync = false; await vm.Reload();
         var w = new MainWindow
