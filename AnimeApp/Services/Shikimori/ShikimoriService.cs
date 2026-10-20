@@ -18,42 +18,71 @@ public sealed class ShikimoriService(HttpClient http, OAuthOptions initialOption
     public bool ShowAdultContent { get; set; }
     private readonly System.Collections.Concurrent.ConcurrentDictionary<long, bool> contentRatings = new();
     private bool ratingsLoaded;
+    private readonly SemaphoreSlim contentGate = new(1, 1);
+    private const string ContentCacheKey = "content-visibility-v2";
+    private const string ContentQuery = "&censored=true&rating=!r_plus,!rx";
+
     public async Task<IReadOnlyList<Anime>> FilterContent(IEnumerable<Anime> anime, CancellationToken ct = default)
     {
         var items = anime.ToArray();
-        if (ShowAdultContent) return items;
+        if (ShowAdultContent || items.Length == 0) return items;
+        await contentGate.WaitAsync(ct);
+        try
+        {
+            if (ShowAdultContent) return items;
+            await LoadContentCache(ct);
+            foreach (var item in items.Where(a => a.ShikimoriId > 0))
+                if (SafeRating(item.AgeRating)) contentRatings[item.ShikimoriId] = true;
+                else if (item.AgeRating.ToLowerInvariant() is "r_plus" or "rx") contentRatings[item.ShikimoriId] = false;
+
+            foreach (var batch in items.Where(a => a.ShikimoriId > 0 && !contentRatings.ContainsKey(a.ShikimoriId))
+                         .Select(a => a.ShikimoriId).Distinct().Chunk(50))
+            {
+                // REST filtering is the same policy used by search. It does not depend
+                // on a second GraphQL endpoint being available on the user's network.
+                using var d = await Send(HttpMethod.Get, "/api/animes?ids=" + string.Join(",", batch) + "&limit=50" + ContentQuery, null, false, ct);
+                if (d.RootElement.ValueKind != JsonValueKind.Array)
+                    throw new IOException("Не удалось проверить фильтр 18+. Повторите загрузку списка.");
+                var permitted = d.RootElement.EnumerateArray().Select(row => long.TryParse(row.GetProperty("id").ToString(), out var id) ? id : 0).ToHashSet();
+                foreach (var id in batch) contentRatings[id] = permitted.Contains(id);
+            }
+            if (repository is not null) await repository.SaveSetting(ContentCacheKey, contentRatings.ToDictionary(), ct);
+            return ShowAdultContent ? items : items.Where(a => contentRatings.GetValueOrDefault(a.ShikimoriId)).ToArray();
+        }
+        finally { contentGate.Release(); }
+    }
+
+    private async Task LoadContentCache(CancellationToken ct)
+    {
         if (!ratingsLoaded && repository is not null)
         {
-            foreach (var pair in await repository.Setting<Dictionary<long, bool>>("content-ratings", ct) ?? [])
+            foreach (var pair in await repository.Setting<Dictionary<long, bool>>(ContentCacheKey, ct) ?? [])
                 contentRatings.TryAdd(pair.Key, pair.Value);
+            // Legacy false also meant missing/unknown rating, so it is not a ban.
+            foreach (var pair in await repository.Setting<Dictionary<long, bool>>("content-ratings", ct) ?? [])
+                if (pair.Value) contentRatings.TryAdd(pair.Key, true);
             ratingsLoaded = true;
         }
-        foreach (var item in items.Where(a => !string.IsNullOrEmpty(a.AgeRating)))
-            contentRatings[item.ShikimoriId] = SafeRating(item.AgeRating);
-        foreach (var batch in items.Where(a => a.ShikimoriId > 0 && !contentRatings.ContainsKey(a.ShikimoriId))
-                     .Select(a => a.ShikimoriId).Distinct().Chunk(50))
+    }
+
+    private async Task<List<Anime>> SearchResults(JsonElement rows, bool filtered, CancellationToken ct)
+    {
+        var items = rows.EnumerateArray().Select(Parse).ToList();
+        if (filtered)
         {
+            await contentGate.WaitAsync(ct);
             try
             {
-            var query = "{ animes(ids: \"" + string.Join(",", batch) + "\", limit: 50) { id rating } }";
-            using var d = await Send(HttpMethod.Post, "/api/graphql", () => new StringContent(JsonSerializer.Serialize(new { query }), System.Text.Encoding.UTF8, "application/json"), false, ct);
-            if (!d.RootElement.TryGetProperty("data", out var data) || !data.TryGetProperty("animes", out var rows))
-                throw new IOException("Не удалось проверить возрастные ограничения.");
-            foreach (var row in rows.EnumerateArray())
-                if (long.TryParse(row.GetProperty("id").ToString(), out var id) && batch.Contains(id))
-                {
-                    var rating = Text(row, "rating").ToLowerInvariant();
-                    contentRatings[id] = SafeRating(rating);
-                }
+                await LoadContentCache(ct);
+                foreach (var item in items.Where(a => a.ShikimoriId > 0))
+                    contentRatings[item.ShikimoriId] = item.AgeRating.ToLowerInvariant() is not ("r_plus" or "rx");
+                if (repository is not null) await repository.SaveSetting(ContentCacheKey, contentRatings.ToDictionary(), ct);
+                return items.Where(a => contentRatings.GetValueOrDefault(a.ShikimoriId)).ToList();
             }
-            catch (Exception ex) when (ex is IOException or HttpRequestException)
-            {
-                // Keep verified offline entries visible; unverified entries remain hidden.
-                break;
-            }
+            finally { contentGate.Release(); }
         }
-        if (repository is not null) await repository.SaveSetting("content-ratings", contentRatings.ToDictionary(), ct);
-        return ShowAdultContent ? items : items.Where(a => contentRatings.GetValueOrDefault(a.ShikimoriId)).ToArray();
+        // Respect a toggle changed while the request was in flight.
+        return ShowAdultContent ? items : (await FilterContent(items, ct)).ToList();
     }
     public static bool SafeRating(string rating) => rating.ToLowerInvariant() is "g" or "pg" or "pg_13" or "r";
 
@@ -237,8 +266,9 @@ public sealed class ShikimoriService(HttpClient http, OAuthOptions initialOption
 
     public async Task<List<Anime>> Search(string query, CancellationToken ct = default)
     {
-        using var d = await Send(HttpMethod.Get, $"/api/animes?search={Uri.EscapeDataString(query)}&limit=30" + (ShowAdultContent ? "" : "&censored=true"), null, false, ct);
-        return (await FilterContent(d.RootElement.EnumerateArray().Select(Parse), ct)).ToList();
+        var filtered = !ShowAdultContent;
+        using var d = await Send(HttpMethod.Get, $"/api/animes?search={Uri.EscapeDataString(query)}&limit=30" + (filtered ? ContentQuery : ""), null, false, ct);
+        return await SearchResults(d.RootElement, filtered, ct);
     }
 
     public bool SupportsSearchFilters => true;
@@ -264,8 +294,9 @@ public sealed class ShikimoriService(HttpClient http, OAuthOptions initialOption
 
     public async Task<List<Anime>> Search(AnimeSearch query, CancellationToken ct = default)
     {
-        using var d = await Send(HttpMethod.Get, "/api/animes?" + query.ToShikimoriQuery() + (ShowAdultContent ? "" : "&censored=true"), null, false, ct);
-        return (await FilterContent(d.RootElement.EnumerateArray().Select(Parse), ct)).ToList();
+        var filtered = !ShowAdultContent;
+        using var d = await Send(HttpMethod.Get, "/api/animes?" + query.ToShikimoriQuery() + (filtered ? ContentQuery : ""), null, false, ct);
+        return await SearchResults(d.RootElement, filtered, ct);
     }
 
     public async Task<Anime> Details(long id, CancellationToken ct = default)

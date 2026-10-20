@@ -45,7 +45,7 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
     public bool IsConnected => host.UserId > 0;
     public string DataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AnimeApp");
     public string Version => "AnimeWatchka · " + typeof(SettingsViewModel).Assembly.GetName().Version!.ToString(3);
-    public string ReleaseNotes => "0.1.20\n• Источник «Субтитры»: украинские переводы из Mikai.\n• Кнопка CC: выбор дорожки, отключение, задержка.\n• Подключение файлов SRT, ASS, SSA и VTT.";
+    public string ReleaseNotes => "0.1.21\n• Исправлены пустые списки при выключенном 18+.\n• Старый кэш скрытых тайтлов перепроверяется.\n• Переключатель 18+ перенесён в конец настроек.";
 
     [RelayCommand]
     private Task ClearPosters() => host.Run(async () =>

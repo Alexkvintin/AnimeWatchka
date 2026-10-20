@@ -1,11 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="using:AnimeApp.UI" x:Class="AnimeApp.UI.SettingsView">
   <ScrollViewer>
     <StackPanel Spacing="20">
-      <Border Classes="panel"><StackPanel Spacing="12">
-        <TextBlock Text="Контент" Classes="h2"/>
-        <ToggleSwitch Content="Отображать 18+" IsChecked="{Binding Settings.ShowAdultContent}"/>
-        <TextBlock Text="По умолчанию скрыты эротические тайтлы и тайтлы с неподтверждённым возрастным рейтингом." Classes="muted" TextWrapping="Wrap"/>
-      </StackPanel></Border>
       <Border Classes="panel">
         <StackPanel Spacing="14">
           <TextBlock Text="Shikimori" Classes="h2" />
@@ -117,6 +112,11 @@
       </Border>
       <Border Classes="panel"><StackPanel Spacing="12"><TextBlock Text="Данные" Classes="h2"/><TextBlock Text="{Binding Settings.DataPath}" TextWrapping="Wrap"/><TextBlock Text="Кэш постеров ограничен 400 МБ" Classes="muted"/><Button Content="Очистить кэш постеров" Command="{Binding Settings.ClearPostersCommand}"/><Button Content="Открыть папку логов" Command="{Binding Settings.OpenLogsCommand}"/></StackPanel></Border>
       <Border Classes="panel"><StackPanel Spacing="12"><TextBlock Text="О приложении" Classes="h2"/><TextBlock Text="{Binding Settings.Version}"/><Expander Header="Что нового" IsExpanded="False"><TextBlock Text="{Binding Settings.ReleaseNotes}" TextWrapping="Wrap"/></Expander></StackPanel></Border>
+      <Border Classes="panel"><StackPanel Spacing="12">
+        <TextBlock Text="Контент" Classes="h2"/>
+        <ToggleSwitch Content="Отображать 18+" IsChecked="{Binding Settings.ShowAdultContent}"/>
+        <TextBlock Text="Показывать тайтлы с рейтингами R+ и Rx. По умолчанию выключено." Classes="muted" TextWrapping="Wrap"/>
+      </StackPanel></Border>
     </StackPanel>
   </ScrollViewer>
 </UserControl>
