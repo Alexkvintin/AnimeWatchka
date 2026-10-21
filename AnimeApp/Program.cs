@@ -66,7 +66,7 @@ public sealed class App : Application
                 var scaling = await services.GetRequiredService<LibraryRepository>().Setting<string>("video-scaling", ct) ?? "linear";
                 var compatibility = await services.GetRequiredService<LibraryRepository>().Setting<bool>("player-compatibility", ct);
                 var engine = PlayerEngineFactory.Create(request.Source.Kind, scaling, compatibility);
-                var playerVm = new PlayerViewModel(request, episodes, provider, engine, services.GetRequiredService<LibraryRepository>(), services.GetRequiredService<PlaybackService>(), services.GetRequiredService<SyncService>(), services.GetRequiredService<ILogger<PlayerViewModel>>());
+                var playerVm = new PlayerViewModel(request, episodes, provider, engine, services.GetRequiredService<LibraryRepository>(), services.GetRequiredService<PlaybackService>(), services.GetRequiredService<SyncService>(), services.GetRequiredService<ILogger<PlayerViewModel>>()) { SubtitleFinder = new AutomaticSubtitles(services.GetRequiredService<HttpClient>()) };
                 try
                 {
                     activePlayer = new PlayerWindow(playerVm);

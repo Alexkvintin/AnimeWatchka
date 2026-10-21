@@ -29,7 +29,10 @@
    </WrapPanel>
    <ScrollViewer IsVisible="{Binding ShowSubtitles}" MaxHeight="190" VerticalScrollBarVisibility="Auto" Margin="0,6,0,0">
     <StackPanel Spacing="8" Margin="4,8,16,8">
-     <WrapPanel><ComboBox ItemsSource="{Binding SubtitleTracks}" SelectedItem="{Binding SelectedSubtitle}" MinWidth="180" MaxWidth="430"/><Button Content="Открыть субтитры…" Click="OpenSubtitleFile" Margin="8,0"/></WrapPanel>
+      <TextBlock Text="Переводы из интернета"/>
+      <WrapPanel><ComboBox ItemsSource="{Binding OnlineSubtitles}" SelectedItem="{Binding SelectedOnlineSubtitle}" MinWidth="240" MaxWidth="550" PlaceholderText="Доступные русские / украинские"/><Button Content="Подключить перевод" Command="{Binding LoadOnlineSubtitleCommand}" Margin="8,0"/></WrapPanel>
+      <TextBlock Text="{Binding OnlineSubtitleStatus}" TextWrapping="Wrap"/>
+      <WrapPanel><ComboBox ItemsSource="{Binding SubtitleTracks}" SelectedItem="{Binding SelectedSubtitle}" MinWidth="180" MaxWidth="430"/><Button Content="Свой файл…" Click="OpenSubtitleFile" Margin="8,0"/></WrapPanel>
      <WrapPanel><TextBlock Text="Задержка, секунды" VerticalAlignment="Center" Margin="0,0,12,0"/><NumericUpDown Value="{Binding SubtitleDelay}" Minimum="-120" Maximum="120" Increment="0.1" FormatString="0.0" Width="140"/></WrapPanel>
      <TextBlock Text="{Binding SubtitleHint}" TextWrapping="Wrap" Classes="muted"/>
      <StackPanel Spacing="8" IsEnabled="{Binding CanStyleSubtitles}">

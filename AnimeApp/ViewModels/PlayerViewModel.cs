@@ -141,6 +141,7 @@ public sealed partial class PlayerViewModel : ObservableObject
 
     private async Task OpenCurrent()
     {
+        subtitleSearch?.Cancel();
         Loading = true;
         try
         {
@@ -182,6 +183,7 @@ public sealed partial class PlayerViewModel : ObservableObject
             SubtitleDelay = 0;
             SubtitleControls.Delay(Engine, 0);
             RefreshSubtitles();
+            StartSubtitleSearch();
             Engine.SetVolume(Volume);
             Engine.SetSpeed(Speed);
             Status = "Загрузка видео…";
@@ -429,6 +431,7 @@ public sealed partial class PlayerViewModel : ObservableObject
         if (closed)
             return;
         closed = true;
+        subtitleSearch?.Cancel();
         qualityCancellation?.Cancel();
         await transitionGate.WaitAsync();
         try

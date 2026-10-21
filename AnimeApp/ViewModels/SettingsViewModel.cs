@@ -45,7 +45,7 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
     public bool IsConnected => host.UserId > 0;
     public string DataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AnimeApp");
     public string Version => "AnimeWatchka · " + typeof(SettingsViewModel).Assembly.GetName().Version!.ToString(3);
-    public string ReleaseNotes => "0.1.22\n• Шрифты субтитров: стандартный, манга и иероглифный.\n• Загрузка TTF/OTF, размер и сохранение оформления.\n• Сохранение авторских стилей ASS/SSA по выбору.";
+    public string ReleaseNotes => "0.1.23\n• Автоматический поиск и загрузка переводов для текущей серии.\n• Выбор найденного перевода в CC.\n• Проверка тайтла и эпизода, переход к следующему переводу при ошибке файла.";
 
     [RelayCommand]
     private Task ClearPosters() => host.Run(async () =>
