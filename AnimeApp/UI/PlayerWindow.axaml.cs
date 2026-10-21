@@ -12,6 +12,20 @@ using LibVLCSharp.Avalonia;
 namespace AnimeApp.UI;
 public sealed partial class PlayerWindow : Window
 {
+    private async void OpenSubtitleFont(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var files = await StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
+            {
+                Title = "Загрузить шрифт", AllowMultiple = false,
+                FileTypeFilter = [new("Шрифты") { Patterns = ["*.ttf", "*.otf"] }]
+            });
+            if (files.Count > 0 && files[0].Path.IsFile) await vm.ImportSubtitleFont(files[0].Path.LocalPath);
+        }
+        catch (IOException ex) { vm.SubtitleStyleStatus = ex.Message; }
+        catch (Exception ex) { vm.ReportFailure(ex); }
+    }
     private async void OpenSubtitleFile(object? sender, RoutedEventArgs e)
     {
         try

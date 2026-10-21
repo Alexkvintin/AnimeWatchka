@@ -32,6 +32,14 @@
      <WrapPanel><ComboBox ItemsSource="{Binding SubtitleTracks}" SelectedItem="{Binding SelectedSubtitle}" MinWidth="180" MaxWidth="430"/><Button Content="Открыть субтитры…" Click="OpenSubtitleFile" Margin="8,0"/></WrapPanel>
      <WrapPanel><TextBlock Text="Задержка, секунды" VerticalAlignment="Center" Margin="0,0,12,0"/><NumericUpDown Value="{Binding SubtitleDelay}" Minimum="-120" Maximum="120" Increment="0.1" FormatString="0.0" Width="140"/></WrapPanel>
      <TextBlock Text="{Binding SubtitleHint}" TextWrapping="Wrap" Classes="muted"/>
+     <StackPanel Spacing="8" IsEnabled="{Binding CanStyleSubtitles}">
+      <WrapPanel><ComboBox ItemsSource="{Binding SubtitleFontChoices}" SelectedItem="{Binding SelectedSubtitleFont}" MinWidth="220"/><Button Content="Загрузить шрифт…" Click="OpenSubtitleFont" Margin="8,0"/></WrapPanel>
+      <WrapPanel><TextBlock Text="Размер текста" VerticalAlignment="Center" Margin="0,0,12,0"/><NumericUpDown Value="{Binding SubtitleSize}" Minimum="16" Maximum="80" Increment="2" Width="140"/></WrapPanel>
+      <CheckBox Content="Сохранить оформление автора в ASS/SSA" IsChecked="{Binding PreserveSubtitleStyles}"/>
+      <Button Content="Применить и сохранить" Command="{Binding SaveSubtitleStyleCommand}"/>
+     </StackPanel>
+     <TextBlock Text="{Binding SubtitleStyleHint}" TextWrapping="Wrap" Classes="muted"/>
+     <TextBlock Text="{Binding SubtitleStyleStatus}" TextWrapping="Wrap"/>
     </StackPanel>
    </ScrollViewer>
    <ScrollViewer IsVisible="{Binding ShowOptions}" MaxHeight="190" VerticalScrollBarVisibility="Auto" Margin="0,6,0,0">

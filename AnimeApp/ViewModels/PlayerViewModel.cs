@@ -118,6 +118,9 @@ public sealed partial class PlayerViewModel : ObservableObject
             if (closed)
                 return;
             settings = await repository.Setting<AppSettings>("playback") ?? new();
+            try { await LoadSubtitleStyle(); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            { SubtitleStyleStatus = "Не удалось загрузить свои шрифты. Видео доступно со стандартным оформлением."; }
             await OpenCurrent();
         }
         catch (Exception ex)
@@ -175,6 +178,7 @@ public sealed partial class PlayerViewModel : ObservableObject
             var max = Request.Source.Variants?.OrderByDescending(v => v.Height).FirstOrDefault();
             QualityInfo = $"{provider.DisplayName} · выбран поток: {variant?.Quality ?? "Auto"}" + (max is null ? "" : $" · максимум источника: {max.Quality}");
             await Engine.Open(source);
+            ApplySubtitleStyle();
             SubtitleDelay = 0;
             SubtitleControls.Delay(Engine, 0);
             RefreshSubtitles();

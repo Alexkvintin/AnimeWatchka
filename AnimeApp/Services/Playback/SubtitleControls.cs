@@ -16,6 +16,15 @@ public static class SubtitleControls
 
     public static bool Supported(IPlayerEngine engine) => Active(engine) is MpvPlayerEngine or VlcPlayerEngine;
 
+    public static bool CanStyle(IPlayerEngine engine) => Active(engine) is MpvPlayerEngine;
+    public static void Style(IPlayerEngine engine, SubtitleFont font, double size, bool preserveAss)
+    {
+        if (Active(engine) is not MpvPlayerEngine mpv) return;
+        mpv.Command("set", "sub-font", font.Family);
+        mpv.Command("set", "sub-font-size", Math.Clamp(double.IsFinite(size) ? size : 40, 16, 80).ToString(CultureInfo.InvariantCulture));
+        mpv.Command("set", "sub-ass-override", preserveAss ? "no" : "force");
+    }
+
     public static IReadOnlyList<SubtitleChoice> Tracks(IPlayerEngine engine)
     {
         var result = new List<SubtitleChoice> { new(-1, "Выключены") };

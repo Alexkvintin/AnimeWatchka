@@ -60,6 +60,11 @@ public sealed class MpvPlayerEngine : IPlayerEngine
             throw new IOException("Не удалось создать mpv.");
         try
         {
+            var subtitleFonts = new SubtitleFonts();
+            var fontsPath = Path.Combine(AppContext.BaseDirectory, "Fonts");
+            try { subtitleFonts.Prepare(); fontsPath = subtitleFonts.DirectoryPath; }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
+            Check(Native.mpv_set_option_string(handle, "sub-fonts-dir", fontsPath));
             foreach (var(key, value)in new (string, string)[]
             {
                 ("config", "no"),
