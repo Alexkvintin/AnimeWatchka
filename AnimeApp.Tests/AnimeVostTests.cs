@@ -9,6 +9,25 @@ namespace AnimeApp.Tests;
 public sealed class AnimeVostTests
 {
     private const string Url = "https://animevost.org/tip/tv/3044-sousou-no-frieren.html";
+    private const string DatabaseError = "<html><head><title>MySQL Fatal Error</title></head><body>MySQL Error!</body></html>";
+    [Fact]
+    public async Task DatabaseFailureWithHttp200IsReportedForReleaseAndSearch()
+    {
+        var provider = new AnimeVostProvider(new(new Handler(_ => new(HttpStatusCode.OK) { Content = new StringContent(DatabaseError) })), new AnimeVostParser());
+        Assert.Contains("сбой базы данных", (await Assert.ThrowsAsync<ProviderException>(() => provider.GetEpisodes(Url))).Message);
+        Assert.Contains("сбой базы данных", (await Assert.ThrowsAsync<ProviderException>(() => provider.Search("Black Lagoon"))).Message);
+        var availability = await provider.CheckAvailability();
+        Assert.False(availability.Available);
+    }
+    [Fact]
+    public async Task DatabaseFailureIsNotCachedAndRecoveryNeedsNoRestart()
+    {
+        var requests = 0;
+        var provider = new AnimeVostProvider(new(new Handler(_ => new(HttpStatusCode.OK) { Content = new StringContent(++requests == 1 ? DatabaseError : Fixture("movie")) })), new AnimeVostParser());
+        await Assert.ThrowsAsync<ProviderException>(() => provider.GetEpisodes(Url));
+        Assert.Single(await provider.GetEpisodes(Url));
+        Assert.Equal(2, requests);
+    }
     public static string Fixture(string name) => File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "AnimeVost", name + ".html"));
     [Fact]
     public void SearchFindsTwoSeasons()

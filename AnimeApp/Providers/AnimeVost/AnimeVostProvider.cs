@@ -39,6 +39,11 @@ public sealed partial class AnimeVostProvider(HttpClient http, IAnimeVostParser 
             var text = await r.Content.ReadAsStringAsync(ct);
             if (string.IsNullOrWhiteSpace(text))
                 throw new ProviderException("AnimeVost вернул пустой ответ. Попробуйте позже.");
+            // The site can return its database error page with HTTP 200.
+            // Do not treat that response as a release or an empty search result.
+            if (System.Text.RegularExpressions.Regex.IsMatch(text, @"<title>\s*MySQL Fatal Error\s*</title>",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase, TimeSpan.FromSeconds(1)))
+                throw new ProviderException("На стороне AnimeVost произошёл сбой базы данных. Сайт временно не отдаёт серии. Попробуйте позже или выберите другую озвучку.");
             return text;
         }
         catch (TaskCanceledException)when (!ct.IsCancellationRequested)

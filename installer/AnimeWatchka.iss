@@ -1,4 +1,4 @@
-#define AppVersion "0.2.0"
+#define AppVersion "0.2.1"
 [Setup]
 AppId={{7C63C651-80B9-4404-80EF-07D4959C8409}
 AppName=AnimeWatchka
@@ -24,7 +24,7 @@ CloseApplications=yes
 CloseApplicationsFilter=*.exe,*.dll
 SetupLogging=yes
 RestartApplications=no
-VersionInfoVersion=0.2.0.0
+VersionInfoVersion=0.2.1.0
 
 [Languages]
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
