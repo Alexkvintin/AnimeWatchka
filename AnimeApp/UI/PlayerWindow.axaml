@@ -12,7 +12,7 @@
  <Grid x:Name="PlayerRoot" RowDefinitions="Auto,*,Auto" Margin="20">
   <Grid x:Name="Header" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,15"><Button Content="← Назад" Command="{Binding BackCommand}"/><StackPanel Grid.Column="1" Margin="20,0"><TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding EpisodeLabel}" Classes="muted"/></StackPanel><Button Grid.Column="2" Content="⛶ Полный экран" Command="{Binding FullscreenCommand}"/></Grid>
   <Border Grid.Row="1" Background="Black"><ContentControl x:Name="Surface" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/></Border>
-  <Border x:Name="Controls" Grid.Row="2" Margin="0,8,0,0" Background="#ED151923" BorderBrush="#405F6A82" BorderThickness="1" CornerRadius="18" Padding="18,12"><StackPanel Spacing="6">
+  <Border x:Name="Controls" Grid.Row="2" Margin="0,8,0,0" Background="#ED151923" BorderBrush="#405F6A82" BorderThickness="1" CornerRadius="18" Padding="18,12"><Border.Transitions><Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.2"/></Transitions></Border.Transitions><StackPanel Spacing="6">
    <TextBlock Text="{Binding EpisodeLabel}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis"/>
    <TextBlock Text="{Binding Status}" IsVisible="{Binding ShowStatus}" TextWrapping="Wrap" Foreground="#B5F279"/>
    <Grid ColumnDefinitions="*,Auto,Auto"><Slider x:Name="Timeline" Minimum="0" Maximum="{Binding Duration}" Value="{Binding SeekPosition}" IsEnabled="{Binding CanControl}"/><TextBlock Grid.Column="1" Text="{Binding TimeLabel}" MinWidth="125" VerticalAlignment="Center" Margin="15,0,0,0"/><Button Grid.Column="2" Content="⛶" Command="{Binding FullscreenCommand}" ToolTip.Tip="Полный экран / выйти · Esc" AutomationProperties.Name="Войти или выйти из полного экрана" Margin="12,0,0,0"/></Grid>
@@ -23,16 +23,26 @@
     <TextBlock Text="Звук" VerticalAlignment="Center" Margin="10,0,4,0"/><Slider Minimum="0" Maximum="100" Value="{Binding Volume}" Width="85" IsEnabled="{Binding CanControl}" AutomationProperties.Name="Громкость"/>
     <Button Content="+90 с" Command="{Binding SkipOpeningCommand}" ToolTip.Tip="Пропустить опенинг · O" IsEnabled="{Binding CanControl}" Margin="6,0"/>
     <ToggleButton x:Name="EnhancementToggle" Content="✦ Улучшение" IsChecked="{Binding ScalingEnabled}" IsEnabled="{Binding CanChangeScaling}" ToolTip.Tip="{Binding ScalingHint}" AutomationProperties.Name="Улучшение изображения" Margin="0,0,6,0"/>
-    <ToggleButton Content="CC" IsChecked="{Binding ShowSubtitles}" IsEnabled="{Binding CanUseSubtitles}" ToolTip.Tip="Субтитры" AutomationProperties.Name="Субтитры" Margin="0,0,6,0"/>
+    <ToggleButton Content="CC" IsChecked="{Binding SubtitlesEnabled}" IsEnabled="{Binding CanUseSubtitles}" ToolTip.Tip="Субтитры" AutomationProperties.Name="Субтитры" Margin="0,0,6,0"/>
     <ToggleButton x:Name="OptionsToggle" Content="⚙" IsChecked="{Binding ShowOptions}" ToolTip.Tip="Настройки видео" AutomationProperties.Name="Настройки видео"/>
     <Button Content="{Binding ResumeLabel}" Command="{Binding ResumeCommand}" IsVisible="{Binding ShowResume}" Margin="6,0"/>
    </WrapPanel>
-   <ScrollViewer IsVisible="{Binding ShowSubtitles}" MaxHeight="190" VerticalScrollBarVisibility="Auto" Margin="0,6,0,0">
-    <StackPanel Spacing="8" Margin="4,8,16,8">
-      <TextBlock Text="Переводы из интернета"/>
-      <WrapPanel><ComboBox ItemsSource="{Binding OnlineSubtitles}" SelectedItem="{Binding SelectedOnlineSubtitle}" MinWidth="240" MaxWidth="550" PlaceholderText="Доступные русские / украинские"/><Button Content="Подключить перевод" Command="{Binding LoadOnlineSubtitleCommand}" Margin="8,0"/></WrapPanel>
+   <ScrollViewer IsVisible="{Binding ShowOptions}" MaxHeight="250" VerticalScrollBarVisibility="Auto" Margin="0,6,0,0">
+    <Grid ColumnDefinitions="*,24,*">
+    <StackPanel Spacing="12" Margin="4,8,16,8">
+     <WrapPanel IsVisible="{Binding HasStreamQualities}" IsEnabled="{Binding !Loading}"><TextBlock Text="Качество видео" VerticalAlignment="Center" Margin="0,0,12,0"/><ComboBox ItemsSource="{Binding StreamQualities}" SelectedItem="{Binding SelectedStreamQuality}" Width="120"/><Button Content="Применить" Command="{Binding ApplyStreamQualityCommand}" Margin="8,0"/></WrapPanel>
+     <WrapPanel><TextBlock Text="Скорость" VerticalAlignment="Center" Margin="0,0,8,0"/><Slider Minimum="0.5" Maximum="2" TickFrequency="0.25" IsSnapToTickEnabled="True" Value="{Binding Speed}" Width="120" IsEnabled="{Binding CanControl}"/><TextBlock Text="{Binding SpeedLabel}" VerticalAlignment="Center" Margin="8,0"/></WrapPanel>
+     <WrapPanel ToolTip.Tip="{Binding ScalingHint}"><TextBlock Text="Режим улучшения" VerticalAlignment="Center"/><ComboBox ItemsSource="{Binding ScalingModes}" SelectedItem="{Binding SelectedScaling}" IsEnabled="{Binding CanChangeScaling}" Width="200" Margin="12,0"/></WrapPanel>
+     <WrapPanel><TextBlock Text="Аудиодорожка" VerticalAlignment="Center" Margin="0,0,8,0"/><ComboBox ItemsSource="{Binding AudioTracks}" SelectedItem="{Binding SelectedAudioTrack}" MinWidth="160" MaxWidth="300"/></WrapPanel>
+     <TextBlock Text="{Binding TorrentStatus}" TextWrapping="Wrap"/>
+     <Expander Header="Информация о видео"><TextBlock x:Name="VideoInfo" TextWrapping="Wrap"/></Expander>
+    </StackPanel>
+    <StackPanel Grid.Column="2" Spacing="8" Margin="4,8,12,8">
+      <TextBlock Text="Субтитры" FontWeight="SemiBold"/>
+      <WrapPanel><ComboBox ItemsSource="{Binding OnlineSubtitles}" SelectedItem="{Binding SelectedOnlineSubtitle}" MinWidth="160" MaxWidth="300" PlaceholderText="Доступные RU / UK / EN"/></WrapPanel>
       <TextBlock Text="{Binding OnlineSubtitleStatus}" TextWrapping="Wrap"/>
-      <WrapPanel><ComboBox ItemsSource="{Binding SubtitleTracks}" SelectedItem="{Binding SelectedSubtitle}" MinWidth="180" MaxWidth="430"/><Button Content="Свой файл…" Click="OpenSubtitleFile" Margin="8,0"/></WrapPanel>
+      <WrapPanel><ComboBox ItemsSource="{Binding SubtitleTracks}" SelectedItem="{Binding SelectedSubtitle}" MinWidth="140" MaxWidth="300"/><Button Content="Свой файл…" IsEnabled="{Binding CanUseSubtitles}" Click="OpenSubtitleFile" Margin="8,0"/></WrapPanel>
+     <Expander Header="Дополнительно"><StackPanel Spacing="8">
      <WrapPanel><TextBlock Text="Задержка, секунды" VerticalAlignment="Center" Margin="0,0,12,0"/><NumericUpDown Value="{Binding SubtitleDelay}" Minimum="-120" Maximum="120" Increment="0.1" FormatString="0.0" Width="140"/></WrapPanel>
      <TextBlock Text="{Binding SubtitleHint}" TextWrapping="Wrap" Classes="muted"/>
      <StackPanel Spacing="8" IsEnabled="{Binding CanStyleSubtitles}">
@@ -43,18 +53,13 @@
      </StackPanel>
      <TextBlock Text="{Binding SubtitleStyleHint}" TextWrapping="Wrap" Classes="muted"/>
      <TextBlock Text="{Binding SubtitleStyleStatus}" TextWrapping="Wrap"/>
+     </StackPanel></Expander>
     </StackPanel>
-   </ScrollViewer>
-   <ScrollViewer IsVisible="{Binding ShowOptions}" MaxHeight="190" VerticalScrollBarVisibility="Auto" Margin="0,6,0,0">
-    <StackPanel Spacing="12" Margin="4,8,16,8">
-     <WrapPanel IsVisible="{Binding HasStreamQualities}" IsEnabled="{Binding !Loading}"><TextBlock Text="Качество видео" VerticalAlignment="Center" Margin="0,0,12,0"/><ComboBox ItemsSource="{Binding StreamQualities}" SelectedItem="{Binding SelectedStreamQuality}" Width="120"/><Button Content="Применить" Command="{Binding ApplyStreamQualityCommand}" Margin="8,0"/></WrapPanel>
-     <WrapPanel><TextBlock Text="Скорость" VerticalAlignment="Center" Margin="0,0,8,0"/><Slider Minimum="0.5" Maximum="2" TickFrequency="0.25" IsSnapToTickEnabled="True" Value="{Binding Speed}" Width="120" IsEnabled="{Binding CanControl}"/><TextBlock Text="{Binding SpeedLabel}" VerticalAlignment="Center" Margin="8,0"/></WrapPanel>
-     <WrapPanel ToolTip.Tip="{Binding ScalingHint}"><TextBlock Text="Режим улучшения" VerticalAlignment="Center"/><ComboBox ItemsSource="{Binding ScalingModes}" SelectedItem="{Binding SelectedScaling}" IsEnabled="{Binding CanChangeScaling}" Width="200" Margin="12,0"/></WrapPanel>
-     <Expander Header="Информация о видео"><TextBlock x:Name="VideoInfo" TextWrapping="Wrap"/></Expander>
-    </StackPanel>
+    </Grid>
    </ScrollViewer>
    <WrapPanel><Button Classes="primary" Content="Следующая серия →" Command="{Binding NextCommand}" IsVisible="{Binding ShowNext}" Margin="0,0,12,0"/><Button Content="Отметить аниме как просмотренное" Command="{Binding CompleteCommand}" IsVisible="{Binding CanComplete}"/><Button Content="Не сейчас" Command="{Binding DismissCompleteCommand}" IsVisible="{Binding CanComplete}" Margin="10,0"/></WrapPanel>
   </StackPanel></Border>
+  <ProgressBar x:Name="SeekIndicator" Grid.RowSpan="3" VerticalAlignment="Top" Height="3" MinHeight="0" Minimum="0" Maximum="1" Value="0" Foreground="{DynamicResource AccentBrush}" Background="Transparent" IsHitTestVisible="False" IsVisible="False"/>
  </Grid>
 </Window>
 

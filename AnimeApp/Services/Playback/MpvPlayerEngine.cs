@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace AnimeApp.Services.Playback;
@@ -180,7 +180,7 @@ public sealed class MpvPlayerEngine : IPlayerEngine
                 lastShaderCheck = DateTimeOffset.UtcNow;
             }
 
-            return new(Number("time-pos"), Number("duration"), Property("pause") == "no" && Property("idle-active") != "yes", Property("eof-reached") == "yes", error);
+            return new(Number("time-pos"), Number("duration"), Property("pause") == "no" && Property("idle-active") != "yes" && Property("time-pos") != "" && Property("paused-for-cache") != "yes", Property("eof-reached") == "yes", error);
         }
     }
 
@@ -195,19 +195,25 @@ public sealed class MpvPlayerEngine : IPlayerEngine
             throw new ArgumentException("mpv не открывает веб-страницы.");
         string Validate(string location)
         {
-            if (source.Kind == PlaybackKind.LocalFile && File.Exists(location))
+            if ((source.Kind == PlaybackKind.LocalFile || source.SubtitleTracks?.Any(t => t.Location == location) == true) && File.Exists(location))
                 return Path.GetFullPath(location);
-            if (Uri.TryCreate(location, UriKind.Absolute, out var uri) && uri.Scheme == "https")
+            if (Uri.TryCreate(location, UriKind.Absolute, out var uri) && (uri.Scheme == "https" || source.IsTorrentStream && uri.Scheme == "http" && uri.Host == "127.0.0.1"))
                 return location;
             throw new IOException("Недопустимый адрес медиадорожки.");
         }
 
         error = null;
+        Set("cache", "yes");
+        Set("demuxer-readahead-secs", source.IsTorrentStream ? "60" : "20");
+        Set("cache-pause-wait", source.IsTorrentStream ? "8" : "1");
         Set("http-header-fields", "");
         if (source.Headers?.TryGetValue("Referer", out var referer) == true && !referer.Contains('\n') && !referer.Contains('\r'))
             Set("referrer", referer);
         else
             Set("referrer", "");
+        Set("alang", source.PreferredAudioLanguage ?? "");
+        if (source.IsTorrentStream) { Set("aid", "auto"); Set("slang", MediaLanguage.Default); Set("sid", "auto"); }
+        else { Set("slang", ""); if(source.Kind==PlaybackKind.LocalFile && source.SubtitleTracks?.Count>0) Set("sid", "auto"); }
         Set("audio-files", source.AudioTrack is { } audio ? Validate(audio.Location) : "");
         Set("sub-files", string.Join(";", (source.SubtitleTracks ?? []).Select(t => Validate(t.Location))));
         Set("start", Math.Max(0, source.StartSeconds).ToString(CultureInfo.InvariantCulture));

@@ -58,6 +58,8 @@ public sealed class UiTests
         Assert.NotNull(card.Command);
         card.Command!.Execute(card.CommandParameter);
         for (var wait = 0; wait < 100 && vm.SelectedAnime?.Description != "Description"; wait++) { await Task.Delay(10); Dispatcher.UIThread.RunJobs(); }
+        await vm.CardReady.WaitAsync(TimeSpan.FromSeconds(10));
+        Dispatcher.UIThread.RunJobs();
         Assert.True(w.GetVisualDescendants().OfType<DetailsView>().Single().IsVisible);
         Assert.Equal("Description", vm.SelectedAnime!.Description);
         await vm.CardReady.WaitAsync(TimeSpan.FromSeconds(10));

@@ -1,11 +1,11 @@
-using AnimeApp.Services.Providers;
+﻿using AnimeApp.Services.Providers;
 namespace AnimeApp.Services.Playback;
 public sealed record SeasonProgress(int Done, int Total, int Episode, DownloadProgress? Transfer = null);
 public sealed record SeasonResult(int Downloaded, int Skipped, IReadOnlyList<int> Failed);
 public sealed class SeasonDownloader(HttpClient http)
 {
     public async Task<SeasonResult> Download(IPlaybackProvider provider, ProviderRelease release, IReadOnlyList<ProviderEpisode> episodes,
-        string root, string title, long animeId, string quality, IProgress<SeasonProgress>? progress, CancellationToken ct)
+        string root, string title, long animeId, string quality, IProgress<SeasonProgress>? progress, CancellationToken ct, AutomaticSubtitles? subtitles=null, string poster="", string? subtitleLanguage=null, Action<DownloadEntry>? completed=null)
     {
         var ready = await Task.Run(() => DownloadLibrary.Read(root), ct);
         int done = 0, downloaded = 0, skipped = 0;
@@ -19,9 +19,20 @@ public sealed class SeasonDownloader(HttpClient http)
             progress?.Report(new(done, episodes.Count, episode.Number));
             try
             {
-                var source = await provider.GetPlayback(release.Id, episode, ct);
-                await new EpisodeDownloader(http).Download(source, directory, title + " · " + provider.DisplayName + " · серия " + episode.Number,
-                    quality, new TransferProgress(p => progress?.Report(new(done, episodes.Count, episode.Number, p))), ct, episode.Number, identity);
+                var source = provider is AnimeApp.Services.Torrents.TorrentProvider torrent ? await torrent.GetNextPlayback(release.Id,episode,ct) : await provider.GetPlayback(release.Id, episode, ct);
+                if(subtitles is not null && animeId>0) {
+                    try {
+                        var translations=await subtitles.Find(animeId,title,episode.Number,ct);
+                        foreach(var translation in translations.Where(t=>t.Language==(subtitleLanguage ?? MediaLanguage.Default)).Take(3)) {
+                            try { var path=await subtitles.Download(translation,ct); source=source with {SubtitleTracks=(source.SubtitleTracks ?? []).Append(new MediaTrack(path)).ToArray()}; break; }
+                            catch(Exception ex) when(ex is IOException or HttpRequestException) { }
+                        }
+                    } catch(Exception ex) when(ex is IOException or HttpRequestException) { }
+                }
+                var saved=await new EpisodeDownloader(http).Download(source, directory, title + " · " + provider.DisplayName + " · серия " + episode.Number,
+                    quality, new TransferProgress(p => progress?.Report(new(done, episodes.Count, episode.Number, p))), ct, episode.Number, identity,title,poster);
+                var data=System.Text.Json.JsonSerializer.Deserialize<SavedEpisode>(await File.ReadAllTextAsync(Path.Combine(saved.Directory,"download.json"),ct))!;
+                completed?.Invoke(new(saved.Directory,data));
                 downloaded++;
             }
             catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }

@@ -16,7 +16,7 @@ public record MediaVariant(string Quality, string Location, int? Width = null, l
 }
 
 public record MediaTrack(string Location, string Language = "", string Label = "");
-public record PlaybackSource(PlaybackKind Kind, string Location, IReadOnlyDictionary<string, string>? Headers = null, IReadOnlyList<MediaVariant>? Variants = null, MediaTrack? VideoTrack = null, MediaTrack? AudioTrack = null, IReadOnlyList<MediaTrack>? SubtitleTracks = null, double StartSeconds = 0, bool StartPaused = false);
+public record PlaybackSource(PlaybackKind Kind, string Location, IReadOnlyDictionary<string, string>? Headers = null, IReadOnlyList<MediaVariant>? Variants = null, MediaTrack? VideoTrack = null, MediaTrack? AudioTrack = null, IReadOnlyList<MediaTrack>? SubtitleTracks = null, double StartSeconds = 0, bool StartPaused = false, string? PreferredAudioLanguage = null, bool IsTorrentStream = false);
 public record PlaybackRequest(long UserId, long ShikimoriId, string Title, string ProviderId, string ReleaseId, string EpisodeId, int Episode, PlaybackSource Source, double ResumeSeconds = 0, bool CountsTowardProgress = true);
 public interface IPlaybackLauncher
 {

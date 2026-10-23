@@ -1,4 +1,4 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using AnimeApp.Services.Database;
@@ -12,7 +12,7 @@ public sealed record DownloadPreferences(bool Automatic = true, string Folder = 
         Path.IsPathFullyQualified(Folder) ? Path.GetFullPath(Folder) : throw new IOException("Выберите абсолютный путь папки загрузок в настройках.");
 }
 public sealed record DownloadIdentity(string ProviderId, string ReleaseId, string EpisodeId, long AnimeId = 0);
-public sealed record SavedEpisode(string Title, string Media, int Episode = 1, DownloadIdentity? Identity = null);
+public sealed record SavedEpisode(string Title, string Media, int Episode = 1, DownloadIdentity? Identity = null, string AnimeTitle = "", string Poster = "", string[]? Subtitles = null);
 public sealed record DownloadEntry(string Directory, SavedEpisode Data)
 {
     public string Label => $"{Data.Title} · серия {Data.Episode}";
@@ -60,7 +60,7 @@ public static class DownloadLibrary
         var settings = await repository.Setting<DownloadPreferences>("downloads", ct) ?? new();
         var entries = await Task.Run(() => Read(settings.Root), ct);
         var saved = Find(entries, provider.Id, release, episode.Id);
-        if (saved is not null) return new(PlaybackKind.LocalFile, saved.File);
+        if (saved is not null) return DownloadedEpisodeProvider.Source(saved.Directory);
         return await provider.GetPlayback(release, episode, ct);
     }
 }

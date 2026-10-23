@@ -1,4 +1,4 @@
-using AnimeApp.Services.Providers;
+﻿using AnimeApp.Services.Providers;
 using AnimeApp.Services.Playback;
 using AnimeApp.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -17,7 +17,7 @@ public sealed partial class SettingsViewModel
     [ObservableProperty]
     private ScalingMode scaling = VideoScaling.Modes[0];
     [ObservableProperty]
-    private string preferredLanguages = "uk,ru,any";
+    private string preferredLanguages = AnimeApp.Services.Playback.MediaLanguage.ProviderOrder;
     [ObservableProperty]
     private ProviderViewModel? preferredProvider;
     public IEnumerable<ProviderViewModel> PlaybackChoices => Providers.Where(p => !p.IsWeb);
@@ -45,7 +45,7 @@ public sealed partial class SettingsViewModel
     {
         var scalingId = await repository.Setting<string>("video-scaling");
         Scaling = ScalingModes.FirstOrDefault(m => m.Id == scalingId) ?? ScalingModes[0];
-        PreferredLanguages = await repository.Setting<string>("preferred-languages") ?? "uk,ru,any";
+        PreferredLanguages = await repository.Setting<string>("preferred-languages") ?? AnimeApp.Services.Playback.MediaLanguage.ProviderOrder;
         host.Sources.PreferredLanguage = PreferredLanguages;
         var preferred = await repository.Setting<string>("preferred-provider");
         PreferredProvider = Providers.FirstOrDefault(p => p.Id == preferred);

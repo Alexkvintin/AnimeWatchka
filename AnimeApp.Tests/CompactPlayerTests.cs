@@ -26,6 +26,12 @@ public class CompactPlayerTests
         Assert.True(controls.Bounds.Height>compactHeight);
         Assert.Equal(50,engine.Snapshot.Position);
         Assert.True(engine.Snapshot.Playing);
+        using (var optionsImage = new RenderTargetBitmap(new PixelSize(1000,650)))
+        {
+            optionsImage.Render(window);
+            Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory,"screenshots"));
+            optionsImage.Save(Path.Combine(AppContext.BaseDirectory,"screenshots","player-options.png"));
+        }
         vm.ShowOptions=false;
         vm.ShowNext=true; vm.Playing=true;
         Assert.Equal("⏸ Пауза",vm.PlayLabel);

@@ -1,4 +1,4 @@
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="using:AnimeApp.UI" x:Class="AnimeApp.UI.MainWindow" x:Name="Root" Width="1380" Height="900" MinWidth="1000" MinHeight="520" Title="AnimeWatchka">
+﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="using:AnimeApp.UI" x:Class="AnimeApp.UI.MainWindow" x:Name="Root" Width="1380" Height="900" MinWidth="1000" MinHeight="520" Title="AnimeWatchka">
   <Grid ColumnDefinitions="230,*" RowDefinitions="*,Auto">
     <Border Grid.ColumnSpan="2" Grid.RowSpan="2" Background="{DynamicResource AtmosphereBrush}" IsHitTestVisible="False"/>
     <Image Grid.ColumnSpan="2" Grid.RowSpan="2" Source="{Binding Appearance.Background}" Stretch="UniformToFill" Opacity="{Binding Appearance.BackgroundOpacity}" Effect="{Binding Appearance.BackgroundEffect}" IsHitTestVisible="False"/>
@@ -149,7 +149,13 @@
     <Border Grid.ColumnSpan="2" Grid.RowSpan="2" Background="{DynamicResource CanvasBrush}" Margin="50" Padding="24" CornerRadius="20" IsVisible="{Binding Sources.DownloadsVisible}">
       <Grid RowDefinitions="Auto,Auto,*"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="Скачанное" Classes="h2"/><Button Grid.Column="1" Content="Закрыть" Command="{Binding Sources.CloseDownloadsCommand}"/></Grid>
       <WrapPanel Grid.Row="1" Margin="0,12"><Button Content="Обновить" Command="{Binding Sources.ShowDownloadsCommand}"/><Button Content="Папка загрузок" Command="{Binding Sources.OpenDownloadFolderCommand}" Margin="8,0"/><Button Content="Открыть старую загрузку…" Click="OpenDownloaded"/></WrapPanel>
-      <ScrollViewer Grid.Row="2"><ItemsControl ItemsSource="{Binding Sources.Downloads}"><ItemsControl.ItemTemplate><DataTemplate><Border Classes="panel" Margin="0,0,0,8"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="{Binding Data.Title}" TextWrapping="Wrap" VerticalAlignment="Center"/><Button Grid.Column="1" Content="▶ Смотреть с диска" Command="{Binding $parent[Window].DataContext.Sources.PlayDownloadedCommand}" CommandParameter="{Binding}" Margin="12,0,0,0"/></Grid></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></ScrollViewer>
+      <ScrollViewer Grid.Row="2"><ItemsControl ItemsSource="{Binding Sources.DownloadGroups}"><ItemsControl.ItemTemplate><DataTemplate><Border Classes="panel" Margin="0,0,0,12">
+        <Grid ColumnDefinitions="130,*"><Border CornerRadius="10" ClipToBounds="True" Height="180"><ui:PosterImage Url="{Binding Poster}" Stretch="UniformToFill"/></Border>
+        <StackPanel Grid.Column="1" Margin="20,0,0,0" Spacing="12"><TextBlock Text="{Binding Title}" FontSize="22" TextWrapping="Wrap"/><TextBlock Text="{Binding Voice}" Classes="muted"/>
+        <ItemsControl ItemsSource="{Binding Episodes}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate>
+          <StackPanel Width="82" Margin="0,0,8,8" Spacing="4"><Button Content="{Binding Number}" MinHeight="58" HorizontalAlignment="Stretch" IsEnabled="{Binding Ready}" Command="{Binding $parent[Window].DataContext.Sources.PlayDownloadedCommand}" CommandParameter="{Binding Entry}"/><ProgressBar IsVisible="{Binding Active}" IsIndeterminate="True" Height="3"/><TextBlock IsVisible="{Binding Active}" Text="{Binding Percent, StringFormat={}{0:0}%}" HorizontalAlignment="Center"/></StackPanel>
+        </DataTemplate></ItemsControl.ItemTemplate></ItemsControl></StackPanel></Grid>
+      </Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></ScrollViewer>
       </Grid>
     </Border>
     <Border Grid.ColumnSpan="2" Grid.RowSpan="2" BorderBrush="{DynamicResource OutlineBrush}" BorderThickness="1" CornerRadius="12" IsHitTestVisible="False"/>

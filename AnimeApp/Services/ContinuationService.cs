@@ -26,7 +26,7 @@ public sealed class ContinuationService(LibraryRepository repository)
                 continue;
             try
             {
-                var episodes = await provider.GetEpisodes(release, ct);
+                var episodes = provider is IOfflineEpisodeCatalog saved ? await saved.GetSavedEpisodes(release, ct) : await provider.GetEpisodes(release, ct);
                 var resume = history.FirstOrDefault(h => h.AnimeId == anime.ShikimoriId && h.ProviderId == provider.Id && h.ReleaseId == release && !h.Completed && h.Position > 0 && episodes.Any(e => e.Id == h.EpisodeId && e.Available));
                 var episode = resume is not null ? episodes.First(e => e.Id == resume.EpisodeId) : episodes.Where(e => e.Available && e.CountsTowardProgress && e.Number > anime.EpisodesWatched).OrderBy(e => e.Number).FirstOrDefault();
                 return new(provider.Id, provider.DisplayName, release, episode, resume?.Position ?? 0, episode is null ? "Новых серий в источнике пока нет" : resume is not null ? "Есть сохранённая позиция" : "Следующая доступная серия");

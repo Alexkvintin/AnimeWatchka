@@ -25,7 +25,11 @@ public sealed class AutomaticSubtitleTests
             "/api/episodes" => """{"data":[{"id":9,"episodeInt":1,"episodeType":"opening"},{"id":11,"episodeInt":1,"episodeType":"tv"}]}""",
             _ => """{"data":[{"id":100,"seriesId":10,"episodeId":11,"isActive":1,"typeKind":"sub","typeLang":"ru","authorsSummary":"Team","duration":1400}]}"""
         });
-        var result = await new AutomaticSubtitles(new(handler)).Find(1, "Example", 1);
+        var service = new AutomaticSubtitles(new(handler));
+        var result = await service.Find(1, "Example", 1);
+        var again = await service.Find(1, "Example", 1);
+        Assert.Equal(result, again);
+        Assert.Equal(3, handler.Paths.Count);
         Assert.Equal(100, Assert.Single(result).Id);
         Assert.Contains(handler.Paths, p => p.Contains("episodeId=11"));
         Assert.DoesNotContain(handler.Paths, p => p.Contains("episodeId=9"));
@@ -40,7 +44,7 @@ public sealed class AutomaticSubtitleTests
         Assert.Single(handler.Paths);
     }
     [Fact]
-    public void OnlyActiveRussianAndUkrainianSubtitlesForExactEpisode()
+    public void OnlyActiveSupportedSubtitlesForExactEpisode()
     {
         using var doc = JsonDocument.Parse("""
         [{"id":1,"seriesId":10,"episodeId":11,"isActive":1,"typeKind":"sub","typeLang":"ru"},
@@ -50,7 +54,7 @@ public sealed class AutomaticSubtitleTests
         {"id":5,"seriesId":10,"episodeId":12,"isActive":1,"typeKind":"sub","typeLang":"ru"},
         {"id":6,"seriesId":10,"episodeId":11,"isActive":1,"typeKind":"sub","typeLang":"en"}]
         """);
-        Assert.Equal(new long[] { 1, 2 }, AutomaticSubtitles.Parse(doc.RootElement, 10, 11).Select(t => t.Id));
+        Assert.Equal(new long[] { 1, 2, 6 }, AutomaticSubtitles.Parse(doc.RootElement, 10, 11).Select(t => t.Id));
     }
     [Fact]
     public async Task LoginHtmlIsNotLoadedAsSubtitles()

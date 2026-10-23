@@ -20,7 +20,7 @@ public sealed class FullscreenState
 
     public void Exit() => Active = false;
     public void Interact(DateTimeOffset now) => interaction = now;
-    public bool ControlsVisible(DateTimeOffset now) => !Active || now - interaction < TimeSpan.FromSeconds(7.5);
+    public bool ControlsVisible(DateTimeOffset now) => !Active || now - interaction < TimeSpan.FromSeconds(4.5);
 }
 
 public record ScalingMode(string Id, string Name)

@@ -15,6 +15,7 @@ public sealed partial class MainViewModel : ObservableObject
 {
     private readonly LibraryRepository repository;
     private readonly IMetadataProvider api;
+    internal IMetadataProvider MetadataProvider => api;
     private readonly SyncService sync;
     private readonly ITokenStore tokens;
     private readonly PlaybackService playback;
@@ -610,6 +611,8 @@ public sealed partial class MainViewModel : ObservableObject
         IsBusy = false;
         try
         {
+            Sources.BeginCard();
+            var selectionRevision = Sources.SelectionRevision;
             SelectedAnime = anime;
             Watched = anime.EpisodesWatched;
             UserStatus = anime.UserStatus;
@@ -668,6 +671,9 @@ public sealed partial class MainViewModel : ObservableObject
                 logger.LogWarning(ex, "Details unavailable");
             }
 
+            if ((release is null || providerId is null) && Sources.SelectionRevision == selectionRevision)
+                sourceTask = Sources.SelectForAnime(ct);
+
             try
             {
                 var relations = await api.Relations(anime.Identity, ct);
@@ -683,7 +689,7 @@ public sealed partial class MainViewModel : ObservableObject
 
             ct.ThrowIfCancellationRequested();
             await sourceTask;
-            if (release is null || providerId is null) await Sources.SelectForAnime(ct);
+
         }
         catch (OperationCanceledException)
         {

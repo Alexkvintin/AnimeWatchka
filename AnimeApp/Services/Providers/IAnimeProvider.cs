@@ -50,3 +50,9 @@ public sealed class ProviderRegistry(IEnumerable<IAnimeProvider> providers)
 }
 
 public sealed class ProviderException(string message, Exception? inner = null) : IOException(message, inner);
+
+// Background collection refresh must not start a peer-to-peer transfer.
+public interface IOfflineEpisodeCatalog
+{
+    Task<IReadOnlyList<ProviderEpisode>> GetSavedEpisodes(string releaseId, CancellationToken ct = default);
+}

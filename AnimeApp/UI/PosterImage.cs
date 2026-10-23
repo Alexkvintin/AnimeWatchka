@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Microsoft.Extensions.Logging;
@@ -39,11 +39,13 @@ public sealed class PosterImage : Image
             FallbackUrl
         }.Distinct())
         {
-            if (!AnimeApp.Services.PosterService.IsUsable(candidate) || !Uri.TryCreate(candidate, UriKind.Absolute, out var uri))
+            var local=candidate is not null && Path.IsPathFullyQualified(candidate) && File.Exists(candidate) && new[]{".jpg",".jpeg",".png",".webp"}.Contains(Path.GetExtension(candidate).ToLowerInvariant());
+            if (!local && (!AnimeApp.Services.PosterService.IsUsable(candidate) || !Uri.TryCreate(candidate, UriKind.Absolute, out _)))
                 continue;
             try
             {
-                var bytes = await Loader.Load(uri, ct);
+                if(local && new FileInfo(candidate!).Length>4*1024*1024) continue;
+                var bytes = local ? await File.ReadAllBytesAsync(candidate!,ct) : await Loader.Load(new Uri(candidate!), ct);
                 ct.ThrowIfCancellationRequested();
                 using var stream = new MemoryStream(bytes);
                 bitmap = Bitmap.DecodeToWidth(stream, 320);

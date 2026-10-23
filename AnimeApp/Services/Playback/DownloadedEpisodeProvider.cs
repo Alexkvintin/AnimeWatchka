@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using AnimeApp.Services.Providers;
 namespace AnimeApp.Services.Playback;
 // Offline playback is isolated from network providers and never marks a Shikimori title.
@@ -28,6 +28,13 @@ public sealed class DownloadedEpisodeProvider : IAnimeProvider
             }
         }
         return (data.Title, media, Math.Clamp(data.Episode, 0, 99999));
+    }
+    public static PlaybackSource Source(string directory) {
+        var media=Read(directory);
+        var data=JsonSerializer.Deserialize<SavedEpisode>(File.ReadAllText(Path.Combine(directory,"download.json")));
+        var tracks=(data?.Subtitles ?? []).Where(n=>n==Path.GetFileName(n) && !n.Contains(':') && !n.Contains('\\') && new[]{".ass",".ssa",".srt",".vtt"}.Contains(Path.GetExtension(n).ToLowerInvariant()))
+            .Select(n=>Path.Combine(directory,n)).Where(File.Exists).Select(n=>new MediaTrack(n)).ToArray();
+        return new(PlaybackKind.LocalFile,media.File,SubtitleTracks:tracks,PreferredAudioLanguage:"ja,jpn");
     }
     public Task<ProviderAvailability> CheckAvailability(CancellationToken ct = default) => Task.FromResult(new ProviderAvailability(true, ""));
     public Task<IReadOnlyList<ProviderRelease>> Search(string q, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<ProviderRelease>>([]);
@@ -61,7 +68,7 @@ public sealed class DownloadedEpisodeProvider : IAnimeProvider
     {
         var available = await GetEpisodes(id, ct);
         var selected = available.FirstOrDefault(e => e.Id == episode.Id) ?? throw new InvalidDataException("Серия не найдена в скачанном сезоне.");
-        return new(PlaybackKind.LocalFile, selected.Id);
+        return Source(Path.GetDirectoryName(selected.Id)!);
     }
 }
 

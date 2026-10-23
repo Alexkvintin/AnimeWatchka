@@ -39,6 +39,9 @@ public sealed partial class PlayerWindow : Window
         }
         catch (Exception ex) { vm.ReportFailure(ex); }
     }
+    private DateTimeOffset seekIndicatorUntil;
+    private bool hoveredLastTick;
+    private DateTimeOffset nextVideoInfoUpdate;
     private readonly PlayerViewModel vm;
     private readonly DispatcherTimer timer = new()
     {
@@ -159,20 +162,28 @@ public sealed partial class PlayerWindow : Window
             overlay.AddHandler(KeyUpEvent, OnPlayerKeyReleased, RoutingStrategies.Tunnel);
         }
 
+        if (overlay is not null)
+        {
+            var indicator = this.FindControl<ProgressBar>("SeekIndicator")!;
+            this.FindControl<Grid>("PlayerRoot")!.Children.Remove(indicator);
+            overlay.Children.Add(indicator);
+        }
         PointerMoved += OnPointerMoved;
         hudTimer.Tick += (_, _) =>
         {
             var controlsHovered = this.FindControl<Border>("Controls")!.IsPointerOver;
-            if (controlsHovered || vm.ShowOptions || vm.ShowSubtitles || dragging) Fullscreen.Interact(DateTimeOffset.UtcNow);
+            if (controlsHovered || hoveredLastTick || dragging) Fullscreen.Interact(DateTimeOffset.UtcNow);
+            hoveredLastTick = controlsHovered;
+            this.FindControl<ProgressBar>("SeekIndicator")!.IsVisible = DateTimeOffset.UtcNow < seekIndicatorUntil;
             var visible = Fullscreen.ControlsVisible(DateTimeOffset.UtcNow);
             var controls = this.FindControl<Border>("Controls")!;
-            if (controls.IsVisible != visible)
-            {
-                controls.IsVisible = visible;
-                if (!visible) overlay?.Focus();
-            }
+            controls.Opacity = visible ? 1 : 0;
+            controls.IsHitTestVisible = visible;
+            if (!visible && controls.IsKeyboardFocusWithin) overlay?.Focus();
             if (overlay is not null)
                 overlay.Cursor = new Cursor(visible ? StandardCursorType.Arrow : StandardCursorType.None);
+            if (!vm.ShowOptions || DateTimeOffset.UtcNow < nextVideoInfoUpdate) return;
+            nextVideoInfoUpdate = DateTimeOffset.UtcNow.AddSeconds(1);
             if (vm.Engine is VlcPlayerEngine vlc)
             {
                 uint w = 0, h = 0;
@@ -249,7 +260,7 @@ public sealed partial class PlayerWindow : Window
     {
         if (e.Handled)
             return;
-        Interact();
+        if (e.Key is not (Key.Left or Key.Right or Key.O)) Interact();
         switch (e.Key)
         {
             case Key.Escape:
@@ -284,6 +295,14 @@ public sealed partial class PlayerWindow : Window
                 return;
         }
 
+        if (e.Key is Key.Left or Key.Right or Key.O)
+        {
+            var indicator = this.FindControl<ProgressBar>("SeekIndicator")!;
+            var duration = vm.Engine.Snapshot.Duration;
+            indicator.Value = duration > 0 ? Math.Clamp(vm.SeekPosition / duration, 0, 1) : 0;
+            seekIndicatorUntil = DateTimeOffset.UtcNow.AddSeconds(2);
+            indicator.IsVisible = true;
+        }
         e.Handled = true;
     }
 
@@ -305,7 +324,8 @@ public sealed partial class PlayerWindow : Window
                 root.Children.Remove(controls);
                 controls.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Bottom;
                 controls.Margin = new(32, 0, 32, 24);
-                controls.MaxWidth = 1120;
+                controls.MaxWidth = 1360;
+                controls.Width = Math.Max(680, Math.Min(1360, (Screens.ScreenFromWindow(this)?.WorkingArea.Width / RenderScaling ?? 1120) - 64));
                 controls.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
                 overlay.Children.Add(controls);
             }
@@ -327,6 +347,9 @@ public sealed partial class PlayerWindow : Window
             controls.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
             controls.Margin = new(0, 8, 0, 0);
             controls.MaxWidth = double.PositiveInfinity;
+            controls.Width = double.NaN;
+            controls.Opacity = 1;
+            controls.IsHitTestVisible = true;
             controls.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
             controls.IsVisible = true;
             header.IsVisible = true;

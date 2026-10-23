@@ -12,6 +12,67 @@ namespace AnimeApp.Tests;
 public sealed class PlayerViewModelTests
 {
     [Fact]
+    public async Task AutomaticResumeRetriesAfterTemporarySeekFailure()
+    {
+        var (vm,engine,_) = await Create(); await vm.Initialize();
+        engine.RejectSeek=true;
+        await vm.Tick();
+        Assert.Contains("недоступна",vm.Status);
+        engine.RejectSeek=false;
+        await vm.Tick();
+        Assert.Equal(42,engine.LastSeek);
+        await vm.Tick();
+        Assert.Equal(1,engine.SeekCalls);
+        await vm.Close();
+    }
+    [Fact]
+    public async Task SeekBeforeVideoReadyDoesNotCallEngine()
+    {
+        var (vm,engine,_) = await Create(); await vm.Initialize();
+        engine.Current=new(0,0,false); engine.RejectSeek=true;
+        vm.SeekPosition=40;
+        vm.SeekCommand.Execute(null);
+        vm.SkipOpeningCommand.Execute(null);
+        vm.ResumeCommand.Execute(null);
+        Assert.Equal(0,engine.SeekCalls);
+        Assert.Contains("загружается",vm.Status);
+        await vm.Close();
+    }
+    [Fact]
+    public async Task SeekRejectedAfterReadinessDoesNotEscapeUiCommandAndCanRetry()
+    {
+        var (vm,engine,_) = await Create(); await vm.Initialize();
+        engine.RejectSeek=true; vm.SeekPosition=40;
+        vm.SeekCommand.Execute(null);
+        vm.SkipOpeningCommand.Execute(null);
+        vm.ResumeCommand.Execute(null);
+        Assert.Contains("недоступна",vm.Status);
+        engine.RejectSeek=false; vm.SeekPosition=40; vm.SeekCommand.Execute(null);
+        Assert.Equal(40,engine.LastSeek);
+        await vm.Close();
+    }
+    [Fact]
+    public async Task SubtitleDelaySurvivesEpisodeChange() {
+        var (vm,engine,_) = await Create(); await vm.Initialize();
+        vm.SubtitleDelay=2.5;
+        engine.Current=new(100,100,false,Ended:true);
+        await vm.TogglePlayCommand.ExecuteAsync(null);
+        Assert.Equal(2,vm.Request.Episode); Assert.Equal(2.5,vm.SubtitleDelay);
+        await vm.Close();
+    }
+    [Fact]
+    public async Task BurnedSubtitleReleaseRejectsAnotherSubtitleFile()
+    {
+        var (vm, _, _) = await Create(providerId: "subtitles");
+        await vm.Initialize();
+        Assert.True(vm.HasBurnedSubtitles);
+        Assert.False(vm.CanUseSubtitles);
+        Assert.Throws<IOException>(() => vm.OpenSubtitleFile("translation.ass"));
+        Assert.Contains("вшит", vm.OnlineSubtitleStatus);
+        await vm.Close();
+    }
+
+    [Fact]
     public async Task SpaceActionAtActualEndMovesNextButNearEndOnlyResumes()
     {
         var (vm, engine, repo) = await Create();
@@ -43,7 +104,7 @@ public sealed class PlayerViewModelTests
     }
 
     [Fact]
-    public void RealPointerMovementAnywhereWakesControlsForSevenAndHalfSeconds()
+    public void RealPointerMovementAnywhereWakesControlsForFourAndHalfSeconds()
     {
         var state = new FullscreenState();
         var now = DateTimeOffset.UtcNow;
@@ -53,8 +114,8 @@ public sealed class PlayerViewModelTests
         Assert.False(state.ControlsVisible(now.AddSeconds(10)));
         state.PointerMoved(50, 100, false, now.AddSeconds(11));
         Assert.True(state.ControlsVisible(now.AddSeconds(11)));
-        Assert.True(state.ControlsVisible(now.AddSeconds(18)));
-        Assert.False(state.ControlsVisible(now.AddSeconds(19)));
+        Assert.True(state.ControlsVisible(now.AddSeconds(15)));
+        Assert.False(state.ControlsVisible(now.AddSeconds(16)));
         state.PointerMoved(55, 500, true, now.AddSeconds(12));
         Assert.True(state.ControlsVisible(now.AddSeconds(12)));
     }
@@ -75,7 +136,7 @@ public sealed class PlayerViewModelTests
         Assert.Equal(50, Assert.Single(await repo.History(0)).Position);
     }
 
-    internal static async Task<(PlayerViewModel Vm, FakeEngine Engine, LibraryRepository Repo)> Create(bool autoResume = true, string status = "released", bool variants = false)
+    internal static async Task<(PlayerViewModel Vm, FakeEngine Engine, LibraryRepository Repo)> Create(bool autoResume = true, string status = "released", bool variants = false, string providerId = "fake")
     {
         var db = new DatabaseService(Path.Combine(Path.GetTempPath(), "AnimeAppTests", Guid.NewGuid().ToString(), "player.db"));
         await db.Initialize();
@@ -83,7 +144,7 @@ public sealed class PlayerViewModelTests
         await repo.Cache(0, [new() { ShikimoriId = 1, EpisodesTotal = 2, Status = status }]);
         await repo.SaveSetting("playback", new AppSettings(AutoResume: autoResume));
         var service = new PlaybackService(repo, new EmbeddedPlaybackLauncher());
-        var request = new PlaybackRequest(0, 1, "Test", "fake", "release", "ep1", 1, new(PlaybackKind.DirectMedia, "https://example.org/video.mp4", Variants: variants ? [new("1080p","https://example.org/1080.mp4"),new("720p","https://example.org/720.mp4")] : null));
+        var request = new PlaybackRequest(0, 1, "Test", providerId, "release", "ep1", 1, new(PlaybackKind.DirectMedia, "https://example.org/video.mp4", Variants: variants ? [new("1080p","https://example.org/1080.mp4"),new("720p","https://example.org/720.mp4")] : null));
         await service.ReportProgress(request, 42, 100, eligible: false, ranges: [new(0, 42)]);
         var engine = new FakeEngine();
         var provider = new FakeProvider();
@@ -184,6 +245,7 @@ public sealed class PlayerViewModelTests
 
         public double LastSeek;
         public int SeekCalls;
+        public bool RejectSeek;
         public bool Disposed;
         public PlaybackSource? LastSource;
         public HashSet<string> FailedLocations { get; } = [];
@@ -205,6 +267,7 @@ public sealed class PlayerViewModelTests
         };
         public void Seek(double s)
         {
+            if(RejectSeek) throw new IOException("mpv: ошибка настройки или команды (-12).");
             LastSeek = s;
             SeekCalls++;
             Current = Current with

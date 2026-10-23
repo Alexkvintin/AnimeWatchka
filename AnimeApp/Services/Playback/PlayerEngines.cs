@@ -95,20 +95,21 @@ public sealed class VlcPlayerEngine : IPlayerEngine
         };
         if (s.Kind == PlaybackKind.LocalFile && !File.Exists(s.Location))
             throw new FileNotFoundException("Видео не найдено.");
-        if (s.Kind == PlaybackKind.DirectMedia && (!Uri.TryCreate(s.Location, UriKind.Absolute, out var remote) || remote.Scheme != "https"))
+        if (s.Kind == PlaybackKind.DirectMedia && (!Uri.TryCreate(s.Location, UriKind.Absolute, out var remote) || !(remote.Scheme == "https" || s.IsTorrentStream && remote.Scheme == "http" && remote.Host == "127.0.0.1")))
             throw new InvalidOperationException("Неподдерживаемый адрес видео.");
         using var media = new Media(vlc, s.Kind == PlaybackKind.LocalFile ? new Uri(Path.GetFullPath(s.Location)) : new Uri(s.Location));
         if (s.Headers?.TryGetValue("Referer", out var referer) == true && !referer.Contains('\n') && !referer.Contains('\r'))
             media.AddOption(":http-referrer=" + referer);
         string Track(string location)
         {
-            if (s.Kind == PlaybackKind.LocalFile && File.Exists(location))
+            if ((s.Kind == PlaybackKind.LocalFile || s.SubtitleTracks?.Any(t => t.Location == location) == true) && File.Exists(location))
                 return new Uri(Path.GetFullPath(location)).ToString();
             if (Uri.TryCreate(location, UriKind.Absolute, out var uri) && uri.Scheme == "https")
                 return uri.ToString();
             throw new IOException("Недопустимый адрес дополнительной дорожки.");
         }
 
+        if (s.PreferredAudioLanguage is not null) media.AddOption(":audio-language=" + s.PreferredAudioLanguage);
         if (s.AudioTrack is { } audio)
             media.AddSlave(MediaSlaveType.Audio, 4, Track(audio.Location));
         foreach (var subtitle in s.SubtitleTracks ?? [])

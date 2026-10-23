@@ -207,7 +207,7 @@ public sealed class Stage4UiTests
         vm.ShowOptions = true;
         Dispatcher.UIThread.RunJobs();
         window.UpdateLayout();
-        var expander = window.GetVisualDescendants().OfType<Expander>().Single();
+        var expander = window.GetVisualDescendants().OfType<Expander>().Single(e => Equals(e.Header, "Информация о видео"));
         expander.IsExpanded = true;
         window.UpdateLayout();
         var header = expander.GetVisualDescendants().OfType<Button>().First();

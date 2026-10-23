@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -45,7 +45,7 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
     public bool IsConnected => host.UserId > 0;
     public string DataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AnimeApp");
     public string Version => "AnimeWatchka · " + typeof(SettingsViewModel).Assembly.GetName().Version!.ToString(3);
-    public string ReleaseNotes => "0.1.23\n• Автоматический поиск и загрузка переводов для текущей серии.\n• Выбор найденного перевода в CC.\n• Проверка тайтла и эпизода, переход к следующему переводу при ошибке файла.";
+    public string ReleaseNotes => "0.2.0\n• Источник «Субтитры»: автоматический подбор видео с японской озвучкой и перевода.\n• Переключение аудиодорожек и язык перевода по системе.\n• Сохранение найденных субтитров вместе с сериями для просмотра без интернета.\n• Скачанное сгруппировано по тайтлам: обложки, серии и ход загрузки.\n• Буферизация и подбор раздач учитывают размер видео и доступность участников.";
 
     [RelayCommand]
     private Task ClearPosters() => host.Run(async () =>

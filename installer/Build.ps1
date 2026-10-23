@@ -4,7 +4,7 @@ $root = Split-Path $PSScriptRoot -Parent
 $dotnet = if (Test-Path "$root\.dotnet\dotnet.exe") { "$root\.dotnet\dotnet.exe" } else { "dotnet" }
 & $dotnet publish "$root\AnimeApp\AnimeApp.csproj" -c Release -r win-x64 --self-contained true -o "$root\artifacts\installer-payload"
 if ($LASTEXITCODE -ne 0) { throw 'Publish failed' }
-$privateFiles = Get-ChildItem "$root\artifacts\installer-payload" -Recurse -File | Where-Object { $_.Name -match '^(credentials|tokens)\.dat$|\.db($|-)|\.log$' }
+$privateFiles = Get-ChildItem "$root\artifacts\installer-payload" -Recurse -File | Where-Object { $_.Name -match '^(credentials|tokens|opensubtitles)\.dat$|\.db($|-)|\.log$' }
 if ($privateFiles) { throw 'Personal data found in installer payload' }
 if (Test-Path "$PSScriptRoot\oauth-public.json") {
     $publicConfig = Get-Content "$PSScriptRoot\oauth-public.json" -Raw | ConvertFrom-Json

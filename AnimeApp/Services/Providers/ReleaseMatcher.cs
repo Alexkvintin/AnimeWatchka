@@ -80,11 +80,15 @@ public sealed class ReleaseMatcher
         {
             foreach (var r in await provider.Search(q, ct))
                 found[r.Id] = r;
+            var exact = Unambiguous(found.Values.Select(r => Rank(anime, r)).ToArray());
+            if (exact is { Score: >= 0.99, Release.Year: not null } && !string.IsNullOrEmpty(exact.Release.Kind))
+                break;
         }
 
         var best = found.Values.Select(r => Rank(anime, r)).OrderByDescending(r => r.Score).Take(5).ToList();
         for (int i = 0; i < best.Count; i++)
         {
+            if (best[i].Score < 0.6) continue;
             try
             {
                 best[i] = Rank(anime, await provider.GetRelease(best[i].Release.Id, ct));

@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using System.Text.Json;
 
@@ -41,12 +41,13 @@ public sealed class EpisodeDownloader(HttpClient http)
             ?? variants.OrderBy(v => v.Height > 0 ? v.Height : int.MaxValue).First();
     }
     private static Uri Https(string location) => Uri.TryCreate(location, UriKind.Absolute, out var u) && u.Scheme == "https" && string.IsNullOrEmpty(u.UserInfo) ? u : throw new InvalidDataException("Источник не предоставляет подходящий HTTPS-поток.");
-    public async Task<DownloadResult> Download(PlaybackSource source, string destination, string title, string quality, IProgress<DownloadProgress>? progress, CancellationToken ct, int episode = 1, DownloadIdentity? identity = null)
+    public async Task<DownloadResult> Download(PlaybackSource source, string destination, string title, string quality, IProgress<DownloadProgress>? progress, CancellationToken ct, int episode = 1, DownloadIdentity? identity = null, string animeTitle = "", string poster = "")
     {
-        if (source.Kind != PlaybackKind.DirectMedia || source.AudioTrack is not null || source.SubtitleTracks?.Count > 0)
+        if (source.Kind != PlaybackKind.DirectMedia || source.AudioTrack is not null)
             throw new InvalidDataException("Скачивание этого источника или отдельных дорожек пока не поддерживается.");
         var location = SelectQuality(source.Variants, quality)?.Location ?? source.VideoTrack?.Location ?? source.Location;
-        var uri = Https(location);
+        Uri Address(string location) => source.IsTorrentStream && Uri.TryCreate(location,UriKind.Absolute,out var local) && local.Scheme=="http" && local.Host=="127.0.0.1" && local.UserInfo=="" ? local : Https(location);
+        var uri = Address(location);
         destination = Path.GetFullPath(destination);
         Directory.CreateDirectory(destination);
         var id = Guid.NewGuid().ToString("N");
@@ -60,12 +61,12 @@ public sealed class EpisodeDownloader(HttpClient http)
         long bytes = 0;
         async Task<HttpResponseMessage> Get(Uri address)
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, Https(address.ToString()));
+            using var request = new HttpRequestMessage(HttpMethod.Get, Address(address.ToString()));
             if (source.Headers is { } headers)
                 foreach (var pair in headers.Where(h => h.Key.Equals("Referer", StringComparison.OrdinalIgnoreCase) || h.Key.Equals("User-Agent", StringComparison.OrdinalIgnoreCase) || h.Key.Equals("Origin", StringComparison.OrdinalIgnoreCase)))
                     request.Headers.TryAddWithoutValidation(pair.Key, pair.Value);
             var response = await http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct);
-            try { response.EnsureSuccessStatusCode(); Https(response.RequestMessage?.RequestUri?.ToString() ?? address.ToString()); return response; }
+            try { response.EnsureSuccessStatusCode(); Address(response.RequestMessage?.RequestUri?.ToString() ?? address.ToString()); return response; }
             catch { response.Dispose(); throw; }
         }
         async Task Copy(HttpResponseMessage response, string file, int part, int parts)
@@ -158,8 +159,8 @@ public sealed class EpisodeDownloader(HttpClient http)
             else
             {
                 var extension = Path.GetExtension(uri.AbsolutePath).ToLowerInvariant();
-                if (extension is not (".mp4" or ".webm" or ".mkv") && type is not ("video/mp4" or "video/webm" or "video/x-matroska")) throw new InvalidDataException("Источник не предоставляет поддерживаемый видеофайл.");
-                media = "episode" + (extension is ".webm" or ".mkv" ? extension : type == "video/webm" ? ".webm" : ".mp4");
+                if (!source.IsTorrentStream && extension is not (".mp4" or ".webm" or ".mkv") && type is not ("video/mp4" or "video/webm" or "video/x-matroska")) throw new InvalidDataException("Источник не предоставляет поддерживаемый видеофайл.");
+                media = "episode" + (source.IsTorrentStream ? ".mkv" : extension is ".webm" or ".mkv" ? extension : type == "video/webm" ? ".webm" : ".mp4");
                 await Copy(response, media, 0, 0);
                 using var check = File.OpenRead(Path.Combine(staging, media));
                 var signature = new byte[16]; var length = check.Read(signature);
@@ -167,7 +168,26 @@ public sealed class EpisodeDownloader(HttpClient http)
                     throw new InvalidDataException("Полученный файл не похож на видео. Попробуйте другой источник.");
             }
             ct.ThrowIfCancellationRequested();
-            await File.WriteAllTextAsync(Path.Combine(staging, "download.json"), JsonSerializer.Serialize(new SavedEpisode(title, media, episode, identity)), ct);
+            if(Uri.TryCreate(poster,UriKind.Absolute,out var posterUri) && posterUri.Scheme=="https") {
+                try {
+                    using var posterTimeout=CancellationTokenSource.CreateLinkedTokenSource(ct);posterTimeout.CancelAfter(TimeSpan.FromSeconds(5));
+                    using var image=await http.GetAsync(posterUri,HttpCompletionOption.ResponseHeadersRead,posterTimeout.Token);image.EnsureSuccessStatusCode();
+                    if(image.Content.Headers.ContentType?.MediaType?.StartsWith("image/")==true) {
+                        await using var input=await image.Content.ReadAsStreamAsync(posterTimeout.Token);
+                        using var posterBytes=new MemoryStream();var chunk=new byte[8192];int count;
+                        while((count=await input.ReadAsync(chunk,posterTimeout.Token))>0) {if(posterBytes.Length+count>4*1024*1024) throw new IOException();posterBytes.Write(chunk,0,count);}
+                        await File.WriteAllBytesAsync(Path.Combine(staging,"poster.jpg"),posterBytes.ToArray(),ct);
+                    }
+                } catch(Exception ex) when(ex is IOException or HttpRequestException or OperationCanceledException) {ct.ThrowIfCancellationRequested();}
+            }
+            var subtitles=new List<string>();
+            foreach(var track in source.SubtitleTracks ?? []) {
+                var extension=Path.GetExtension(track.Location).ToLowerInvariant();
+                if(!new[]{".ass",".ssa",".srt",".vtt"}.Contains(extension) || !File.Exists(track.Location) || new FileInfo(track.Location).Length>4*1024*1024) continue;
+                var subtitle="subtitle-"+subtitles.Count+extension;
+                File.Copy(track.Location,Path.Combine(staging,subtitle)); subtitles.Add(subtitle);
+            }
+            await File.WriteAllTextAsync(Path.Combine(staging, "download.json"), JsonSerializer.Serialize(new SavedEpisode(title, media, episode, identity,animeTitle,poster,subtitles.ToArray())), ct);
             markerLock.Dispose();
             File.Delete(Path.Combine(staging, "download.pending"));
             Directory.Move(staging, final);

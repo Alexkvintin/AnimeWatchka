@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Text;
 using AnimeApp.Services.Playback;
 using AnimeApp.Services.Providers;
@@ -83,7 +83,7 @@ public sealed class SeasonDownloadTests
         var window=new AnimeApp.UI.MainWindow{DataContext=vm,Width=1000,Height=600};window.Show();
         try {
             Avalonia.Threading.Dispatcher.UIThread.RunJobs();window.UpdateLayout();
-            var play=Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(window).OfType<Avalonia.Controls.Button>().Single(b=>Equals(b.Content,"▶ Смотреть с диска"));
+            var play=Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(window).OfType<Avalonia.Controls.Button>().Single(b=>b.CommandParameter is DownloadEntry);
             Assert.True(play.IsEffectivelyVisible);
             using var screenshot=new Avalonia.Media.Imaging.RenderTargetBitmap(new Avalonia.PixelSize(1000,600));screenshot.Render(window);
             var directory=Path.Combine(AppContext.BaseDirectory,"screenshots");Directory.CreateDirectory(directory);screenshot.Save(Path.Combine(directory,"download-library.png"));

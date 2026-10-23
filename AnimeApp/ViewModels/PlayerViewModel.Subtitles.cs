@@ -1,4 +1,4 @@
-using AnimeApp.Services.Playback;
+﻿using AnimeApp.Services.Playback;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -13,33 +13,50 @@ public sealed partial class PlayerViewModel
     [ObservableProperty] private string onlineSubtitleStatus = "";
     private bool populatingOnlineSubtitles;
     private long subtitleSelectionVersion;
+    private bool subtitlesDisabledByUser;
+    private string? preferredSubtitleAuthor;
+    private string? preferredSubtitleService;
+    private string? preferredEmbeddedSubtitle;
+    private bool restoreSubtitleSelection;
+    private static bool PreferredLanguageTrack(SubtitleChoice track) => MediaLanguage.MatchesTrack(track.Label);
 
     private void StartSubtitleSearch()
     {
         subtitleSearch?.Cancel();
         subtitleSearch?.Dispose();
         subtitleSearch = new();
+        ++subtitleSelectionVersion;
+        restoreSubtitleSelection = true;
         OnlineSubtitles = [];
+        populatingOnlineSubtitles=true;
         SelectedOnlineSubtitle = null;
+        populatingOnlineSubtitles=false;
         _ = FindSubtitles(Request, subtitleSearch.Token);
     }
     private async Task FindSubtitles(PlaybackRequest request, CancellationToken ct)
     {
+        if (HasBurnedSubtitles)
+        {
+            OnlineSubtitleStatus = "В этом релизе текст вшит в видео. Второй перевод отключён, чтобы субтитры не перекрывались.";
+            return;
+        }
+
         if (SubtitleFinder is null) return;
-        OnlineSubtitleStatus = "Ищем русские и украинские субтитры…";
+        OnlineSubtitleStatus = "Ищем русские, украинские и английские субтитры…";
         try
         {
             var found = await SubtitleFinder.Find(request.ShikimoriId, request.Title, request.Episode, ct);
             ct.ThrowIfCancellationRequested();
             populatingOnlineSubtitles = true;
-            try { OnlineSubtitles = found; SelectedOnlineSubtitle = found.FirstOrDefault(); }
+            try { OnlineSubtitles = found; SelectedOnlineSubtitle = found.FirstOrDefault(s=>s.Author==preferredSubtitleAuthor && s.Service==preferredSubtitleService) ?? found.FirstOrDefault(s=>s.Language==MediaLanguage.Default) ?? found.FirstOrDefault(); }
             finally { populatingOnlineSubtitles = false; }
-            OnlineSubtitleStatus = found.Count == 0 ? "Для этой серии отдельные RU/UK субтитры не найдены." : $"Найдено переводов: {found.Count}.";
-            // Mikai uses hard subtitles. Do not overlay a second translation on top of them.
-            if (request.ProviderId == "subtitles")
-                OnlineSubtitleStatus += " В этом видео украинский текст вшит; отдельный перевод наложится поверх него.";
-            else if (SubtitleControls.Tracks(Engine).Count <= 1)
-                foreach (var translation in found.Take(5))
+            OnlineSubtitleStatus = found.Count == 0 ? "Для этой серии отдельные RU/UK/EN субтитры не найдены." : $"Найдено переводов: {found.Count}.";
+            var candidates=found.Where(s=>!request.Source.IsTorrentStream || s.Language==MediaLanguage.Default || preferredSubtitleAuthor is not null && s.Author==preferredSubtitleAuthor && s.Service==preferredSubtitleService).OrderByDescending(s=>s==SelectedOnlineSubtitle).ToArray();
+            // At most one automatic OpenSubtitles download per episode: it consumes an account quota.
+            var attempts=candidates.Where(s=>s.Service!="OpenSubtitles").Take(4)
+                .Concat(candidates.Where(s=>s.Service=="OpenSubtitles").Take(1)).OrderByDescending(s=>s==SelectedOnlineSubtitle);
+            if (!subtitlesDisabledByUser && (request.Source.IsTorrentStream ? (preferredSubtitleAuthor is not null || !SubtitleControls.Tracks(Engine).Any(PreferredLanguageTrack)) && preferredEmbeddedSubtitle is null : SubtitleControls.Tracks(Engine).Count <= 1))
+                foreach (var translation in attempts)
                 {
                     populatingOnlineSubtitles = true;
                     try { SelectedOnlineSubtitle = translation; }
@@ -56,7 +73,17 @@ public sealed partial class PlayerViewModel
     partial void OnSelectedOnlineSubtitleChanged(OnlineSubtitle? value)
     {
         if (!populatingOnlineSubtitles && value is not null && subtitleSearch is { } search)
+        {
+            preferredSubtitleAuthor=value.Author; preferredSubtitleService=value.Service;
+            _ = SaveSubtitleLanguage(value.Language);
+            preferredEmbeddedSubtitle=null;
+            subtitlesDisabledByUser=false;
             _ = ApplyOnlineSubtitle(value, search.Token);
+        }
+    }
+    private async Task SaveSubtitleLanguage(string language) {
+        try { await repository.SaveSetting("subtitle-language",language); }
+        catch(Exception ex) when(ex is IOException or UnauthorizedAccessException) { }
     }
     [RelayCommand]
     private Task LoadOnlineSubtitle() => SelectedOnlineSubtitle is { } selected && subtitleSearch is { } search
@@ -64,7 +91,7 @@ public sealed partial class PlayerViewModel
 
     private async Task<bool> ApplyOnlineSubtitle(OnlineSubtitle selected, CancellationToken ct)
     {
-        if (SubtitleFinder is null) return false;
+        if (SubtitleFinder is null || HasBurnedSubtitles) return false;
         var version = ++subtitleSelectionVersion;
         OnlineSubtitleStatus = "Подключаем субтитры…";
         try
@@ -72,7 +99,16 @@ public sealed partial class PlayerViewModel
             var path = await SubtitleFinder.Download(selected, ct);
             ct.ThrowIfCancellationRequested();
             if (closed || version != subtitleSelectionVersion) return false;
+            if(Request.Source.IsTorrentStream) {
+                for(var wait=0; wait<150 && Engine.Snapshot.Duration<=0; wait++) await Task.Delay(100,ct);
+                ct.ThrowIfCancellationRequested();
+                if(closed || version!=subtitleSelectionVersion) return false;
+                if(Engine.Snapshot.Duration<=0) throw new IOException("Видео ещё буферизуется. Выберите перевод после начала воспроизведения.");
+            }
+            restoreSubtitleSelection=false;
             SubtitleControls.AddFile(Engine, path);
+            ApplySubtitleStyle();
+            SubtitleControls.Delay(Engine,SubtitleDelay);
             RefreshSubtitles();
             OnlineSubtitleStatus = $"Подключены: {selected}. Если текст опережает видео, измените задержку.";
             return true;
@@ -83,6 +119,28 @@ public sealed partial class PlayerViewModel
         return false;
     }
     [ObservableProperty] private bool showSubtitles;
+    [ObservableProperty] private bool subtitlesEnabled;
+    private int lastSubtitleId = -1;
+    public bool HasBurnedSubtitles => Request.ProviderId == "subtitles";
+    partial void OnSubtitlesEnabledChanged(bool value)
+    {
+        if (readingSubtitles) return;
+        subtitlesDisabledByUser = !value;
+        if (!value)
+        {
+            lastSubtitleId = SubtitleControls.Selected(Engine);
+            ++subtitleSelectionVersion;
+            SubtitleControls.Select(Engine, -1);
+        }
+        else if (!HasBurnedSubtitles)
+        {
+            var track = SubtitleTracks.FirstOrDefault(t => t.Id == lastSubtitleId && t.Id >= 0)
+                ?? SubtitleTracks.FirstOrDefault(t => t.Id >= 0);
+            if (track is not null) SubtitleControls.Select(Engine, track.Id);
+            else if (SelectedOnlineSubtitle is not null) LoadOnlineSubtitleCommand.Execute(null);
+            else { ShowOptions = true; OnlineSubtitleStatus = "Ищем доступные переводы. Можно выбрать свой файл."; }
+        }
+    }
     [ObservableProperty] private IReadOnlyList<SubtitleChoice> subtitleTracks = [new(-1, "Выключены")];
     [ObservableProperty] private SubtitleChoice? selectedSubtitle;
     [ObservableProperty] private double subtitleDelay;
@@ -135,7 +193,7 @@ public sealed partial class PlayerViewModel
         SubtitleStyleStatus = "Шрифт сохранён. Заново откройте плеер, чтобы загрузить новый файл шрифта.";
     }
 
-    public bool CanUseSubtitles => SubtitleControls.Supported(Engine);
+    public bool CanUseSubtitles => !HasBurnedSubtitles && SubtitleControls.Supported(Engine);
     public string SubtitleHint => SubtitleTracks.Count > 1
         ? "Выберите язык из доступных дорожек. Положительная задержка показывает текст позже."
         : "Автоматически найденные переводы доступны выше. Вшитый в видео текст отключить или изменить нельзя.";
@@ -145,6 +203,9 @@ public sealed partial class PlayerViewModel
         if (!readingSubtitles && value is not null)
         {
             ++subtitleSelectionVersion;
+            subtitlesDisabledByUser = value.Id < 0;
+            preferredEmbeddedSubtitle = value.Id >= 0 ? value.Label : null;
+            restoreSubtitleSelection = false;
             SubtitleControls.Select(Engine, value.Id);
         }
     }
@@ -156,8 +217,16 @@ public sealed partial class PlayerViewModel
         try
         {
             var tracks = SubtitleControls.Tracks(Engine);
+            if(restoreSubtitleSelection && tracks.Count>1) {
+                var preferred=tracks.FirstOrDefault(t=>t.Id>=0 && t.Label==preferredEmbeddedSubtitle)
+                    ?? (Request.Source.IsTorrentStream ? tracks.FirstOrDefault(PreferredLanguageTrack) : null);
+                if(subtitlesDisabledByUser) SubtitleControls.Select(Engine,-1);
+                else if(preferred is not null) SubtitleControls.Select(Engine,preferred.Id);
+                restoreSubtitleSelection=false;
+            }
             if (!SubtitleTracks.SequenceEqual(tracks)) SubtitleTracks = tracks;
             SelectedSubtitle = SubtitleTracks.FirstOrDefault(t => t.Id == SubtitleControls.Selected(Engine)) ?? SubtitleTracks[0];
+            SubtitlesEnabled = SelectedSubtitle.Id >= 0;
             OnPropertyChanged(nameof(CanUseSubtitles));
             OnPropertyChanged(nameof(SubtitleHint));
             OnPropertyChanged(nameof(CanStyleSubtitles));
@@ -168,8 +237,9 @@ public sealed partial class PlayerViewModel
 
     public void OpenSubtitleFile(string path)
     {
+        if (HasBurnedSubtitles) throw new IOException("В этом видео уже вшиты субтитры. Наложение второго текста отключено.");
         SubtitleControls.AddFile(Engine, path);
-        ShowSubtitles = true;
+        ShowOptions = true;
         RefreshSubtitles();
     }
 }

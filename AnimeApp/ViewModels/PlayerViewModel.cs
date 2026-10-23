@@ -1,4 +1,4 @@
-using AnimeApp.Models;
+﻿using AnimeApp.Models;
 using AnimeApp.Services;
 using AnimeApp.Services.Database;
 using AnimeApp.Services.Playback;
@@ -178,10 +178,11 @@ public sealed partial class PlayerViewModel : ObservableObject
                 };
             var max = Request.Source.Variants?.OrderByDescending(v => v.Height).FirstOrDefault();
             QualityInfo = $"{provider.DisplayName} · выбран поток: {variant?.Quality ?? "Auto"}" + (max is null ? "" : $" · максимум источника: {max.Quality}");
+            if (provider is AnimeApp.Services.Torrents.TorrentProvider activeTorrent) activeTorrent.Playing = true;
+            restoreAudioSelection=true;
             await Engine.Open(source);
             ApplySubtitleStyle();
-            SubtitleDelay = 0;
-            SubtitleControls.Delay(Engine, 0);
+            SubtitleControls.Delay(Engine, SubtitleDelay);
             RefreshSubtitles();
             StartSubtitleSearch();
             Engine.SetVolume(Volume);
@@ -206,6 +207,7 @@ public sealed partial class PlayerViewModel : ObservableObject
             return;
         var s = Engine.Snapshot;
         RefreshSubtitles();
+        RefreshAudio();
         Position = s.Position;
         Duration = s.Duration;
         Playing = s.Playing;
@@ -216,6 +218,12 @@ public sealed partial class PlayerViewModel : ObservableObject
         if (s.Error is not null)
         {
             Status = s.Error;
+            return;
+        }
+
+        if (Request.Source.IsTorrentStream && s.Duration <= 0)
+        {
+            Status = "Подготовка видео · " + TorrentStatus;
             return;
         }
 
@@ -230,14 +238,13 @@ public sealed partial class PlayerViewModel : ObservableObject
             resumeApplied = true;
             if (settings.AutoResume && Request.ResumeSeconds > 3)
             {
-                Engine.Seek(Math.Min(Request.ResumeSeconds, Math.Max(0, s.Duration - 1)));
-                seekPending = true;
+                resumeApplied = TrySeek(Math.Min(Request.ResumeSeconds, Math.Max(0, s.Duration - 1)));
             }
         }
 
         tracker.Observe(s.Position, s.Playing, s.Seeking || seekPending, DateTimeOffset.UtcNow, Speed);
         seekPending = false;
-        if (s.Playing && Status == "Загрузка видео…")
+        if (s.Playing && (Status == "Загрузка видео…" || Status.StartsWith("Подготовка видео · ")))
             Status = "Приятного просмотра";
         if (s.Ended)
         {
@@ -335,9 +342,30 @@ public sealed partial class PlayerViewModel : ObservableObject
     [RelayCommand]
     private void Seek()
     {
-        if (Loading || closed) return;
-        Engine.Seek(SeekPosition);
-        seekPending = true;
+        TrySeek(SeekPosition);
+    }
+
+    private bool TrySeek(double seconds)
+    {
+        if (Loading || closed) return false;
+        var snapshot = Engine.Snapshot;
+        if (!snapshot.CanControl || snapshot.Duration <= 0 || !double.IsFinite(seconds))
+        {
+            Status = "Видео ещё загружается. Перемотка станет доступна после подготовки.";
+            return false;
+        }
+        try
+        {
+            Engine.Seek(Math.Clamp(seconds, 0, snapshot.Duration));
+            seekPending = true;
+            return true;
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException)
+        {
+            logger.LogWarning("Seek unavailable: {Type}", ex.GetType().Name);
+            Status = "Перемотка пока недоступна. Дождитесь загрузки видео и повторите.";
+            return false;
+        }
     }
 
     [RelayCommand]
@@ -345,16 +373,14 @@ public sealed partial class PlayerViewModel : ObservableObject
     {
         var snapshot = Engine.Snapshot;
         SeekPosition = snapshot.Duration > 0 ? Math.Min(snapshot.Duration, snapshot.Position + 90) : snapshot.Position + 90;
-        Seek();
-        Status = "Пропущено до 90 секунд · границы опенинга источник не сообщает";
+        if (TrySeek(SeekPosition))
+            Status = "Пропущено до 90 секунд · границы опенинга источник не сообщает";
     }
 
     [RelayCommand]
     private void Resume()
     {
-        Engine.Seek(Request.ResumeSeconds);
-        seekPending = true;
-        ShowResume = false;
+        if (TrySeek(Request.ResumeSeconds)) ShowResume = false;
     }
 
     [RelayCommand]
@@ -384,7 +410,9 @@ public sealed partial class PlayerViewModel : ObservableObject
             Engine.Pause();
             await Save();
             var e = Episodes[index];
-            var source = await DownloadLibrary.Resolve(repository, provider, Request.ReleaseId, e);
+            var source = provider is AnimeApp.Services.Torrents.TorrentProvider nextTorrent
+                ? await nextTorrent.GetNextPlayback(Request.ReleaseId, e)
+                : await DownloadLibrary.Resolve(repository, provider, Request.ReleaseId, e);
             if (closed)
                 return;
             if ((source.Kind == PlaybackKind.WebPage) != (Request.Source.Kind == PlaybackKind.WebPage))
@@ -441,6 +469,7 @@ public sealed partial class PlayerViewModel : ObservableObject
             // Native video controls must release their media-player reference before disposal.
             detachSurface?.Invoke();
             await Engine.DisposeAsync();
+            if (provider is AnimeApp.Services.Torrents.TorrentProvider torrent) await torrent.Stop(true);
         }
         finally
         {

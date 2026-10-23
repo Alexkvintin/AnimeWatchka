@@ -6,6 +6,16 @@ using Xunit;
 namespace AnimeApp.Tests;
 public class DownloadTests
 {
+    [Fact] public async Task OfflineSubtitleIsCopiedAndSurvivesRemovalOfOriginalCache() {
+        var root=Root();var subtitle=Path.Combine(root,"translation.ass");await File.WriteAllTextAsync(subtitle,"[Script Info]\nTitle: offline");
+        using var http=new HttpClient(new Handler((r,c)=>Task.FromResult(Response(Video))));
+        var saved=await new EpisodeDownloader(http).Download(new(PlaybackKind.DirectMedia,"https://media.test/e.mp4",SubtitleTracks:[new(subtitle)]),root,"Show","Auto",null,default);
+        File.Delete(subtitle);
+        var local=DownloadedEpisodeProvider.Source(saved.Directory);
+        Assert.Equal(PlaybackKind.LocalFile,local.Kind);
+        var track=Assert.Single(local.SubtitleTracks!);
+        Assert.True(File.Exists(track.Location));Assert.StartsWith(saved.Directory,track.Location);
+    }
     private sealed class Handler(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> respond) : HttpMessageHandler
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) => respond(request, cancellationToken);

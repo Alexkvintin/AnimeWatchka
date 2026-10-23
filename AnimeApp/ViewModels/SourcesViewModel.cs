@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using AnimeApp.Models;
@@ -18,6 +18,9 @@ public sealed partial class SourcesViewModel : ObservableObject
     private readonly ReleaseMatcher matcher = new();
     private CancellationTokenSource? loading;
     private bool selectingSaved;
+    private CancellationTokenSource? automaticSelection;
+    public long SelectionRevision { get; private set; }
+    public void BeginCard() { automaticSelection?.Cancel(); loading?.Cancel(); torrentCancellation?.Cancel(); SelectionRevision++; }
     public void CancelLoading() => loading?.Cancel();
     public async Task UseRelease(string providerId, ProviderRelease release, CancellationToken ct = default)
     {
@@ -48,7 +51,7 @@ public sealed partial class SourcesViewModel : ObservableObject
 
     private readonly ProviderRegistry registry;
     public string PreferredProviderId { get; set; } = "";
-    public string PreferredLanguage { get; set; } = "uk,ru,any";
+    public string PreferredLanguage { get; set; } = AnimeApp.Services.Playback.MediaLanguage.ProviderOrder;
 
     public void Register(IAnimeProvider provider)
     {
@@ -112,7 +115,7 @@ public sealed partial class SourcesViewModel : ObservableObject
     public void RefreshProviders()
     {
         EnabledProviders.Clear();
-        foreach (var p in Providers.Where(p => p.Enabled && !p.IsWeb).OrderBy(p => p.Priority).ThenBy(p => LanguageRank(p.Language)))
+        foreach (var p in Providers.Where(p => p.Enabled && !p.IsWeb).OrderBy(p => LanguageRank(p.Language)).ThenBy(p => p.Priority))
             EnabledProviders.Add(p);
         SelectedProvider = EnabledProviders.FirstOrDefault();
     }
@@ -126,22 +129,35 @@ public sealed partial class SourcesViewModel : ObservableObject
 
     partial void OnSelectedProviderChanged(ProviderViewModel? value)
     {
+        torrentCancellation?.Cancel();
+        OnPropertyChanged(nameof(IsTorrent));
         if (!selectingSaved && host.SelectedAnime is not null)
+        {
+            SelectionRevision++;
+            automaticSelection?.Cancel();
             _ = InitializeSafe();
+        }
     }
 
+    private long initializationVersion;
     private async Task InitializeSafe()
     {
+        var version = ++initializationVersion;
         try
         {
-            await InitializeForAnime();
+            var provider = SelectedProvider;
+            var task = InitializeForAnime();
+            if (await Task.WhenAny(task, Task.Delay(5000)) != task && SelectedProvider == provider && version == initializationVersion)
+                SourceMessage = "Источник отвечает дольше обычного. Поиск продолжается — карточку закрывать не нужно.";
+            await task;
         }
         catch (OperationCanceledException)
         {
-            SourceMessage = "Поиск отменён";
+            if (version == initializationVersion) SourceMessage = "Поиск отменён";
         }
         catch (Exception ex)
         {
+            if (version != initializationVersion) return;
             host.ReportError(ex);
             SourceMessage = ex.Message;
         }
@@ -163,11 +179,15 @@ public sealed partial class SourcesViewModel : ObservableObject
 
     public async Task SelectForAnime(CancellationToken ct = default)
     {
+        automaticSelection?.Cancel();
+        automaticSelection = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        ct = automaticSelection.Token;
         if (host.SelectedAnime is null)
             return;
-        foreach (var p in EnabledProviders)
+        foreach (var p in EnabledProviders.Where(p => p.Id != "torrent-subtitles"))
             if (await repository.Mapping(host.SelectedAnime.ShikimoriId, p.Id, ct)is not null)
             {
+                ct.ThrowIfCancellationRequested();
                 selectingSaved = true;
                 SelectedProvider = p;
                 selectingSaved = false;
@@ -197,7 +217,7 @@ public sealed partial class SourcesViewModel : ObservableObject
                 timeout.CancelAfter(TimeSpan.FromSeconds(20));
                 var candidates = await SuggestionsFor(p.Provider, anime, timeout.Token);
                 foreach (var candidate in candidates.Where(c => c == ReleaseMatcher.Unambiguous(candidates)))
-                    if ((await p.Provider.GetEpisodes(candidate.Release.Id, timeout.Token)).Any(e => e.Available))
+                    if ((await CachedEpisodes(p.Provider, candidate.Release.Id, timeout.Token)).Any(e => e.Available))
                     {
                         preferred = p;
                         break;
@@ -245,12 +265,19 @@ public sealed partial class SourcesViewModel : ObservableObject
         if (anime is null || provider is null)
             return;
         SourceQuery = anime.Title;
+        if (provider.Provider is AnimeApp.Services.Torrents.TorrentProvider torrentProvider)
+        {
+            SourceQuery = AnimeApp.Services.Torrents.TorrentProvider.SearchNames(anime).FirstOrDefault() ?? anime.Title;
+            await LoadTorrentSettings(ct);
+            await SearchTorrents();
+            return;
+        }
         SourceMessage = "Ищем сохранённый релиз…";
         var id = await repository.Mapping(anime.ShikimoriId, provider.Id, ct);
         if (id is not null)
         {
             IsLinked = true;
-            var release = await provider.Provider.GetRelease(id, ct);
+            var release = await CachedRelease(provider.Provider, id, ct);
             ct.ThrowIfCancellationRequested();
             SelectedRelease = release;
             Releases.Add(SelectedRelease);
@@ -261,7 +288,7 @@ public sealed partial class SourcesViewModel : ObservableObject
         }
         else
         {
-            SourceMessage = "Подбираем серии…";
+            SourceMessage = "Подбираем серии в выбранном источнике…";
             foreach (var s in await SuggestionsFor(provider.Provider, anime, ct))
             {
                 ct.ThrowIfCancellationRequested();
@@ -273,7 +300,7 @@ public sealed partial class SourcesViewModel : ObservableObject
             ShowCandidates = ReleaseMatcher.Unambiguous(Suggestions.ToArray()) is null;
             if (!ShowCandidates && SelectedSuggestion is { Score: >= 0.85 } best)
             {
-                var release = await provider.Provider.GetRelease(best.Release.Id, ct);
+                var release = await CachedRelease(provider.Provider, best.Release.Id, ct);
                 ct.ThrowIfCancellationRequested();
                 SelectedRelease = release;
                 await LoadEpisodesCore(ct);
@@ -312,7 +339,7 @@ public sealed partial class SourcesViewModel : ObservableObject
         }
 
         loading?.Cancel();
-        SelectedRelease = await provider.Provider.GetRelease(releaseId);
+        SelectedRelease = await CachedRelease(provider.Provider, releaseId);
         await LoadEpisodesCore();
         SelectedEpisode = Episodes.FirstOrDefault(e => e.Id == episodeId && e.Available);
         IsLinked = await repository.Mapping(host.SelectedAnime!.ShikimoriId, providerId) == releaseId;
@@ -380,12 +407,14 @@ public sealed partial class SourcesViewModel : ObservableObject
     public async Task LoadEpisodesCore(CancellationToken ct = default)
     {
         Episodes.Clear();
+        EpisodeTiles.Clear();
+        SelectedEpisode = null;
         if (SelectedProvider is null || SelectedRelease is null)
             return;
         var provider = SelectedProvider;
         var release = SelectedRelease;
         var anime = host.SelectedAnime;
-        var episodes = await provider.Provider.GetEpisodes(release.Id, ct);
+        var episodes = await CachedEpisodes(provider.Provider, release.Id, ct);
         var history = await repository.History(host.UserId, ct);
         ct.ThrowIfCancellationRequested();
         if (SelectedProvider != provider || SelectedRelease != release || host.SelectedAnime?.Identity != anime?.Identity)
@@ -394,6 +423,7 @@ public sealed partial class SourcesViewModel : ObservableObject
             Episodes.Add(e);
         var resume = history.FirstOrDefault(h => h.AnimeId == anime?.ShikimoriId && h.ProviderId == provider.Id && h.ReleaseId == release.Id && !h.Completed && h.Position > 0);
         SelectedEpisode = Episodes.FirstOrDefault(e => e.Id == resume?.EpisodeId) ?? Episodes.FirstOrDefault(e => e.Number > host.Watched) ?? Episodes.FirstOrDefault();
+        RefreshTiles(history);
         await RefreshDownloads();
         RefreshTiles(history);
     }
@@ -431,11 +461,18 @@ public sealed partial class SourcesViewModel : ObservableObject
         if (requestedRelease != SelectedRelease) return;
         if (host.SelectedAnime is null || SelectedProvider is null || SelectedRelease is null || SelectedEpisode is null)
             throw new InvalidOperationException("Выберите релиз и серию.");
-        if (host.SelectedAnime.ShikimoriId > 0 && !(await repository.Library(host.UserId)).Any(a => a.ShikimoriId == host.SelectedAnime.ShikimoriId))
-            await repository.Cache(host.UserId, [host.SelectedAnime]);
-        var source = await DownloadLibrary.Resolve(repository, SelectedProvider.Provider, SelectedRelease.Id, SelectedEpisode);
-        var last = (await repository.History(host.UserId)).FirstOrDefault(h => h.AnimeId == host.SelectedAnime.ShikimoriId && h.ProviderId == SelectedProvider.Id && h.ReleaseId == SelectedRelease.Id && h.EpisodeId == SelectedEpisode.Id && !h.Completed);
-        await playback.Start(new(host.UserId, host.SelectedAnime.ShikimoriId, host.SelectedAnime.Title, SelectedProvider.Id, SelectedRelease.Id, SelectedEpisode.Id, SelectedEpisode.Number, source, last?.Position ?? 0, host.SelectedAnime.ShikimoriId > 0 && SelectedEpisode.CountsTowardProgress));
+        var anime=host.SelectedAnime;
+        var provider=SelectedProvider;
+        var release=SelectedRelease;
+        var episode=SelectedEpisode;
+        bool Current() => host.SelectedAnime?.Identity==anime.Identity && SelectedProvider==provider && SelectedRelease==release && SelectedEpisode==episode;
+        if (anime.ShikimoriId > 0 && !(await repository.Library(host.UserId)).Any(a => a.ShikimoriId == anime.ShikimoriId))
+            await repository.Cache(host.UserId, [anime]);
+        var source = await DownloadLibrary.Resolve(repository, provider.Provider, release.Id, episode);
+        if(!Current()) return;
+        var last = (await repository.History(host.UserId)).FirstOrDefault(h => h.AnimeId == anime.ShikimoriId && h.ProviderId == provider.Id && h.ReleaseId == release.Id && h.EpisodeId == episode.Id && !h.Completed);
+        if(!Current()) return;
+        await playback.Start(new(host.UserId, anime.ShikimoriId, anime.Title, provider.Id, release.Id, episode.Id, episode.Number, source, last?.Position ?? 0, anime.ShikimoriId > 0 && episode.CountsTowardProgress));
         host.Message = "Просмотр открыт в AnimeApp";
         await host.Reload();
     });
