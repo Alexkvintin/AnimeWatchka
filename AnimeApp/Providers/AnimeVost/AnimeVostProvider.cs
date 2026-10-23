@@ -27,24 +27,39 @@ public sealed partial class AnimeVostProvider(HttpClient http, IAnimeVostParser 
     {
         try
         {
+            using var originalContent = content;
+            var body = content is null ? null : await content.ReadAsByteArrayAsync(ct);
+            for (var attempt = 0; ; attempt++)
+            {
             using var req = new HttpRequestMessage(content is null ? HttpMethod.Get : HttpMethod.Post, url)
             {
-                Content = content
+                Content = body is null ? null : new ByteArrayContent(body)
             };
+            if (content is not null)
+                foreach (var header in content.Headers) req.Content!.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            if (attempt > 0) req.Headers.CacheControl = new() { NoCache = true };
             using var r = await http.SendAsync(req, ct);
+            var text = await r.Content.ReadAsStringAsync(ct);
+            var databaseError = System.Text.RegularExpressions.Regex.IsMatch(text, @"<title>\s*MySQL Fatal Error\s*</title>",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase, TimeSpan.FromSeconds(1));
+            // Retry read-only catalog/player requests once; never cache an outage page.
+            if (attempt == 0 && (databaseError || r.StatusCode is HttpStatusCode.BadGateway or HttpStatusCode.ServiceUnavailable or HttpStatusCode.GatewayTimeout))
+            {
+                await Task.Delay(500, ct);
+                continue;
+            }
             if (r.StatusCode == HttpStatusCode.NotFound)
                 throw new ProviderException("Релиз или серия удалены. Смените релиз или удалите сохранённую связь.");
             if (!r.IsSuccessStatusCode)
                 throw new ProviderException($"AnimeVost сейчас недоступен (HTTP {(int)r.StatusCode}).");
-            var text = await r.Content.ReadAsStringAsync(ct);
             if (string.IsNullOrWhiteSpace(text))
                 throw new ProviderException("AnimeVost вернул пустой ответ. Попробуйте позже.");
             // The site can return its database error page with HTTP 200.
             // Do not treat that response as a release or an empty search result.
-            if (System.Text.RegularExpressions.Regex.IsMatch(text, @"<title>\s*MySQL Fatal Error\s*</title>",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase, TimeSpan.FromSeconds(1)))
+            if (databaseError)
                 throw new ProviderException("На стороне AnimeVost произошёл сбой базы данных. Сайт временно не отдаёт серии. Попробуйте позже или выберите другую озвучку.");
             return text;
+            }
         }
         catch (TaskCanceledException)when (!ct.IsCancellationRequested)
         {
@@ -138,6 +153,7 @@ public sealed partial class AnimeVostProvider(HttpClient http, IAnimeVostParser 
             if (variants.Count > 0)
             {
                 var expanded = await QualityNegotiation.ExpandHls(http, variants, ct);
+                expanded = await AvailableVariants(expanded, page, ct);
                 return new(PlaybackKind.DirectMedia, QualityNegotiation.Select(expanded, "Auto")!.Location, new Dictionary<string, string> { { "Referer", page.ToString() } }, expanded);
             }
 
@@ -148,5 +164,30 @@ public sealed partial class AnimeVostProvider(HttpClient http, IAnimeVostParser 
         }
 
         throw new ProviderException("Не удалось получить адрес видео: структура плеера изменилась.");
+    }
+
+    private async Task<IReadOnlyList<MediaVariant>> AvailableVariants(IReadOnlyList<MediaVariant> variants, Uri page, CancellationToken ct)
+    {
+        var remaining = variants.OrderByDescending(v => v.Height).ToList();
+        foreach (var variant in remaining.ToArray())
+        {
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            timeout.CancelAfter(TimeSpan.FromSeconds(3));
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, variant.Location);
+                request.Headers.Referrer = page;
+                request.Headers.Range = new(0, 1023);
+                using var response = await http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
+                // Older releases can advertise a removed HD file alongside a working SD file.
+                // Only discard explicitly missing files; transient failures must not hide quality choices.
+                if (response.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.Gone)
+                { remaining.Remove(variant); continue; }
+                return remaining;
+            }
+            catch (OperationCanceledException) when (!ct.IsCancellationRequested) { return remaining; }
+            catch (HttpRequestException) { return remaining; }
+        }
+        throw new ProviderException("Видео этой серии удалено с серверов AnimeVost во всех доступных качествах.");
     }
 }

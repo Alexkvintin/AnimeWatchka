@@ -45,7 +45,7 @@ public sealed partial class SettingsViewModel(MainViewModel host, LibraryReposit
     public bool IsConnected => host.UserId > 0;
     public string DataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AnimeApp");
     public string Version => "AnimeWatchka · " + typeof(SettingsViewModel).Assembly.GetName().Version!.ToString(3);
-    public string ReleaseNotes => "0.2.1\n• AnimeVost: ошибка базы данных сайта распознаётся корректно вместо сообщения об изменении структуры страницы.\n• Ошибочный ответ не сохраняется: после восстановления сайта загрузку можно повторить без перезапуска.";
+    public string ReleaseNotes => "0.2.1\n• AnimeVost автоматически повторяет запрос при временном сбое каталога или плеера.\n• Если видео в выбранном качестве удалено, автоматически выбирается доступное качество вместо чёрного экрана.";
 
     [RelayCommand]
     private Task ClearPosters() => host.Run(async () =>

@@ -24,7 +24,7 @@ CloseApplications=yes
 CloseApplicationsFilter=*.exe,*.dll
 SetupLogging=yes
 RestartApplications=no
-VersionInfoVersion=0.2.1.0
+VersionInfoVersion=0.2.1.1
 
 [Languages]
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"

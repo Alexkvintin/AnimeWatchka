@@ -23,12 +23,76 @@ public sealed class AnimeVostTests
     public async Task DatabaseFailureIsNotCachedAndRecoveryNeedsNoRestart()
     {
         var requests = 0;
-        var provider = new AnimeVostProvider(new(new Handler(_ => new(HttpStatusCode.OK) { Content = new StringContent(++requests == 1 ? DatabaseError : Fixture("movie")) })), new AnimeVostParser());
+        var provider = new AnimeVostProvider(new(new Handler(_ => new(HttpStatusCode.OK) { Content = new StringContent(++requests <= 2 ? DatabaseError : Fixture("movie")) })), new AnimeVostParser());
         await Assert.ThrowsAsync<ProviderException>(() => provider.GetEpisodes(Url));
+        Assert.Single(await provider.GetEpisodes(Url));
+        Assert.Equal(3, requests);
+    }
+    [Fact]
+    public async Task TransientDatabaseFailureRecoversAutomatically()
+    {
+        var requests = 0;
+        var provider = new AnimeVostProvider(new(new Handler(r => {
+            if (++requests == 1) return new(HttpStatusCode.OK) { Content = new StringContent(DatabaseError) };
+            Assert.True(r.Headers.CacheControl?.NoCache);
+            return new(HttpStatusCode.OK) { Content = new StringContent(Fixture("movie")) };
+        })), new AnimeVostParser());
         Assert.Single(await provider.GetEpisodes(Url));
         Assert.Equal(2, requests);
     }
     public static string Fixture(string name) => File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "AnimeVost", name + ".html"));
+    [Theory]
+    [InlineData(404)]
+    [InlineData(410)]
+    public async Task MissingHdAutomaticallyUsesExistingSd(int missingStatus)
+    {
+        var provider = new AnimeVostProvider(new(new Handler(r => {
+            if(r.RequestUri!.Host=="media.example") {
+                Assert.Equal("bytes=0-1023",r.Headers.Range!.ToString());
+                Assert.Equal("animevost.org",r.Headers.Referrer!.Host);
+                return new(r.RequestUri.AbsolutePath.Contains("/720/") ? (HttpStatusCode)missingStatus : HttpStatusCode.PartialContent);
+            }
+            return new(HttpStatusCode.OK) {Content=new StringContent(r.RequestUri.AbsolutePath=="/frame2.php" ? Fixture("media") : Fixture("movie"))};
+        })),new AnimeVostParser());
+        var source=await provider.GetPlayback(Url,Assert.Single(await provider.GetEpisodes(Url)));
+        Assert.Equal("480p",Assert.Single(source.Variants!).Quality);
+        Assert.DoesNotContain("/720/",source.Location);
+    }
+    [Fact]
+    public async Task MissingAllVideoFilesDoesNotOpenABlackPlayer()
+    {
+        var provider=new AnimeVostProvider(new(new Handler(r=>r.RequestUri!.Host=="media.example"
+            ? new(HttpStatusCode.NotFound)
+            : new(HttpStatusCode.OK) {Content=new StringContent(r.RequestUri.AbsolutePath=="/frame2.php" ? Fixture("media") : Fixture("movie"))})),new AnimeVostParser());
+        var episode=Assert.Single(await provider.GetEpisodes(Url));
+        Assert.Contains("во всех доступных качествах",(await Assert.ThrowsAsync<ProviderException>(()=>provider.GetPlayback(Url,episode))).Message);
+    }
+    [Fact]
+    public async Task SearchRetryPreservesQueryAndFormType()
+    {
+        var requests = 0;
+        var provider = new AnimeVostProvider(new(new Handler(r => {
+            Assert.Equal(HttpMethod.Post, r.Method);
+            Assert.Equal("application/x-www-form-urlencoded", r.Content!.Headers.ContentType!.MediaType);
+            Assert.Contains("story=Black+Lagoon", r.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+            return new(++requests == 1 ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.OK) { Content = new StringContent(Fixture("search")) };
+        })), new AnimeVostParser());
+        Assert.Equal(2, (await provider.Search("Black Lagoon")).Count);
+        Assert.Equal(2, requests);
+    }
+    [Fact]
+    public async Task PlayerFrameRecoversFromTemporaryGatewayFailure()
+    {
+        var frames = 0;
+        var provider = new AnimeVostProvider(new(new Handler(r => {
+            if(r.RequestUri!.AbsolutePath=="/frame2.php")
+                return new(++frames == 1 ? HttpStatusCode.BadGateway : HttpStatusCode.OK) { Content = new StringContent(Fixture("media")) };
+            return new(HttpStatusCode.OK) { Content = new StringContent(Fixture("movie")) };
+        })), new AnimeVostParser());
+        var episode = Assert.Single(await provider.GetEpisodes(Url));
+        Assert.Equal(PlaybackKind.DirectMedia, (await provider.GetPlayback(Url,episode)).Kind);
+        Assert.Equal(2,frames);
+    }
     [Fact]
     public void SearchFindsTwoSeasons()
     {
