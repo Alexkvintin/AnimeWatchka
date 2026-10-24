@@ -1,19 +1,108 @@
-Third-party video components
+Сторонние компоненты AnimeWatchka 0.2.1
+====================================
 
-libmpv-2.dll: shinchiro/mpv-winbuild-cmake, release 20261010,
-asset mpv-dev-x86_64-20261010-git-b2c255c13e.7z.
+Версии прямых зависимостей сверены с AnimeApp.csproj. Перечень ниже описывает
+основные компоненты, а не заменяет оригинальные тексты лицензий и уведомления
+их транзитивных и нативных зависимостей. Права на компоненты принадлежат их авторам.
+
+Видео и торренты
+---------------
+
+mpv / libmpv-2.dll
+Бинарная сборка: shinchiro/mpv-winbuild-cmake, release 20261010.
+Архив: mpv-dev-x86_64-20261010-git-b2c255c13e.7z.
 https://github.com/shinchiro/mpv-winbuild-cmake/releases/tag/20261010
-SHA256 (extracted DLL): 34780746A0273A4FCAE42DFE262A28984A426A238939474AFD3A1561B450BBEF
-mpv source revision: https://github.com/mpv-player/mpv/tree/b2c255c13e
-Build recipes/dependency sources: https://github.com/shinchiro/mpv-winbuild-cmake
-License: GNU GPL, included as mpv-GPL.txt. This development build is for local testing.
-Before distributing an installer, package corresponding sources/build instructions and
-all dependency license notices for the exact binary build; do not omit this requirement.
+SHA256 DLL: 34780746A0273A4FCAE42DFE262A28984A426A238939474AFD3A1561B450BBEF
+Исходная ревизия mpv: https://github.com/mpv-player/mpv/tree/b2c255c13e
+Рецепты сборки и зависимости: https://github.com/shinchiro/mpv-winbuild-cmake
+Условия mpv: https://github.com/mpv-player/mpv/blob/b2c255c13e/Copyright
+Текст GNU GPL включён в mpv-GPL.txt. Конкретная бинарная сборка также содержит
+зависимости с собственными условиями (в том числе FFmpeg и библиотеки субтитров).
+Ссылки выше идентифицируют сборку; этот перечень сам по себе не является полным
+комплектом соответствующих исходников. Для распространения бинарников требуется
+обеспечить соблюдение условий точной сборки, включая предоставление соответствующих
+исходников, рецептов сборки и уведомлений её зависимостей. В этом репозитории
+полный такой комплект не хранится.
 
-Anime4K shaders: bloc97/Anime4K v4.0.1 (release asset Anime4K_v4.0.zip).
+Anime4K v4.0.1
 https://github.com/bloc97/Anime4K/releases/tag/v4.0.1
-Mode B shader chain from the upstream Windows mpv high-end configuration.
-MIT license is in Shaders/LICENSE.txt. Shader copyright headers are preserved.
+Шейдеры Mode B из upstream-конфигурации Windows mpv high-end.
+MIT; текст находится в Assets/Shaders/LICENSE.txt (Shaders/LICENSE.txt в сборке).
+Авторские заголовки шейдеров сохранены.
 
-VLC / LibVLCSharp: NuGet VideoLAN.LibVLC.Windows 3.0.24 and LibVLCSharp 3.10.1.
-Existing VLC runtime and its upstream notices remain bundled.
+MonoTorrent 3.0.2
+https://github.com/alanmcgovern/monotorrent
+MIT; Copyright (C) 2006 Alan McGovern, Olivier Dufour.
+Полный текст: MonoTorrent.txt в этой папке.
+Используется для получения метаданных, приоритетной загрузки и потокового
+воспроизведения торрент-файлов через локальный HTTP-сервер.
+Лицензия: https://github.com/alanmcgovern/monotorrent/blob/master/LICENSE
+
+LibVLCSharp / LibVLCSharp.Avalonia 3.10.1
+VideoLAN.LibVLC.Windows 3.0.24
+NuGet указывает LGPL-2.1-or-later для этих пакетов.
+https://code.videolan.org/videolan/LibVLCSharp
+https://www.nuget.org/packages/VideoLAN.LibVLC.Windows/3.0.24
+LibVLC используется как резервный движок. У модулей и зависимостей VLC могут
+быть дополнительные условия; исходные уведомления поставляемого runtime
+не следует удалять. Исходники VLC: https://code.videolan.org/videolan/vlc
+
+Интерфейс, данные и интеграции
+----------------------------
+
+Avalonia.Desktop и Avalonia.Themes.Fluent 11.3.22 — MIT.
+https://github.com/AvaloniaUI/Avalonia
+
+CommunityToolkit.Mvvm 8.4.0 — MIT.
+https://github.com/CommunityToolkit/dotnet
+
+Microsoft.Data.Sqlite 10.0.0 — MIT.
+https://github.com/dotnet/efcore
+Microsoft.Extensions.DependencyInjection, Microsoft.Extensions.Logging.Console,
+System.Security.Cryptography.ProtectedData 10.0.0 — MIT.
+https://github.com/dotnet/runtime
+
+SQLitePCLRaw.bundle_e_sqlite3 3.0.5 — Apache-2.0.
+https://github.com/ericsink/SQLitePCL.raw
+У SQLite и поставляемых нативных пакетов собственные уведомления:
+https://www.sqlite.org/copyright.html
+
+Tmds.DBus.Protocol 0.21.3 — MIT.
+https://github.com/tmds/Tmds.DBus
+
+AngleSharp 1.8.3 — MIT.
+https://github.com/AngleSharp/AngleSharp
+
+Microsoft.Web.WebView2 1.0.4258.31 — условия Microsoft, файл LICENSE.txt
+в соответствующем NuGet-пакете; не относится к MIT-компонентам.
+https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.4258.31
+
+Точные транзитивные версии после восстановления пакетов перечислены в
+AnimeApp/obj/project.assets.json; лицензии доступны в соответствующих NuGet-пакетах.
+Этот генерируемый файл не включается в Git.
+
+Шрифты субтитров
+---------------
+
+Balsamiq Sans — Copyright 2011 The Balsamiq Sans Project Authors.
+SIL Open Font License 1.1; полный текст: BalsamiqSans-OFL.txt.
+https://github.com/balsamiq/balsamiqsans
+
+Stick — Copyright 2020 The Stick Project Authors.
+SIL Open Font License 1.1; полный текст: Stick-OFL.txt.
+https://github.com/fontworks-fonts/Stick
+
+Импортированные пользователем шрифты и изображения не входят в этот перечень.
+
+Внешние сервисы и источники
+--------------------------
+
+Shikimori, AnimeVost, AniLiberty, Mikai (Glass Moon / FanVoxUA), Nyaa,
+AnimeTosho, Anime365 и OpenSubtitles являются внешними сервисами, а не
+встроенными библиотеками. Их доступность и условия использования определяются
+соответствующими сервисами. Лицензии приложения не предоставляют прав на видео,
+субтитры, обложки и другие материалы этих сервисов.
+
+OpenSubtitles подключается с пользовательскими учётными данными и API-ключом.
+Совместимость с исполнением расширений Hayase не заявлена: удалённые скрипты
+Hayase не исполняются; пользовательские источники поиска используют формат данных.
