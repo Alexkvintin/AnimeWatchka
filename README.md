@@ -208,7 +208,8 @@ AnimeWatchka распространяется бесплатно. Исходны
 
 - [История изменений](CHANGELOG.md)
 - [Отзывы и сообщения об ошибках](CONTRIBUTING.md)
-- [Сторонние компоненты и лицензии](AnimeApp/Assets/Licenses/THIRD-PARTY.txt)
+- [Сторонние компоненты и лицензии](THIRD_PARTY_NOTICES.txt)
+- [Соответствующие исходники и замена библиотек](THIRD_PARTY_SOURCES.md)
 
 ## 💕 Спасибо за поддержку!
 

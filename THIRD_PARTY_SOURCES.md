@@ -1,0 +1,509 @@
+# Сторонние компоненты AnimeWatchka 0.6.0 Beta
+
+Уведомления из THIRD_PARTY_NOTICES.txt и полные тексты из папки Licenses поставляются с приложением.
+
+## Соответствующие исходники
+
+- [libmpv и FFmpeg](https://github.com/Alexkvintin/AnimeWatchka/releases/download/v0.6.0/AnimeWatchka-0.6.0-libmpv-corresponding-source.zip) — SHA-256 `8894a4ed80fe4cdc4fcb053a17861f88ce7910fef1a210c5ac8870bd52b73525`.
+- [LibVLC и включённые зависимости](https://github.com/Alexkvintin/AnimeWatchka/releases/download/v0.6.0/AnimeWatchka-0.6.0-LibVLC-corresponding-source.zip) — SHA-256 `a1c3169a6e7070ddf750067cd0f8655805f8aa9436ad90b9d54f9e322d8234fd`.
+
+В архивах указаны версии, контрольные суммы, применённые патчи и инструкции по сборке.
+
+## Замена мультимедийных библиотек
+
+1. Полностью закройте AnimeWatchka и сделайте копию DLL или папки мультимедийного движка.
+2. Для mpv замените `libmpv-2.dll` рядом с `AnimeApp.exe` на совместимую Windows x64 DLL с тем же API.
+3. Для VLC замените комплект `libvlc/win-x64`, включая DLL движка и согласованный набор модулей. В настройках плеера выберите совместимый режим.
+4. Запустите приложение. При необходимости восстановите резервную копию.
+
+Условия распространения AnimeWatchka сохраняют право заменять и модифицировать эти библиотеки, а также выполнять обратную разработку приложения в объёме, необходимом для отладки этих модификаций, согласно LGPL.
+
+## Использованные исходники и версии
+
+- [mpv d11ffba253def00b5172c4b8b47e6b2eb765cae1](https://github.com/mpv-player/mpv/tree/d11ffba253def00b5172c4b8b47e6b2eb765cae1).
+- [FFmpeg 9ced9e345c0408e190ebb18387fb7fbc2db69422](https://github.com/FFmpeg/FFmpeg/tree/9ced9e345c0408e190ebb18387fb7fbc2db69422).
+- [VLC 3.0.24](https://download.videolan.org/pub/videolan/vlc/3.0.24/vlc-3.0.24.tar.xz).
+
+### libmpv
+
+- [FFmpeg 9ced9e345c0408e190ebb18387fb7fbc2db69422](https://codeload.github.com/FFmpeg/FFmpeg/tar.gz/9ced9e345c0408e190ebb18387fb7fbc2db69422) — LGPL-3.0-or-later.
+- [GCC runtime 16.2.0](https://ftp.gnu.org/gnu/gcc/gcc-16.2.0/gcc-16.2.0.tar.xz) — GPL-3.0-or-later WITH GCC-exception-3.1.
+- [LuaJIT 96f7b297326e9fd454b7186c6858b2773f94a0dc](https://codeload.github.com/LuaJIT/LuaJIT/tar.gz/96f7b297326e9fd454b7186c6858b2773f94a0dc) — MIT.
+- [MinGW-w64 CRT and Windows imports v14.0.0](https://codeload.github.com/mingw-w64/mingw-w64/tar.gz/refs/tags/v14.0.0) — MinGW-w64 CRT upstream terms.
+- [aom aac27b8f291ed449fac576bcce0ad0ca189be851](https://aomedia.googlesource.com/aom/+archive/aac27b8f291ed449fac576bcce0ad0ca189be851.tar.gz) — BSD-2-Clause; upstream patent notices.
+- [brotli 3dce8720b74194027c7b4cf42dee5bd159786df5](https://codeload.github.com/google/brotli/tar.gz/3dce8720b74194027c7b4cf42dee5bd159786df5) — MIT.
+- [chromaprint 3b38c100022bdfb49be7797c4828a476f1621d55](https://codeload.github.com/acoustid/chromaprint/tar.gz/3b38c100022bdfb49be7797c4828a476f1621d55) — LGPL-2.1-or-later.
+- [dav1d 6c7bee685677fd997a431302be4fea8ea4017606](https://codeload.github.com/videolan/dav1d/tar.gz/6c7bee685677fd997a431302be4fea8ea4017606) — BSD-2-Clause; upstream patent notices.
+- [fontconfig bb21be622280981392c0335fc22202fbba46d247](https://gitlab.freedesktop.org/fontconfig/fontconfig/-/archive/bb21be622280981392c0335fc22202fbba46d247/fontconfig-bb21be622280981392c0335fc22202fbba46d247.tar.gz) — MIT.
+- [freetype dbb00e529e69a2be629a9ef98498e4f9b188aab1](https://codeload.github.com/freetype/freetype/tar.gz/dbb00e529e69a2be629a9ef98498e4f9b188aab1) — FTL (FreeType Project License option).
+- [fribidi 15393e4937aa95bcf865d92143735746aeb654fa](https://codeload.github.com/fribidi/fribidi/tar.gz/15393e4937aa95bcf865d92143735746aeb654fa) — LGPL-2.1-or-later.
+- [gme 8238afd9503a59ffcec0e2685584d5ce819ad7c6](https://codeload.github.com/libgme/game-music-emu/tar.gz/8238afd9503a59ffcec0e2685584d5ce819ad7c6) — LGPL-2.1-or-later (linked library objects).
+- [gmp f9095918ead819c0a2340232891b5acac24b8085](https://codeload.github.com/BtbN/gmplib/tar.gz/f9095918ead819c0a2340232891b5acac24b8085) — LGPL-3.0-or-later (LGPL option).
+- [harfbuzz 8f1a4e0634a35182e5dd04401edcf57acf5eb12e](https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/8f1a4e0634a35182e5dd04401edcf57acf5eb12e) — HarfBuzz Old MIT; upstream notices.
+- [highway 457c891775a7397bdb0376bb1031e6e027af1c48](https://codeload.github.com/google/highway/tar.gz/457c891775a7397bdb0376bb1031e6e027af1c48) — Apache-2.0 OR BSD-3-Clause.
+- [kvazaar ec7562da7f5971f9fa3f984db358371e74bf3c7d](https://codeload.github.com/ultravideo/kvazaar/tar.gz/ec7562da7f5971f9fa3f984db358371e74bf3c7d) — BSD-3-Clause.
+- [lame SVN r7153](https://svn.code.sf.net/p/lame/svn/!svn/rvr/7153/trunk/lame/) — LGPL-2.0-or-later.
+- [lcevcdec e295d8438ba554bc541fb269baa9cbd567b626a8](https://codeload.github.com/v-novaltd/LCEVCdec/tar.gz/e295d8438ba554bc541fb269baa9cbd567b626a8) — BSD-3-Clause-Clear.
+- [lcms2 ed288c301bd85eaabcb9e1ae0f73540c5f129e1e](https://codeload.github.com/mm2/Little-CMS/tar.gz/ed288c301bd85eaabcb9e1ae0f73540c5f129e1e) — MIT.
+- [libarchive dd64c2f9d2421bca6061ade4f7887245f27655ab](https://codeload.github.com/libarchive/libarchive/tar.gz/dd64c2f9d2421bca6061ade4f7887245f27655ab) — BSD-2-Clause; upstream file-level notices.
+- [libaribb24 5e9be272f96e00f15a2f3c5f8ba7e124862aec38](https://codeload.github.com/nkoriyama/aribb24/tar.gz/5e9be272f96e00f15a2f3c5f8ba7e124862aec38) — LGPL-3.0-or-later.
+- [libaribcaption d59c9d6403645dd7e8098b02b887a6723b15259b](https://codeload.github.com/xqq/libaribcaption/tar.gz/d59c9d6403645dd7e8098b02b887a6723b15259b) — MIT.
+- [libass 21b5a54fceff49c126c201d4b51c6445287a5072](https://codeload.github.com/libass/libass/tar.gz/21b5a54fceff49c126c201d4b51c6445287a5072) — ISC.
+- [libbluray 4613535451af402c6d72665e8cd88be1b29c9158](https://code.videolan.org/videolan/libbluray/-/archive/4613535451af402c6d72665e8cd88be1b29c9158/libbluray-4613535451af402c6d72665e8cd88be1b29c9158.tar.gz) — LGPL-2.1-or-later.
+- [libcurl d999cc6c6bb1f73ca60593355e522f97240317ad](https://codeload.github.com/curl/curl/tar.gz/d999cc6c6bb1f73ca60593355e522f97240317ad) — curl license.
+- [libiconv baaba39736e3b498e1597bf0e5e899b1f753fb01](https://git.savannah.gnu.org/git/libiconv.git) — LGPL library; upstream libcharset notices.
+- [libjxl a14f4e0ff32c07cbd19eae144c850e8bbfee2261](https://codeload.github.com/libjxl/libjxl/tar.gz/a14f4e0ff32c07cbd19eae144c850e8bbfee2261) — BSD-3-Clause; upstream patent grant.
+- [libogg 06a5e0262cdc28aa4ae6797627a783b5010440f0](https://codeload.github.com/xiph/ogg/tar.gz/06a5e0262cdc28aa4ae6797627a783b5010440f0) — BSD-3-Clause.
+- [libopus f1afc4222aff7c5456d27581ec618ae64158fbe1](https://codeload.github.com/xiph/opus/tar.gz/f1afc4222aff7c5456d27581ec618ae64158fbe1) — BSD-3-Clause; upstream patent notices.
+- [libplacebo e608e5b799b6515af2689fddbbed66ffae7b724c](https://codeload.github.com/haasn/libplacebo/tar.gz/e608e5b799b6515af2689fddbbed66ffae7b724c) — LGPL-2.1-or-later.
+- [libpng 5408ee7a2e56555cc4b0acc4051ae241fee38cf3](https://codeload.github.com/glennrp/libpng/tar.gz/5408ee7a2e56555cc4b0acc4051ae241fee38cf3) — libpng-2.0.
+- [libpsl 88331dae18f1824ab033f7e77880cf65814fc21a](https://codeload.github.com/rockdaboot/libpsl/tar.gz/88331dae18f1824ab033f7e77880cf65814fc21a) — MIT; chromium attribution retained.
+- [librist a911bee8904d88beb1ccd3349ff9a3de1cadc1a6](https://code.videolan.org/rist/librist.git) — BSD-2-Clause.
+- [libsamplerate 0844c208f683527c08ea8a80acc13b398aa9c8bf](https://codeload.github.com/libsndfile/libsamplerate/tar.gz/0844c208f683527c08ea8a80acc13b398aa9c8bf) — BSD-2-Clause.
+- [libsixel 72ed7d6b4a2252a6245567908c32c4e8e8c226ea](https://codeload.github.com/saitoha/libsixel/tar.gz/72ed7d6b4a2252a6245567908c32c4e8e8c226ea) — MIT; bundled code upstream terms.
+- [libssh 5138d46fd3b844d525b05938bf55a6d0d924c8d2](https://codeload.github.com/libssh/libssh-mirror/tar.gz/5138d46fd3b844d525b05938bf55a6d0d924c8d2) — LGPL-2.1-or-later.
+- [libtheora 28fd5ec77f0ad0e07a371cef1047828116f6bd8a](https://codeload.github.com/xiph/theora/tar.gz/28fd5ec77f0ad0e07a371cef1047828116f6bd8a) — BSD-3-Clause; upstream patent notices.
+- [libudfread b0bc6957e7e07d5f35391f210596d9eb71cffdd9](https://code.videolan.org/videolan/libudfread/-/archive/b0bc6957e7e07d5f35391f210596d9eb71cffdd9/libudfread-b0bc6957e7e07d5f35391f210596d9eb71cffdd9.tar.gz) — LGPL-2.1-or-later.
+- [libunibreak ff24f284a567a006c183b3507b6c650d6ec68b94](https://codeload.github.com/adah1972/libunibreak/tar.gz/ff24f284a567a006c183b3507b6c650d6ec68b94) — Zlib.
+- [libva f052e984e0c8bf10784198cc311b23c567b1367f](https://codeload.github.com/intel/libva/tar.gz/f052e984e0c8bf10784198cc311b23c567b1367f) — MIT.
+- [libvorbis 1b75110b5a2754ba1931d82dd83cb822b266a21d](https://codeload.github.com/xiph/vorbis/tar.gz/1b75110b5a2754ba1931d82dd83cb822b266a21d) — BSD-3-Clause.
+- [libvpx 7e000a41a7727d5b9477dbbe5727431560d6a16c](https://codeload.github.com/webmproject/libvpx/tar.gz/7e000a41a7727d5b9477dbbe5727431560d6a16c) — BSD-3-Clause; upstream patent notices.
+- [libwebp 67b8354c37d21f36d6d5cdd027ca0bcf94d3243d](https://codeload.github.com/webmproject/libwebp/tar.gz/67b8354c37d21f36d6d5cdd027ca0bcf94d3243d) — BSD-3-Clause; upstream patent notices.
+- [libxml2 21c8223ac091b81d5914c52eb20b1b063e29cb92](https://codeload.github.com/GNOME/libxml2/tar.gz/21c8223ac091b81d5914c52eb20b1b063e29cb92) — MIT.
+- [libzmq 46493370217ac135246617fa2f6ac819d8b61bfc](https://codeload.github.com/zeromq/libzmq/tar.gz/46493370217ac135246617fa2f6ac819d8b61bfc) — MPL-2.0.
+- [lilv 4b8f30055fa5cb4134a2eb45fc1555bc04289314](https://codeload.github.com/lv2/lilv/tar.gz/4b8f30055fa5cb4134a2eb45fc1555bc04289314) — ISC.
+- [mujs 1.3.8](https://codeload.github.com/ArtifexSoftware/mujs/tar.gz/refs/tags/1.3.8) — ISC.
+- [nghttp2 c785bf23f9d77966085ae1b32717f3e8c8d12090](https://codeload.github.com/nghttp2/nghttp2/tar.gz/c785bf23f9d77966085ae1b32717f3e8c8d12090) — MIT.
+- [nghttp3 e06a63ac6a0267149b480cd7fe04c8ea9a366d9e](https://codeload.github.com/ngtcp2/nghttp3/tar.gz/e06a63ac6a0267149b480cd7fe04c8ea9a366d9e) — MIT.
+- [ngtcp2 9595a0dda7990b95cc2ff728d2524d7db0a8b7f3](https://codeload.github.com/ngtcp2/ngtcp2/tar.gz/9595a0dda7990b95cc2ff728d2524d7db0a8b7f3) — MIT.
+- [onevpl 412c5cffe3022d5ebb8a955c3b30afe7bd2e3929](https://codeload.github.com/intel/libvpl/tar.gz/412c5cffe3022d5ebb8a955c3b30afe7bd2e3929) — MIT.
+- [openapv 3f0291391dbb1fbc27229b2543aad4ce778b0d72](https://codeload.github.com/AcademySoftwareFoundation/openapv/tar.gz/3f0291391dbb1fbc27229b2543aad4ce778b0d72) — BSD-3-Clause.
+- [opencl 82f60316cc142e7b21dc1d8983b26de18858fbd9](https://codeload.github.com/KhronosGroup/OpenCL-Headers/tar.gz/82f60316cc142e7b21dc1d8983b26de18858fbd9) — Apache-2.0.
+- [opencore-amr 7dba8c32238418ce0b316a852b2224df586ca896](https://git.code.sf.net/p/opencore-amr/code) — Apache-2.0; upstream notices.
+- [openh264 1bca62311e447fd9c39fc93de2c4b96cd5ce971c](https://codeload.github.com/cisco/openh264/tar.gz/1bca62311e447fd9c39fc93de2c4b96cd5ce971c) — BSD-2-Clause; upstream terms.
+- [openjpeg 8314119b067c0fc77834731168daaebd379fdb12](https://codeload.github.com/uclouvain/openjpeg/tar.gz/8314119b067c0fc77834731168daaebd379fdb12) — BSD-2-Clause.
+- [openmpt ad7ba02b3fd1212e65cca02c41476af4368491ce](https://codeload.github.com/OpenMPT/openmpt/tar.gz/ad7ba02b3fd1212e65cca02c41476af4368491ce) — BSD-3-Clause; upstream third-party notices.
+- [openssl openssl-3.6.5](https://codeload.github.com/openssl/openssl/tar.gz/openssl-3.6.5) — Apache-2.0.
+- [sdl fe30456e94e89ef2cab50172121bffb7f7f50830](https://codeload.github.com/libsdl-org/SDL/tar.gz/fe30456e94e89ef2cab50172121bffb7f7f50830) — Zlib.
+- [serd b621b0bc790d1e8102d3138ead16b974ddda8432](https://codeload.github.com/drobilla/serd/tar.gz/b621b0bc790d1e8102d3138ead16b974ddda8432) — ISC.
+- [shaderc 05814952134d09f8b54ae925afe578fc341cf6c1](https://codeload.github.com/google/shaderc/tar.gz/05814952134d09f8b54ae925afe578fc341cf6c1) — Apache-2.0; Glslang and SPIRV-Tools notices.
+- [snappy 946606459314e55d029c85f9a8c46f8809467f0f](https://codeload.github.com/google/snappy/tar.gz/946606459314e55d029c85f9a8c46f8809467f0f) — BSD-3-Clause.
+- [sord 4b5232bb91e7f2f1b84df384494d073fabbcd312](https://codeload.github.com/drobilla/sord/tar.gz/4b5232bb91e7f2f1b84df384494d073fabbcd312) — ISC.
+- [soxr 945b592b70470e29f917f4de89b4281fbbd540c0](https://codeload.github.com/chirlu/soxr/tar.gz/945b592b70470e29f917f4de89b4281fbbd540c0) — LGPL-2.1-or-later.
+- [spirv-cross 57e4efcc84112abcd426dc5ec248b5339bee04f2](https://codeload.github.com/KhronosGroup/SPIRV-Cross/tar.gz/57e4efcc84112abcd426dc5ec248b5339bee04f2) — Apache-2.0.
+- [srt 23af65f7dafb0f65b80312b859f80aeece557924](https://codeload.github.com/Haivision/srt/tar.gz/23af65f7dafb0f65b80312b859f80aeece557924) — MPL-2.0.
+- [subrandr 5a3e258128bb93cb88613f239e3058f46d5261e3](https://codeload.github.com/afishhh/subrandr/tar.gz/5a3e258128bb93cb88613f239e3058f46d5261e3) — MPL-2.0; Rust runtime and linked crate terms.
+- [svtav1 5fdf6b2f373bd96256bb6b45f892077b1b4431d9](https://codeload.github.com/AOMediaCodec/SVT-AV1/tar.gz/5fdf6b2f373bd96256bb6b45f892077b1b4431d9) — BSD-2-Clause-Patent.
+- [twolame 6fced852d4d5cfad58cf9dbe3ea619b08e87d398](https://codeload.github.com/njh/twolame/tar.gz/6fced852d4d5cfad58cf9dbe3ea619b08e87d398) — LGPL-2.1-or-later.
+- [uavs3d 0e20d2c291853f196c68922a264bcd8471d75b68](https://codeload.github.com/uavs3/uavs3d/tar.gz/0e20d2c291853f196c68922a264bcd8471d75b68) — BSD-3-Clause.
+- [uchardet 0.0.8](https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz) — MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later; LGPL option.
+- [vmaf cf677baaa039723876fff8c2677164f25102e684](https://codeload.github.com/Netflix/vmaf/tar.gz/cf677baaa039723876fff8c2677164f25102e684) — BSD-2-Clause-Patent.
+- [vulkan-loader 65b3936528cd92eb4ea3de485d03f858a3850484](https://codeload.github.com/BtbN/Vulkan-Shim-Loader/tar.gz/65b3936528cd92eb4ea3de485d03f858a3850484) — Apache-2.0.
+- [vvenc 7804c92e133983e5d81c88d0ae642201d73ee457](https://codeload.github.com/fraunhoferhhi/vvenc/tar.gz/7804c92e133983e5d81c88d0ae642201d73ee457) — BSD-3-Clause-Clear.
+- [xz f54febc540607b3bdee0a0e6793355df2a7e9f61](https://codeload.github.com/tukaani-project/xz/tar.gz/f54febc540607b3bdee0a0e6793355df2a7e9f61) — 0BSD and public domain liblzma; upstream notices.
+- [zimg 67e0603271c080e22c8429856dd4a8a56587e61e](https://codeload.github.com/sekrit-twc/zimg/tar.gz/67e0603271c080e22c8429856dd4a8a56587e61e) — WTFPL-2.0; public-domain portions.
+- [zix 17d632393f5addb6fa24dda2927b96515407cca7](https://codeload.github.com/drobilla/zix/tar.gz/17d632393f5addb6fa24dda2927b96515407cca7) — ISC.
+- [zlib 99623ef7097352da7993ba614161fd6a311e046e](https://codeload.github.com/madler/zlib/tar.gz/99623ef7097352da7993ba614161fd6a311e046e) — Zlib.
+- [zstd de6359d7ea2949afa1407ed2fc2423777ebf1e23](https://codeload.github.com/facebook/zstd/tar.gz/de6359d7ea2949afa1407ed2fc2423777ebf1e23) — BSD-3-Clause (BSD option).
+
+### LibVLC
+
+- [Broadcom CrystalHD headers v1](https://download.videolan.org/contrib/crystalhd/crystalhd_lgpl_includes_v1.zip) — LGPL-2.1-or-later (headers).
+- [GCC runtime 6.4.0](https://ftp.gnu.org/gnu/gcc/gcc-6.4.0/gcc-6.4.0.tar.xz) — GPL-3.0-or-later WITH GCC-exception-3.1.
+- [MinGW-w64 CRT 14.0.0](https://download.videolan.org/contrib/mingw64/mingw-w64-v14.0.0.tar.bz2) — MinGW-w64 CRT upstream terms.
+- [aom 3.15.0](https://storage.googleapis.com/aom-releases/libaom-3.15.0.tar.gz) — BSD-2-Clause; upstream patent notices.
+- [aribb24 1.0.3](https://download.videolan.org/contrib/aribb24/aribb24-1.0.3.tar.gz) — LGPL-3.0-or-later (corrected upstream notice).
+- [dav1d 1.5.4](https://download.videolan.org/pub/videolan/dav1d/1.5.4/dav1d-1.5.4.tar.xz) — BSD-2-Clause.
+- [ebml 1.4.6](https://download.videolan.org/contrib/ebml/libebml-1.4.6.tar.xz) — LGPL-2.1-or-later.
+- [ffmpeg 8.1.2](https://download.videolan.org/contrib/ffmpeg/ffmpeg-8.1.2.tar.xz) — LGPL-2.1-or-later; linked permissive source notices.
+- [flac 1.4.2](https://download.videolan.org/contrib/flac/flac-1.4.2.tar.xz) — BSD-3-Clause (libFLAC).
+- [fluidlite b0f187b404e393ee0a495b277154d55d7d03cbeb](https://codeload.github.com/divideconcept/FluidLite/tar.gz/b0f187b404e393ee0a495b277154d55d7d03cbeb) — LGPL-2.1-or-later.
+- [fontconfig 2.12.3](https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.12.3.tar.gz) — MIT.
+- [freetype 2.14.3](https://download.videolan.org/contrib/freetype2/freetype-2.14.3.tar.xz) — FTL (FreeType Project License option).
+- [fribidi 1.0.12](https://github.com/fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz) — LGPL-2.1-or-later.
+- [game-music-emu 0.6.5](https://github.com/libgme/game-music-emu/archive/refs/tags/0.6.5.tar.gz) — LGPL-2.1-or-later (linked library); emu2413 MIT.
+- [gcrypt 1.12.2](https://download.videolan.org/contrib/gcrypt/libgcrypt-1.12.2.tar.bz2) — LGPL-2.1-or-later; upstream notices.
+- [gettext 0.26](https://download.videolan.org/contrib/gettext/gettext-0.26.tar.xz) — LGPL-2.1-or-later; upstream notices.
+- [gmp 6.3.0](https://download.videolan.org/contrib/gmp/gmp-6.3.0.tar.xz) — LGPL-3.0-or-later (LGPL option).
+- [gnutls 3.8.13](https://download.videolan.org/contrib/gnutls/gnutls-3.8.13.tar.xz) — LGPL-2.1-or-later (library); upstream notices.
+- [gsm 1.0.23](https://download.videolan.org/contrib/gsm/libgsm_1.0.13.tar.gz) — TU Berlin permissive license.
+- [harfbuzz 14.2.1](https://github.com/harfbuzz/harfbuzz/releases/download/14.2.1/harfbuzz-14.2.1.tar.xz) — HarfBuzz Old MIT; upstream notices.
+- [iconv 1.17](https://download.videolan.org/contrib/iconv/libiconv-1.17.tar.gz) — LGPL-2.1-or-later; upstream notices.
+- [jpeg 10](https://download.videolan.org/contrib/jpeg/jpegsrc.v10.tar.gz) — Independent JPEG Group license.
+- [lame 3.100](https://download.videolan.org/contrib/lame/lame-3.100.tar.gz) — LGPL-2.0-or-later.
+- [libarchive 3.8.9](https://github.com/libarchive/libarchive/releases/download/v3.8.9/libarchive-3.8.9.tar.xz) — BSD-2-Clause; upstream file-level notices.
+- [libass 0.17.5](https://github.com/libass/libass/releases/download/0.17.5/libass-0.17.5.tar.xz) — ISC.
+- [libdvbpsi 1.3.3](https://download.videolan.org/contrib/dvbpsi/libdvbpsi-1.3.3.tar.bz2) — LGPL-2.1-or-later.
+- [libgpg-error 1.61](https://download.videolan.org/contrib/gpg-error/libgpg-error-1.61.tar.bz2) — LGPL-2.1-or-later; upstream notices.
+- [libkate 0.4.1](https://download.videolan.org/contrib/kate/libkate-0.4.1.tar.gz) — BSD-3-Clause.
+- [libmodplug 0.8.9.0](https://download.videolan.org/contrib/modplug/libmodplug-0.8.9.0.tar.gz) — Public domain.
+- [libogg 1.3.6](https://download.videolan.org/contrib/ogg/libogg-1.3.6.tar.xz) — BSD-3-Clause.
+- [libplacebo 0.2.1](https://download.videolan.org/contrib/libplacebo/libplacebo-0.2.1.tar.gz) — LGPL-2.1-or-later.
+- [libtheora 1.1.1](https://download.videolan.org/contrib/theora/libtheora-1.1.1.tar.xz) — BSD-3-Clause.
+- [libvorbis 1.3.7](https://download.videolan.org/contrib/vorbis/libvorbis-1.3.7.tar.xz) — BSD-3-Clause.
+- [libvpx 1.16.0](https://download.videolan.org/contrib/vpx/libvpx-1.16.0.tar.gz) — BSD-3-Clause with upstream patent terms.
+- [libxml2 2.15.3](https://download.videolan.org/contrib/libxml2/libxml2-2.15.3.tar.xz) — MIT.
+- [matroska 1.7.2](https://download.videolan.org/contrib/matroska/libmatroska-1.7.2.tar.xz) — LGPL-2.1-or-later.
+- [microdns 0.2.0](https://github.com/videolabs/libmicrodns/releases/download/0.2.0/microdns-0.2.0.tar.xz) — LGPL-2.1-or-later.
+- [mpg123 1.33.6](https://download.videolan.org/contrib/mpg123/mpg123-1.33.6.tar.bz2) — LGPL-2.1-or-later (library).
+- [mysofa 1.2.1](https://download.videolan.org/contrib/mysofa/libmysofa-1.2.1.tar.gz) — BSD-3-Clause.
+- [nettle 3.10.2](https://download.videolan.org/contrib/nettle/nettle-3.10.2.tar.gz) — LGPL-3.0-or-later (LGPL option).
+- [openjpeg 2.5.4](https://download.videolan.org/contrib/openjpeg/openjpeg-2.5.4.tar.gz) — BSD-2-Clause.
+- [opus 1.6.1](https://download.videolan.org/contrib/opus/opus-1.6.1.tar.gz) — BSD-3-Clause.
+- [png 1.6.58](https://download.videolan.org/contrib/png/libpng-1.6.58.tar.xz) — libpng-2.0.
+- [spatialaudio 0.3.0](https://download.videolan.org/contrib/spatialaudio/spatialaudio-0.3.0.tar.bz2) — LGPL-2.1-or-later.
+- [speex 1.2.1](https://download.videolan.org/contrib/speex/speex-1.2.1.tar.gz) — BSD-3-Clause.
+- [speexdsp 1.2.1](https://download.videolan.org/contrib/speexdsp/speexdsp-1.2.1.tar.gz) — BSD-3-Clause.
+- [ssh2 1.11.1](https://download.videolan.org/contrib/ssh2/libssh2-1.11.1.tar.xz) — BSD-3-Clause.
+- [taglib 1.13.1](https://download.videolan.org/contrib/taglib/taglib-1.13.1.tar.gz) — LGPL-2.1-or-later (dual license; LGPL option).
+- [twolame 0.4.0](https://download.videolan.org/contrib/twolame/twolame-0.4.0.tar.gz) — LGPL-2.1-or-later.
+- [vpl 2.13.0](https://download.videolan.org/contrib/vpl/libvpl-2.13.0.tar.gz) — MIT.
+- [zlib 1.3.2](https://download.videolan.org/contrib/zlib/zlib-1.3.2.tar.xz) — Zlib.
+
+### Выбранные файлы LibVLC
+
+- `libvlc/win-x64/hrtfs/dodeca_and_7channel_3dsl_hrtf.sofa` (SHA-256 `05ca927052cf83663b29546b06998b03ea7fbcd288f7c99e7af8b215ac77ec4e`)
+- `libvlc/win-x64/libvlc.dll` (SHA-256 `c0b1bedbc8e11267b39111733920a6af73d08791e333e4f8902eaffe4daf6db9`)
+- `libvlc/win-x64/libvlccore.dll` (SHA-256 `c089f281affe1e85c61edd5996c2b496191f82fa5cdc7ef709b0c09bf754cdbe`)
+- `libvlc/win-x64/plugins/access/libaccess_concat_plugin.dll` (SHA-256 `cf865553c4818f08d061a8078729412ad1bfbbc1d9e3849a812319b1f9bd0b07`)
+- `libvlc/win-x64/plugins/access/libaccess_imem_plugin.dll` (SHA-256 `9b7ee72fce0798870e6fff4bdb15ef1c290c28ac031a9ffaedd26e6a5bb27ad3`)
+- `libvlc/win-x64/plugins/access/libaccess_mms_plugin.dll` (SHA-256 `485a229ca4700ade774884b3b53a3441720e895f23eb692947f7f7971159ba84`)
+- `libvlc/win-x64/plugins/access/libaccess_wasapi_plugin.dll` (SHA-256 `9aae534511a1c8418f9f0a07f776912fb0ec69bb4d2de9ce8fd1172814d0627d`)
+- `libvlc/win-x64/plugins/access/libattachment_plugin.dll` (SHA-256 `a84c95cfc0231e52dc7ea6b5bd0813017f5abc71d67ea38cdc7b6ef1007a5b7a`)
+- `libvlc/win-x64/plugins/access/libfilesystem_plugin.dll` (SHA-256 `cd454978665b51c62cd553a02f09797cf0ec4f303d5afa1a040672f358ebc517`)
+- `libvlc/win-x64/plugins/access/libftp_plugin.dll` (SHA-256 `23936c3e4db91be3826a3a28fd212f8150eccfbc5a1b4206392829d55cb53789`)
+- `libvlc/win-x64/plugins/access/libhttp_plugin.dll` (SHA-256 `f8f5b7937e6040f3556f8ff50c1adc0124f450a2ca853bbc60914e824a0bce00`)
+- `libvlc/win-x64/plugins/access/libhttps_plugin.dll` (SHA-256 `75813801fa069121218c2f0eec4536c183930a2d0307accd1e28fa23c71da518`)
+- `libvlc/win-x64/plugins/access/libidummy_plugin.dll` (SHA-256 `87a5ffe3056cac0a12e51d66c682cadcbf6560f49c7e73fbd926aa6f31c0c4cb`)
+- `libvlc/win-x64/plugins/access/libimem_plugin.dll` (SHA-256 `aab9aaf551e5fd91766abd17fad948b20756db1d8bb99fcaa37bc2234b0b6fe0`)
+- `libvlc/win-x64/plugins/access/librtp_plugin.dll` (SHA-256 `c86087751e670d169f1795f7cbacde4b2a47204eaa2e3a387f03db80001d91ed`)
+- `libvlc/win-x64/plugins/access/libscreen_plugin.dll` (SHA-256 `785a91561dc76b718f97320f0f53055c79b4507fe8206670e10ee87e6c59bfe3`)
+- `libvlc/win-x64/plugins/access/libsdp_plugin.dll` (SHA-256 `8e5a0435cbb2f25dd98a3379f3470c83d8c785438c82d51bb892ffe49f1039f9`)
+- `libvlc/win-x64/plugins/access/libsftp_plugin.dll` (SHA-256 `aa7c480b845c3b5be72b88110a5bc5897bce67de16a5cc5532e07012098e7e47`)
+- `libvlc/win-x64/plugins/access/libshm_plugin.dll` (SHA-256 `e395b542ac33c88f611bab72ed7e7cfa3a11094a8585a8d745815744f3e17318`)
+- `libvlc/win-x64/plugins/access/libtcp_plugin.dll` (SHA-256 `078778a6b4a740106145262342e3119169f2f95ea35a672319b976281c19e350`)
+- `libvlc/win-x64/plugins/access/libtimecode_plugin.dll` (SHA-256 `49d66971a07d279738e291be684f9013c7a1a802f36a270cc6504a2326537586`)
+- `libvlc/win-x64/plugins/access/libvdr_plugin.dll` (SHA-256 `31c200b2329e69085f2871be1c1ad5e816d681a3dadc47bdb12f0b38580a44af`)
+- `libvlc/win-x64/plugins/access_output/libaccess_output_dummy_plugin.dll` (SHA-256 `bf35b440907dbc17315b8922e34c6fbba3ed138b97a8ac31a617152857beba8d`)
+- `libvlc/win-x64/plugins/access_output/libaccess_output_http_plugin.dll` (SHA-256 `0a53b4d79ade6e806f55397d05ac49e552a8d87d9e314f70ff2c4bf57592be88`)
+- `libvlc/win-x64/plugins/audio_filter/libaudio_format_plugin.dll` (SHA-256 `99a7d96950c8010d644997a2cb8f97081e43ac7471445ebbdf177f7d876437ce`)
+- `libvlc/win-x64/plugins/audio_filter/libaudiobargraph_a_plugin.dll` (SHA-256 `642a5b71195284b2ce7dcf3d023922c20de1a6609acb8a7bbb28caa0d2f0027b`)
+- `libvlc/win-x64/plugins/audio_filter/libchorus_flanger_plugin.dll` (SHA-256 `a49abcd9767832181a66fe2c7f3686b555c4c9fcd5c9b1e3ce8a43a9e6c393ba`)
+- `libvlc/win-x64/plugins/audio_filter/libcompressor_plugin.dll` (SHA-256 `2d9f946cf575b05af90e744f30fd6609ad160cea5dd92d171eadb4be1340fe21`)
+- `libvlc/win-x64/plugins/audio_filter/libequalizer_plugin.dll` (SHA-256 `a4ff9b0056c38d576d2ae395baae74e0522399b36778a7a8307e4001d1193505`)
+- `libvlc/win-x64/plugins/audio_filter/libgain_plugin.dll` (SHA-256 `d48608ddb0d2658ef8f7c3dfa62964ed1090b899402a5e1810dd1a67b90f3770`)
+- `libvlc/win-x64/plugins/audio_filter/libkaraoke_plugin.dll` (SHA-256 `4558a5bcdd838fa2bd07c5e698b590ac2136a7108c663aafff1099f923455177`)
+- `libvlc/win-x64/plugins/audio_filter/libnormvol_plugin.dll` (SHA-256 `9a043a00b66bc49e80cc48bc626f9155175081129a372609c94906a73e3ff816`)
+- `libvlc/win-x64/plugins/audio_filter/libparam_eq_plugin.dll` (SHA-256 `e3ea41e7293fac4b69557f082321535df7df65a4d955ae088cb6eb1668796411`)
+- `libvlc/win-x64/plugins/audio_filter/libremap_plugin.dll` (SHA-256 `5480e195ddb78c3866f19c7cb6dfcf96566b76692bab688f9df2d7bf939d3047`)
+- `libvlc/win-x64/plugins/audio_filter/libscaletempo_pitch_plugin.dll` (SHA-256 `e5c5a0057cdb9de890785d0d8e66cd0622071cbc198ea0b4b3235e0c2f81b6f3`)
+- `libvlc/win-x64/plugins/audio_filter/libscaletempo_plugin.dll` (SHA-256 `d42a45b0ed10d19c79c5e4234a5e2e42d82b3296b4ee62ec5bac2616f3dec27e`)
+- `libvlc/win-x64/plugins/audio_filter/libsimple_channel_mixer_plugin.dll` (SHA-256 `958db85989e7c5582713c0d1e409aeaf3c41098107dbe77f33afae0310b98ec3`)
+- `libvlc/win-x64/plugins/audio_filter/libspatialaudio_plugin.dll` (SHA-256 `6eb99a20a554e583b4d2675aebb5b1dd66584532f1d221cf003b34b17f156d32`)
+- `libvlc/win-x64/plugins/audio_filter/libspatializer_plugin.dll` (SHA-256 `1e658af7b72699b7bd7e16f52a8d217a17a330c70bc910035cf5e62943edbcaa`)
+- `libvlc/win-x64/plugins/audio_filter/libspeex_resampler_plugin.dll` (SHA-256 `f575d257a97d3d12c0c364dfb0b30592fa83cb48572649b13e8347f8ff672cc7`)
+- `libvlc/win-x64/plugins/audio_filter/libstereo_widen_plugin.dll` (SHA-256 `8686027f30c3b0917d9066e9268901cd0bc12a8afe8657ce3b98f7e94afc6d6a`)
+- `libvlc/win-x64/plugins/audio_filter/libtospdif_plugin.dll` (SHA-256 `48b90d7daee6e908bdbfa43b793a81ddfb3a75b84e9ade8fa802f2f1658e409d`)
+- `libvlc/win-x64/plugins/audio_filter/libtrivial_channel_mixer_plugin.dll` (SHA-256 `4d711cde2be59e0df220c0222b0a656e95c9655cee7861b7f727df8401d5af84`)
+- `libvlc/win-x64/plugins/audio_filter/libugly_resampler_plugin.dll` (SHA-256 `d4ef539c13027e41803d1113c75dffba997fcf54e8b9d681bebb5bd662fd9238`)
+- `libvlc/win-x64/plugins/audio_mixer/libfloat_mixer_plugin.dll` (SHA-256 `08ad9661ca494fcf411d7fa0d9ad0bbbe0d753bbd109ce9996d679e0d3ec28ea`)
+- `libvlc/win-x64/plugins/audio_mixer/libinteger_mixer_plugin.dll` (SHA-256 `c8e70f51042fac7e5754d7a9d9afe44dd4c291ec82321d9d5ba65ab4c59eea48`)
+- `libvlc/win-x64/plugins/audio_output/libadummy_plugin.dll` (SHA-256 `d225192cdcd4876f465114f965911a2645d1e325eda7e4cf98a50c0085a450e0`)
+- `libvlc/win-x64/plugins/audio_output/libafile_plugin.dll` (SHA-256 `5c20589f077c8e7b023477852df741cc7c5c478abc78fa58986b2742fb51a008`)
+- `libvlc/win-x64/plugins/audio_output/libamem_plugin.dll` (SHA-256 `fe78b17bf47230cdfca5e957645f1c1622a372ebe66916d2056d2a05f2a8cc37`)
+- `libvlc/win-x64/plugins/audio_output/libdirectsound_plugin.dll` (SHA-256 `40a99b3efbd5422159c39df55ad856e7442a754d69add8ddedc3db6b660e706a`)
+- `libvlc/win-x64/plugins/audio_output/libmmdevice_plugin.dll` (SHA-256 `1cc801b4eb4ad6eea3227ae668b76469a5e68d6681e39af7540753444522e9e6`)
+- `libvlc/win-x64/plugins/audio_output/libwasapi_plugin.dll` (SHA-256 `c971dda80399d72bf501f33d62919cd50576588849f9d9c05cbc1e5da74e0d53`)
+- `libvlc/win-x64/plugins/audio_output/libwaveout_plugin.dll` (SHA-256 `859e204a42ac99388420600d1a903c84db8b7abf752d428e712d0c0d2852e9b7`)
+- `libvlc/win-x64/plugins/codec/libadpcm_plugin.dll` (SHA-256 `0616e3fa1767108df4b491faa246a7cf56249261361d8c1f52b0fdc450801c12`)
+- `libvlc/win-x64/plugins/codec/libaes3_plugin.dll` (SHA-256 `cf94e8e15e21aea886a32a736972d9e0fcb5ec7db4fe9ecced9d872bae19dad1`)
+- `libvlc/win-x64/plugins/codec/libaom_plugin.dll` (SHA-256 `95e27171de07015616c3e8523c8448230b671c1453b1338305f0104b1c1e8924`)
+- `libvlc/win-x64/plugins/codec/libaraw_plugin.dll` (SHA-256 `f8b2d49941a808917b82e0596eecb3b6fdb44bb5709ff5439a1192c0f271ccff`)
+- `libvlc/win-x64/plugins/codec/libavcodec_plugin.dll` (SHA-256 `f8af2239f1a1fa99e2b808af852e87a72447c51134a96bfe4ef538629702744e`)
+- `libvlc/win-x64/plugins/codec/libcc_plugin.dll` (SHA-256 `5d3028c67674b0a4ba0b77553926d7a1e99121ef4e21205e5765734669fd91e0`)
+- `libvlc/win-x64/plugins/codec/libcdg_plugin.dll` (SHA-256 `859210eb7c99a616dce6d932b624c91048493913f0dd9246e8543aadd0a4a861`)
+- `libvlc/win-x64/plugins/codec/libcrystalhd_plugin.dll` (SHA-256 `6571172549fe6926ad28e79e0e5d3de7c314f807e29dc641ab5cb3553ac1e868`)
+- `libvlc/win-x64/plugins/codec/libcvdsub_plugin.dll` (SHA-256 `67d78e073260d0060cd286c2601edd5dde88ed7fb8177ff45189f08e7816231b`)
+- `libvlc/win-x64/plugins/codec/libd3d11va_plugin.dll` (SHA-256 `629e42ebdf0375d4d277f1a734194a1620cfd50d53b314d6060d4a08f267384d`)
+- `libvlc/win-x64/plugins/codec/libdav1d_plugin.dll` (SHA-256 `266af08936e941a0b6751228b51883370733902519fe79e4d730043a57feb8ed`)
+- `libvlc/win-x64/plugins/codec/libddummy_plugin.dll` (SHA-256 `7db27807179b5abe6663983e7788b7041aa2e6c01bddf0581f721cc2dbc87ffc`)
+- `libvlc/win-x64/plugins/codec/libdmo_plugin.dll` (SHA-256 `79d6debb594d5bd9fe53acf2c2fd45d1accd190037bccb2ffaffaa935b03890c`)
+- `libvlc/win-x64/plugins/codec/libdvbsub_plugin.dll` (SHA-256 `34ec81e26e412bc72fcefc148dbf29bc9305e7127fdfdada004c63a8409a6e0c`)
+- `libvlc/win-x64/plugins/codec/libdxva2_plugin.dll` (SHA-256 `c12fb91dd1bd95d74b5d831cbe41ec95ae74741304623d60b9557a9a2eb7e5b9`)
+- `libvlc/win-x64/plugins/codec/libedummy_plugin.dll` (SHA-256 `e92dadabb7337ccfe4ad43cfc19cb8b605d1b5557a90958a293c345529b25e77`)
+- `libvlc/win-x64/plugins/codec/libflac_plugin.dll` (SHA-256 `030a21172d077ac567a2ab983e717d2790a134c7a80201699e8bb160a960a1c8`)
+- `libvlc/win-x64/plugins/codec/libfluidsynth_plugin.dll` (SHA-256 `55902d29c08a4c364139d089bb56775fa5a855fa1b82f44bd51b6d9081d905c7`)
+- `libvlc/win-x64/plugins/codec/libg711_plugin.dll` (SHA-256 `830a0a0fde254c914aa3a3fed1695b0bad2fa19145a994018dd9e9328ec659ba`)
+- `libvlc/win-x64/plugins/codec/libjpeg_plugin.dll` (SHA-256 `e55e69f54263ea2639456128f36aeb677bc25c66aaa4df4108279976ea7193df`)
+- `libvlc/win-x64/plugins/codec/libkate_plugin.dll` (SHA-256 `e46e53de75d3375770e2694434d532662f2218b969ceea951e5f59f825d3695b`)
+- `libvlc/win-x64/plugins/codec/liblibass_plugin.dll` (SHA-256 `a9084ee17deee5d690d6ffdcac9f3c5ffcaf5ce54f8d87cfd988b9903469ae06`)
+- `libvlc/win-x64/plugins/codec/liblpcm_plugin.dll` (SHA-256 `f8c536f26007a801013fcf3360fac624d3cd1781de5047a75d870ec1284cbd46`)
+- `libvlc/win-x64/plugins/codec/libmft_plugin.dll` (SHA-256 `3a987e66faac4420dd4376c00bfa8ee35ef43ebe5adaaf42ffbd3352ca5640ec`)
+- `libvlc/win-x64/plugins/codec/libmpg123_plugin.dll` (SHA-256 `339370c848df5883a58b14294146dbd70646893d76d4db819a4983efd4a12a01`)
+- `libvlc/win-x64/plugins/codec/liboggspots_plugin.dll` (SHA-256 `6ac5c7f07465e1209906d25e7e1ba0ade198011e9644c7f47be38e3e68df258c`)
+- `libvlc/win-x64/plugins/codec/libopus_plugin.dll` (SHA-256 `88e936a71b814c390792e28b346d090b49cdf2a1dec1c5d632acd58566fc7815`)
+- `libvlc/win-x64/plugins/codec/libpng_plugin.dll` (SHA-256 `f03d7fcb57fe0470d3fdf944b025a221726cb2597276d12db0b1e8aeb4494bff`)
+- `libvlc/win-x64/plugins/codec/libqsv_plugin.dll` (SHA-256 `2875e59fac3fe886f92ac8ad5a71e2f15278371dd5ee9b013f74199c8c0018a9`)
+- `libvlc/win-x64/plugins/codec/librawvideo_plugin.dll` (SHA-256 `904d2b887a2098d4d7e0c13a895258e18b2a3f060c0a720c6f5c52db68f127aa`)
+- `libvlc/win-x64/plugins/codec/librtpvideo_plugin.dll` (SHA-256 `c1c0c1d25dd3742bbcecd1f26e2e571be1de21f19d1e0ea87400f79551aa6146`)
+- `libvlc/win-x64/plugins/codec/libscte18_plugin.dll` (SHA-256 `78dbc8778f1b2f8ce6b30e337218c4231fd1b9605b823883ab2ee35affe987ca`)
+- `libvlc/win-x64/plugins/codec/libscte27_plugin.dll` (SHA-256 `735512c10e42ef9e4fdd610c523f187ec60f44c128a143add087c13d05e46bc9`)
+- `libvlc/win-x64/plugins/codec/libspdif_plugin.dll` (SHA-256 `4b43b1da2eb29f5c7c33155376365351bc55bebaf36055fb80836964e7d758ed`)
+- `libvlc/win-x64/plugins/codec/libspeex_plugin.dll` (SHA-256 `d7db3d56bd0c68045021ac76acc52b14c71a1714c1552430f1a4939ba4d4449c`)
+- `libvlc/win-x64/plugins/codec/libspudec_plugin.dll` (SHA-256 `558c3bbe783c8e76a43a6b2a07ec9041cd6ab01dd80bc6f8dda505a06772d7b0`)
+- `libvlc/win-x64/plugins/codec/libstl_plugin.dll` (SHA-256 `acf23bc55680d569dcc5c4337c762590ceda57b9e7438c70888e487d222025a0`)
+- `libvlc/win-x64/plugins/codec/libsubsdec_plugin.dll` (SHA-256 `3f80cac0d9932903e2648d37808ea4e3a44e3ca0432320b2dee01205deb18d77`)
+- `libvlc/win-x64/plugins/codec/libsubstx3g_plugin.dll` (SHA-256 `743839636cc9c97960e7d21a37a91242ffc4e44c26b16ab5e8ab4066f6e3a123`)
+- `libvlc/win-x64/plugins/codec/libsubsusf_plugin.dll` (SHA-256 `ea00d41debf1c5ca39eff913e11d9159ec8486f0282fb2f93dfc13b0d37038fe`)
+- `libvlc/win-x64/plugins/codec/libsvcdsub_plugin.dll` (SHA-256 `2ce9ab8a700d7978a28d933b201817ec3f56797811e01ba266c48fa425bcb05a`)
+- `libvlc/win-x64/plugins/codec/libtextst_plugin.dll` (SHA-256 `3672da0c0017381b6cbdefbc04d411fe6da3c1acdfb04ca355a7f4e0059914b8`)
+- `libvlc/win-x64/plugins/codec/libtheora_plugin.dll` (SHA-256 `7e7a9a976ae579bc85449482bc58bfdc03ff41af5179ade3b9618cfb0dc0e56d`)
+- `libvlc/win-x64/plugins/codec/libttml_plugin.dll` (SHA-256 `698f18e12c91326e7e40c4204ce540d5cea7af5f4615191602142acd8e6409e1`)
+- `libvlc/win-x64/plugins/codec/libtwolame_plugin.dll` (SHA-256 `1068140fc07ec5fe93add543925bfe883d2e096c4c8e925d7ead1ee94c55fe20`)
+- `libvlc/win-x64/plugins/codec/libuleaddvaudio_plugin.dll` (SHA-256 `ac9e6039dbf9b0b871ad42a3f3744d6edbffeb5405797f994ca9ae5fe16d6703`)
+- `libvlc/win-x64/plugins/codec/libvorbis_plugin.dll` (SHA-256 `9cdb7009877fb48e7f9526cda7313c33fce550ee6edc1d47d0a99c9a92d1d86a`)
+- `libvlc/win-x64/plugins/codec/libvpx_plugin.dll` (SHA-256 `7bead55fe0eeffca2ca315ea6628f2c42d01cc895c6c0db2018c8a1a31c369a2`)
+- `libvlc/win-x64/plugins/codec/libwebvtt_plugin.dll` (SHA-256 `6a8d48c38e467f6dac0591d47484a225a371e043a9bfd17e069e1208fb08c384`)
+- `libvlc/win-x64/plugins/d3d11/libdirect3d11_filters_plugin.dll` (SHA-256 `572976c39d1fe2d549bdc258ee8903acccae44aa6af8a2cf686fd2328133259c`)
+- `libvlc/win-x64/plugins/d3d9/libdirect3d9_filters_plugin.dll` (SHA-256 `ea7b2abb3f545c0c087dce3ed3e2c425dff7a8f331b7ee7194381b9541a161ee`)
+- `libvlc/win-x64/plugins/demux/libadaptive_plugin.dll` (SHA-256 `6a65c719bff4c4043d6e46a2d456d1af5a3bd0a35d53e22a7ad4f5d70cf884ec`)
+- `libvlc/win-x64/plugins/demux/libaiff_plugin.dll` (SHA-256 `1bb9a824cf9da1571e6869346847b240795b8546323c2ed6edde6086b6c5c51c`)
+- `libvlc/win-x64/plugins/demux/libasf_plugin.dll` (SHA-256 `64f6b461d85a70bc73852521c099e4ffb85f92d68ac91eb052a79f0ad6dc9daa`)
+- `libvlc/win-x64/plugins/demux/libau_plugin.dll` (SHA-256 `9a456ec5521d1ba6be961276b2116549291c3c32b832d591574056052cf9c158`)
+- `libvlc/win-x64/plugins/demux/libavi_plugin.dll` (SHA-256 `9e9b2c29f2a890fe16df5299624a5ace69ba3039fbdaa148b8a0d022df9f8997`)
+- `libvlc/win-x64/plugins/demux/libcaf_plugin.dll` (SHA-256 `e316a4121217c7d44a3699e888c00f47b1b7171cd9340281d1011cb595cdc6df`)
+- `libvlc/win-x64/plugins/demux/libdemux_cdg_plugin.dll` (SHA-256 `253ea010e571ce9c20856a2e40010b04d24fb4e331e5e225facdb72c75981123`)
+- `libvlc/win-x64/plugins/demux/libdemux_chromecast_plugin.dll` (SHA-256 `09ba3ab2e28b7b576e35c0de813a5369e615e61e9ec4b23b0db8eec9f927da8a`)
+- `libvlc/win-x64/plugins/demux/libdemux_stl_plugin.dll` (SHA-256 `ddf2d8e7d69df3fbdcdf57136266cbe4fd4fba2dc17045c68e865f5f97d1d0d5`)
+- `libvlc/win-x64/plugins/demux/libdemuxdump_plugin.dll` (SHA-256 `9eb688a6ef8fd890c1197e1956bb053f09c0f7665fd351ea8e36fdf460b0539f`)
+- `libvlc/win-x64/plugins/demux/libdiracsys_plugin.dll` (SHA-256 `74006f1edec7e95c510c07c8c6b6fca387f612d00d2a55546861b4341e5d0773`)
+- `libvlc/win-x64/plugins/demux/libdirectory_demux_plugin.dll` (SHA-256 `64370a6a4e73cedc043b8e216b71f43a94932b1f7b17b7268ce5c982cbf17ae4`)
+- `libvlc/win-x64/plugins/demux/libdmxmus_plugin.dll` (SHA-256 `b17d9645d8dca360c45a7919958be0cd68e3b06ae88a66ec54e1347323376cdf`)
+- `libvlc/win-x64/plugins/demux/libes_plugin.dll` (SHA-256 `cc66f7049ce954b13a9a99bbdd304f6360c7e9d124242a6cb689affc74eba5a4`)
+- `libvlc/win-x64/plugins/demux/libflacsys_plugin.dll` (SHA-256 `71fc574c6da28dd3cdd1d347ad8a231e293544eda77d703e93e301ae7540019b`)
+- `libvlc/win-x64/plugins/demux/libgme_plugin.dll` (SHA-256 `71f43a9795586f88a55bbfbf729b565974aa90b892dae7638c1c667d87acdbe1`)
+- `libvlc/win-x64/plugins/demux/libh26x_plugin.dll` (SHA-256 `6c30076e404c1b653967825b0389be965618e0dd6ff7e37917e6cbabcd2ceea4`)
+- `libvlc/win-x64/plugins/demux/libimage_plugin.dll` (SHA-256 `171db26db80f9ae14cacb45baf50906f82d85a0c92dc8b443f89f275c6d3ebb1`)
+- `libvlc/win-x64/plugins/demux/libmjpeg_plugin.dll` (SHA-256 `9232106257e832ca1affad2ab0898b9ab66004095bae13ef7f3b7363e8cac314`)
+- `libvlc/win-x64/plugins/demux/libmkv_plugin.dll` (SHA-256 `7390827ad43711c205988147e83200febd3c3134c80b1d73a11aae32860447e4`)
+- `libvlc/win-x64/plugins/demux/libmod_plugin.dll` (SHA-256 `d3f04a20dd75cdb8eb4a38b3053fe25635dcaeddcf64e121886c7c59c4012cb6`)
+- `libvlc/win-x64/plugins/demux/libmp4_plugin.dll` (SHA-256 `33f66fed655d7ddf12141fad4c49f978bb1c947bda859f5954453187fad53e2a`)
+- `libvlc/win-x64/plugins/demux/libmpgv_plugin.dll` (SHA-256 `8211e7ac2f64ab1ceca742b4852b5c5a160fc1ef3341330264d45a727c95d276`)
+- `libvlc/win-x64/plugins/demux/libnoseek_plugin.dll` (SHA-256 `44b2797cacb051214bc228ecb4d89b3de6afda8925029b060e206343b8d5d477`)
+- `libvlc/win-x64/plugins/demux/libnsc_plugin.dll` (SHA-256 `b2152e5bb4b558eaadc2dc2b2ea6049e148a9e29019c9a55c4aeee01422ca817`)
+- `libvlc/win-x64/plugins/demux/libnsv_plugin.dll` (SHA-256 `52f05fe49d95b212dd0b5e453232bc244213c72b42197dbc8aa6ab96b8cd70f9`)
+- `libvlc/win-x64/plugins/demux/libnuv_plugin.dll` (SHA-256 `49f88983423a3e000da4349dfd53326ab1b27162b84fa2cc3fde5cd38ac92367`)
+- `libvlc/win-x64/plugins/demux/libogg_plugin.dll` (SHA-256 `f52039a2d079a393c2fb137832bd438d6bc49059dac80def9437477b52744a03`)
+- `libvlc/win-x64/plugins/demux/libplaylist_plugin.dll` (SHA-256 `785fc470d00937be411a25dff90af165e182b1d03a65019b19255c4cd1ef7739`)
+- `libvlc/win-x64/plugins/demux/libps_plugin.dll` (SHA-256 `5da9a49c3224e3df8127be121293b8701d317d77c1372b2161a238deeb640673`)
+- `libvlc/win-x64/plugins/demux/libpva_plugin.dll` (SHA-256 `ced615eebfdaeb0b6ed84edb1477dba1610d91f640a599731922d05eef196104`)
+- `libvlc/win-x64/plugins/demux/librawaud_plugin.dll` (SHA-256 `c6068e3268d3cd450e854022f1c033e105b9dd6ce2fd6772d8db6868fbb188cc`)
+- `libvlc/win-x64/plugins/demux/librawdv_plugin.dll` (SHA-256 `84673c14784923eed41987a5e379d7375dc661e875540848d23e50fc16558db5`)
+- `libvlc/win-x64/plugins/demux/librawvid_plugin.dll` (SHA-256 `815285b974e0cd6d6f0826fe8091e0c6b6007ff4338b8ca9239b504af2b8b5a7`)
+- `libvlc/win-x64/plugins/demux/libsmf_plugin.dll` (SHA-256 `95ed5836d12bbd9e9b5521a2b24350a7a600740887c36b2429398a29eeb182b4`)
+- `libvlc/win-x64/plugins/demux/libsubtitle_plugin.dll` (SHA-256 `d0431549e8ea8b62ba2fa3149c998d8965e7586d7747ac5827f7172fca6f7c99`)
+- `libvlc/win-x64/plugins/demux/libts_plugin.dll` (SHA-256 `4f4d41d69431e63474ed80f3a4d5d31ff168467444629b2a2a17bda572d3710e`)
+- `libvlc/win-x64/plugins/demux/libtta_plugin.dll` (SHA-256 `a57ecdd330d65d71b0a8d36ef2960c5cfd3f6d826dff1783f7c55998c8339668`)
+- `libvlc/win-x64/plugins/demux/libty_plugin.dll` (SHA-256 `66677f4c76cb19da95263fdfd1affbe09d1be4f8549c2fb54a6347102849a39e`)
+- `libvlc/win-x64/plugins/demux/libvc1_plugin.dll` (SHA-256 `54925f69b7824c6a3356dd8a6c1d934e59b042b97f497e67992d6a0389ffba4f`)
+- `libvlc/win-x64/plugins/demux/libvobsub_plugin.dll` (SHA-256 `2250913f45d646e52b29760113709d3e46de2edc8086ed64f852580477839f9d`)
+- `libvlc/win-x64/plugins/demux/libvoc_plugin.dll` (SHA-256 `098476f2fdd0b9cc7d22c1cf1f63c7bb708fa5f52689cb6964cba05bbb87dafa`)
+- `libvlc/win-x64/plugins/demux/libwav_plugin.dll` (SHA-256 `95b0ae30c5755c94b5fd4bf41771d4702c42409ce04a4125a45fe7fc1d7cbcf2`)
+- `libvlc/win-x64/plugins/demux/libxa_plugin.dll` (SHA-256 `21b084ce186d80c0c755b778a7831eded410f02191845355c821aac44cc1984f`)
+- `libvlc/win-x64/plugins/keystore/libfile_keystore_plugin.dll` (SHA-256 `8a749ea325973fd023ca78743ad7fb22f7038e74d685bbc54e1cdec04c6e459e`)
+- `libvlc/win-x64/plugins/keystore/libmemory_keystore_plugin.dll` (SHA-256 `5cdaf69697a80b0040c038bc9892072090126dc61cef4ea2221f5dd5f23e6412`)
+- `libvlc/win-x64/plugins/logger/libconsole_logger_plugin.dll` (SHA-256 `9bf85338544779ca64a2644d9a2b33a20591910cda63d9583b13b296394028f6`)
+- `libvlc/win-x64/plugins/meta_engine/libfolder_plugin.dll` (SHA-256 `c6a95d5937e8193a635fba20d8edd2ee88db6698eaedc446905d358bcce68e0d`)
+- `libvlc/win-x64/plugins/meta_engine/libtaglib_plugin.dll` (SHA-256 `d3cb92107999bc0a8fc0a0e2110340daf7b095f96d05c0ddb1b63f60aa9e095d`)
+- `libvlc/win-x64/plugins/misc/libaddonsfsstorage_plugin.dll` (SHA-256 `59a9c71efacc642aa7da1873650e85ac19f2fc90b85a8ad10e8d1a132bc9e358`)
+- `libvlc/win-x64/plugins/misc/libaddonsvorepository_plugin.dll` (SHA-256 `d0b0a3db467ca87c068b0e51ffe1a846380460d2efc5398fd3641c7cfc4bce6f`)
+- `libvlc/win-x64/plugins/misc/libgnutls_plugin.dll` (SHA-256 `ca036112af8888dff5718fae6de9924ce7c5e422c42c5c627a5e1dfff42c8fd0`)
+- `libvlc/win-x64/plugins/misc/libxml_plugin.dll` (SHA-256 `508570919ecd95d5132e8aead68c1ec89c426373a2e4254838def15bb670c3b1`)
+- `libvlc/win-x64/plugins/mux/libmux_asf_plugin.dll` (SHA-256 `dfd390831c6d028768be1e1e714911876faae377ade5072f7709d9145442625c`)
+- `libvlc/win-x64/plugins/mux/libmux_avi_plugin.dll` (SHA-256 `fc402e0761c8415a38388920a793d354eb05b9aeafc8462a8f03133beef85092`)
+- `libvlc/win-x64/plugins/mux/libmux_dummy_plugin.dll` (SHA-256 `79c708418ccee4abf1a0f11b06fa444f9eecaf088d52740486a7f5e23b3043f2`)
+- `libvlc/win-x64/plugins/mux/libmux_mp4_plugin.dll` (SHA-256 `0e7fc96f7884668c1335f4879e11d37627b68f869e2654ec77eb9076492eda1a`)
+- `libvlc/win-x64/plugins/mux/libmux_mpjpeg_plugin.dll` (SHA-256 `d6dcfd3fa46cff7e250220e2e026210804b4d85cffadff1e254643d8861cebf9`)
+- `libvlc/win-x64/plugins/mux/libmux_ogg_plugin.dll` (SHA-256 `f4579cd05163020aa6d1eff24f1409d503120437fde36d1e980a422731116f3d`)
+- `libvlc/win-x64/plugins/mux/libmux_ps_plugin.dll` (SHA-256 `acc46790b4819c571297119a8f28cfe4afb9f7d4e753980e71827ab43c0875be`)
+- `libvlc/win-x64/plugins/mux/libmux_ts_plugin.dll` (SHA-256 `404f42b1cbaa66ea8dbd0b50657537380505a38c3e82f7d987009bc36a8a1a4e`)
+- `libvlc/win-x64/plugins/mux/libmux_wav_plugin.dll` (SHA-256 `b7bf751bc9324ff4a0262540edfce47d61b904b2c7c8a3d7ba29816e79c4463d`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_av1_plugin.dll` (SHA-256 `5e60f3993839fcf1d6bea7628c005d13b5041dc449b412447f9061929fbfe93b`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_copy_plugin.dll` (SHA-256 `af3028b8240a9033b1fe56ec28901da52a7c6930e7e5485ce9be4c42222ca406`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_dirac_plugin.dll` (SHA-256 `8c1357b78caac8254212c36fdb51734624e31b209584fe4dea2a122a8345a05e`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_dts_plugin.dll` (SHA-256 `a67bb4f96657285b2c76e34a5706056682ed809c19177442d5b5abff804ca064`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_flac_plugin.dll` (SHA-256 `5e504f42c1ff4cb8323e29518cb5c35aff3abaf6ab74db8a71f6e8654a4aa26e`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_h264_plugin.dll` (SHA-256 `4356b2f7a609f897f2939f382aed97b2e019fb169224565e82f22e6ba17d48ec`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_hevc_plugin.dll` (SHA-256 `8eb06940f66cf38a505a6ba398676f453e8f110620b6141fda889146538587d0`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_mlp_plugin.dll` (SHA-256 `efb0d00ff0a81ff70f6a5be5dd2c8e6f56a94b420a74b9bc3fea422e76d12fa9`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_mpeg4audio_plugin.dll` (SHA-256 `198c3eb393b6377c481855047f5599eb6db5248f679121cfbe753d9a9f735a55`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_mpeg4video_plugin.dll` (SHA-256 `2a03d96df0e3d412dc65fd1eb03a9ed03b1ebfd19a81260caa481c387d24fadf`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_mpegaudio_plugin.dll` (SHA-256 `780f243d32cad7ba5ab7b975b529ae7afe6c9f68edbcae912f583373d28431ff`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_mpegvideo_plugin.dll` (SHA-256 `575df2d9dcfab08ee00102030b7c94cd73f13e2ce7c8c16f79de82a5e72cf677`)
+- `libvlc/win-x64/plugins/packetizer/libpacketizer_vc1_plugin.dll` (SHA-256 `65005f60eaf5f1ee03d5c45242c5b554da88486a38425fbeeb3ce89760412bd0`)
+- `libvlc/win-x64/plugins/services_discovery/libmicrodns_plugin.dll` (SHA-256 `25e869e2e4a3d1e1d38239023fb06293dc1e194addbddc358c7e7f86ea95a1af`)
+- `libvlc/win-x64/plugins/services_discovery/libwindrive_plugin.dll` (SHA-256 `87690e128a3af3e12d0cb12f471d2e5e3af1a87c29372a18afb54a2e01e0fb25`)
+- `libvlc/win-x64/plugins/spu/libaudiobargraph_v_plugin.dll` (SHA-256 `8bbd55d59ec803efc973f89dfea4c99f24ca2f74992dc9f2fbe0354369372f8c`)
+- `libvlc/win-x64/plugins/spu/liblogo_plugin.dll` (SHA-256 `aceb73ae3a8f2c2152139aa0727c1b0ef32d3476490e088ce117ddf2d7f96405`)
+- `libvlc/win-x64/plugins/spu/libmarq_plugin.dll` (SHA-256 `1353325c74891acd17e85c7cc3f5557c074f3c95e010e07d8d46333683b74c46`)
+- `libvlc/win-x64/plugins/spu/libmosaic_plugin.dll` (SHA-256 `83ffbd2621b1a9e60b84ff31eab3719c0331d98063176e674a5ac6b865611581`)
+- `libvlc/win-x64/plugins/spu/librss_plugin.dll` (SHA-256 `600aa71acc46d08e38dea32044f6fa8dedfe9fa1f0dfda256386a9ac22953b0e`)
+- `libvlc/win-x64/plugins/spu/libsubsdelay_plugin.dll` (SHA-256 `79c6a541c2b39ad8d79ae535b3d125e93bfcb71568a9320a072603df86fb7903`)
+- `libvlc/win-x64/plugins/stream_extractor/libarchive_plugin.dll` (SHA-256 `7c70a23aa3832a140a0ab9c97c16f6671427e1fd35960a1cd050bfed875afe07`)
+- `libvlc/win-x64/plugins/stream_filter/libadf_plugin.dll` (SHA-256 `165a5734478385c3f31bbcd99622b30f98229a42341605e3b69c41b44d859bc1`)
+- `libvlc/win-x64/plugins/stream_filter/libcache_block_plugin.dll` (SHA-256 `15b554df97b50e24d70361fb792a3739403114cfaca2fcbd1fd9c09dd3f7ce2a`)
+- `libvlc/win-x64/plugins/stream_filter/libcache_read_plugin.dll` (SHA-256 `927fd970b5b52cb68730edb8f247c5601f6eb29a5b220d7dfcbf23773bb0b2ec`)
+- `libvlc/win-x64/plugins/stream_filter/libhds_plugin.dll` (SHA-256 `b5865f4a26a8fb186cefc49bbe9d22cf6953fc0679d0d41b83f0b43b8f018dd0`)
+- `libvlc/win-x64/plugins/stream_filter/libinflate_plugin.dll` (SHA-256 `aa9703569520cdbc9ac62817cd0a1153e07cbba1762b0f5196b1d21ba5cde0c1`)
+- `libvlc/win-x64/plugins/stream_filter/libprefetch_plugin.dll` (SHA-256 `fc3295355a649e77b5a638c6d0e5f8f4406a1fab725a007567d2b7c07d9fadde`)
+- `libvlc/win-x64/plugins/stream_filter/librecord_plugin.dll` (SHA-256 `dba11a3103b3a9ba16e9c8e76ffcb4e8a5250e3fcbc3986182e4f1da6424226d`)
+- `libvlc/win-x64/plugins/stream_filter/libskiptags_plugin.dll` (SHA-256 `e912f1faf2db86459448cebd9f0670eca628384a88e4c02e916d5349bd19052c`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_autodel_plugin.dll` (SHA-256 `84299220d7ab098dfe3e526e51bf399dad53bd4d019191ea30928c8c448bf610`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_bridge_plugin.dll` (SHA-256 `784d5e06cf56a637fa90e27cd2de808e5c291f3e91b875a24d3f70cb8ada8483`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_delay_plugin.dll` (SHA-256 `1691fe89e1428a258b820c3c074af93b1d7c562083c63b8fea385518239a20e3`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_description_plugin.dll` (SHA-256 `2c04a71d4bf050542324f9885083cb5245c70b3425cbf46693d13c6a6e131858`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_display_plugin.dll` (SHA-256 `10593c23639a49793406178b1da078591406f3e334434e7627cbfefd0898fe00`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_dummy_plugin.dll` (SHA-256 `7ea7c1503a0daf896ba4a9c8c7d7d6b42b835d8eacad0c67b31c9f27281e6a5a`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_duplicate_plugin.dll` (SHA-256 `a9049b2fad376bd126f4a86a17e1d6fdb62d66d9c77516845862934a2c118161`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_es_plugin.dll` (SHA-256 `6c2f1e1f950149f88b9c79ec8683324fef46bb9fa75e56ffda1057eda14536ef`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_gather_plugin.dll` (SHA-256 `044265162c59af8a7329d843388ff8250640c116e848c5357a74f1276c757d68`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_mosaic_bridge_plugin.dll` (SHA-256 `731578c4ed9fa44e5b1f4c7f1570e6536a23d430f38734575e9fe31386d1ae07`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_record_plugin.dll` (SHA-256 `a4a47b3d0eda07f7d555ac999966e0ce35a203dde93195e09bd2ad604a1412a6`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_setid_plugin.dll` (SHA-256 `f5884a494554b53e30923e34251739ae14b0a0cbeb4487c29fb120f7861556c6`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_smem_plugin.dll` (SHA-256 `0ece3e1eebde17d122e0be93e2cfe4bef731fdbe7d80728bc00fb914a2ed0ea4`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_standard_plugin.dll` (SHA-256 `f64f6373a8b86572ac701fe1c913149db8ac397f8952f4f0046820b6d7cec915`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_stats_plugin.dll` (SHA-256 `43f5ca111793f31c933318b49e123cd2f30cd379a8a9b24cc306f96bb537fd0c`)
+- `libvlc/win-x64/plugins/stream_out/libstream_out_transcode_plugin.dll` (SHA-256 `9e13a8df426b6f0cf82ff6ad815e7649a9633bd6d47eef62c806d998ac3e28e2`)
+- `libvlc/win-x64/plugins/text_renderer/libfreetype_plugin.dll` (SHA-256 `009bc74b6af84ab3a036fa820913f4098ad0bd5519b521a989350dc7434bc69d`)
+- `libvlc/win-x64/plugins/text_renderer/libtdummy_plugin.dll` (SHA-256 `517540e5919b15bac6e1adb42db0b79a95f1cd79103fff203f4952bbe04c8444`)
+- `libvlc/win-x64/plugins/video_chroma/libchain_plugin.dll` (SHA-256 `c73fcf2b70d09a6b909ae586c04d1b05290df47b30789fc12b001d34f1bf6d97`)
+- `libvlc/win-x64/plugins/video_chroma/libgrey_yuv_plugin.dll` (SHA-256 `ef61c1c88b97bbe9772a68cd4783088007afa31dc7ebcfebd4e40fd8194b7cb4`)
+- `libvlc/win-x64/plugins/video_chroma/libi420_10_p010_plugin.dll` (SHA-256 `dd97817368bafecc03c758e7ec07167deeb1596a1e8a63c7d227dc8da9032e85`)
+- `libvlc/win-x64/plugins/video_chroma/libi420_nv12_plugin.dll` (SHA-256 `9901eb4aaa0ea000a264f8972244c5bce814c24a4159d6ebdd6193ee6afaeb85`)
+- `libvlc/win-x64/plugins/video_chroma/libi420_rgb_mmx_plugin.dll` (SHA-256 `6918dee6f0a7f2530d321b29941480375cc8e1b5453613ddd7917440b4cbeba3`)
+- `libvlc/win-x64/plugins/video_chroma/libi420_rgb_plugin.dll` (SHA-256 `92ed62976867829fa439e10d7637ce428e057143cf35ab798ba7581e05fb6fa8`)
+- `libvlc/win-x64/plugins/video_chroma/libi420_rgb_sse2_plugin.dll` (SHA-256 `0819eb9f5a1f7cef675f5aa5437990fe7b716c1200860e69d2f5a37a20f7f5a8`)
+- `libvlc/win-x64/plugins/video_chroma/libi420_yuy2_mmx_plugin.dll` (SHA-256 `2247724c91f2eb3c7f55b548f0de1ca9dcbecc9bae44511a017cabd5cf1adf58`)
+- `libvlc/win-x64/plugins/video_chroma/libi420_yuy2_plugin.dll` (SHA-256 `e351c2a34ed0e0899088225dc8badb190d7559548248ad48ce434b546811d8b6`)
+- `libvlc/win-x64/plugins/video_chroma/libi420_yuy2_sse2_plugin.dll` (SHA-256 `96a0044b29dd54b97f66340fb7a1a50dfba57b944a64f6169a1391dddac707a5`)
+- `libvlc/win-x64/plugins/video_chroma/libi422_i420_plugin.dll` (SHA-256 `ec3549fd954c80a9b3fcf627a8aaacdf11e104582d01849e62230a43caa97445`)
+- `libvlc/win-x64/plugins/video_chroma/libi422_yuy2_mmx_plugin.dll` (SHA-256 `ae0019da7aead6267257c53350d9dea14a0e502b7596cd2b64f15845f674aab0`)
+- `libvlc/win-x64/plugins/video_chroma/libi422_yuy2_plugin.dll` (SHA-256 `f28a009781817e1b8a74d889ef552eabd4fcf68161828b637cf7d09bec975c44`)
+- `libvlc/win-x64/plugins/video_chroma/libi422_yuy2_sse2_plugin.dll` (SHA-256 `9daa63e236b02d084606d6ba362d06f3b4a99f500b9f6424b1a3cd8251c01f14`)
+- `libvlc/win-x64/plugins/video_chroma/librv32_plugin.dll` (SHA-256 `36ff54763927d06903072dc2974a886d8d6b002815dd4891b76c093ce33daa9c`)
+- `libvlc/win-x64/plugins/video_chroma/libswscale_plugin.dll` (SHA-256 `a18dec8989ac0ebd7e8db00c9d26f8e4c8e64a53e6d6c5da03624a150d9ac2f8`)
+- `libvlc/win-x64/plugins/video_chroma/libyuvp_plugin.dll` (SHA-256 `64da7c5c9df90d419debd49dd347b66f166ab73f1ddc2f3d9a4c4c151a762c9b`)
+- `libvlc/win-x64/plugins/video_chroma/libyuy2_i420_plugin.dll` (SHA-256 `f556e66df5617900420f5e0e83157979ca645002289265af55bad697fb56bf63`)
+- `libvlc/win-x64/plugins/video_chroma/libyuy2_i422_plugin.dll` (SHA-256 `2cc34bfd8fc2004223d3d38e75079e50bd88101958f19cbecd9d00d901702d40`)
+- `libvlc/win-x64/plugins/video_filter/libadjust_plugin.dll` (SHA-256 `29100bdab7d00f5d9f1e721a900fcbb4162c5a4779cb865fb58e7e09be23c412`)
+- `libvlc/win-x64/plugins/video_filter/libalphamask_plugin.dll` (SHA-256 `53a1fdae4db1386a55d3e35fd12f28812ffecc7b20fe4b9e15bedf2752b8fe5d`)
+- `libvlc/win-x64/plugins/video_filter/libanaglyph_plugin.dll` (SHA-256 `236a722dc49884c466959a3c45b99071940063871e4db282a93c65e973c9fbb3`)
+- `libvlc/win-x64/plugins/video_filter/libantiflicker_plugin.dll` (SHA-256 `b1a4525b4534488558d0f4187bb1e2229ddcfbbf13ee00a8365ef188a517acb3`)
+- `libvlc/win-x64/plugins/video_filter/libball_plugin.dll` (SHA-256 `fd0a651b14989691210f28d41d2598ad4e8d48405e634fd9fc53e0e5819b943c`)
+- `libvlc/win-x64/plugins/video_filter/libblend_plugin.dll` (SHA-256 `8323fe74d97db1e01a69c9a2d78b78ca76eed1db9e55ac2c3a6455355b010562`)
+- `libvlc/win-x64/plugins/video_filter/libblendbench_plugin.dll` (SHA-256 `c6d4c99dc64a00ea05f63392f1994f3b41fc43cffcb2cab7ef6c03d9a8529be5`)
+- `libvlc/win-x64/plugins/video_filter/libbluescreen_plugin.dll` (SHA-256 `0d5bd9b565b0c017431375eb455aa4e835839169cb2cf842dd566b52716deb7e`)
+- `libvlc/win-x64/plugins/video_filter/libcanvas_plugin.dll` (SHA-256 `4da2e834ef21c0dd84e7f7f8b647b4510d8978cbeef36d416e132aa27cbf8d28`)
+- `libvlc/win-x64/plugins/video_filter/libcolorthres_plugin.dll` (SHA-256 `dcea05f6d3c74832ff9d899c4fbe3667fec15dadc17b67e7818f066fb6f40e30`)
+- `libvlc/win-x64/plugins/video_filter/libcroppadd_plugin.dll` (SHA-256 `bbe82b0a356bb66f66fb6c8762c38035230717f27fe302656cd972de0f55c224`)
+- `libvlc/win-x64/plugins/video_filter/libdeinterlace_plugin.dll` (SHA-256 `59c0cf7a7dc71b886c90c3edfa5dcbf76bb6e8d966b85eff4097b365ee07eafd`)
+- `libvlc/win-x64/plugins/video_filter/libedgedetection_plugin.dll` (SHA-256 `23c5d2f2b8bb585e9f8bcbca909591dad6d74cdace8f129adbbe9bdb1ef83382`)
+- `libvlc/win-x64/plugins/video_filter/liberase_plugin.dll` (SHA-256 `d02ac54544c0beeef929aadbbd8775236e5714a2166d3efbecc9b0f18d5a968a`)
+- `libvlc/win-x64/plugins/video_filter/libextract_plugin.dll` (SHA-256 `181a72f3d9e1ba6a3b0dc7ba1eff5450d9fc601b311133a2f59ea19cfbe616f8`)
+- `libvlc/win-x64/plugins/video_filter/libfps_plugin.dll` (SHA-256 `07634534c7c78364558bb52957ff31f444963c6f87ec2baa0ef18b4c2ffd5039`)
+- `libvlc/win-x64/plugins/video_filter/libfreeze_plugin.dll` (SHA-256 `9cecacba4a69a8083586cdebcc9b8d1c6dd05cf7b03332439548d48423afb239`)
+- `libvlc/win-x64/plugins/video_filter/libgaussianblur_plugin.dll` (SHA-256 `3561bc039377685ab375e8f66b0a0d58c623397a37b9fb6bb0831aa0a88c7f67`)
+- `libvlc/win-x64/plugins/video_filter/libgradfun_plugin.dll` (SHA-256 `1331cbd9c3cb9e2a5c45d65c1104c1ff14758ef12981ea4269c046e5348e16c0`)
+- `libvlc/win-x64/plugins/video_filter/libgradient_plugin.dll` (SHA-256 `6e01904524311fcf400fe8077961734d67e1b1f84d507595a99d9e07b29f1ff6`)
+- `libvlc/win-x64/plugins/video_filter/libgrain_plugin.dll` (SHA-256 `7055b194f1fb7e6ecfaf9aefb2e7e0e65e6918bd19a69dc195d79ca84d90c10f`)
+- `libvlc/win-x64/plugins/video_filter/libhqdn3d_plugin.dll` (SHA-256 `fa188c9c68d7967105340872d36c97f7464e031857f2b082d6f825ea2a5998dc`)
+- `libvlc/win-x64/plugins/video_filter/libinvert_plugin.dll` (SHA-256 `3c24b88e06959ff81ae8e678299988c9a17ab85f3f93b06100b799c3b226bd24`)
+- `libvlc/win-x64/plugins/video_filter/libmagnify_plugin.dll` (SHA-256 `1f8d5355c4e9eb1a84934095fc7a8728cabe1085950d5d0c672a78dfa084123a`)
+- `libvlc/win-x64/plugins/video_filter/libmirror_plugin.dll` (SHA-256 `c817f48b4d4592be912a3f03da54a42d4c142e594457185868e7a18bef13555f`)
+- `libvlc/win-x64/plugins/video_filter/libmotionblur_plugin.dll` (SHA-256 `5148f6c4655ed60aa1d8a249131b8c9b6aa51545ba68118b43f9ecfccd4382d7`)
+- `libvlc/win-x64/plugins/video_filter/libmotiondetect_plugin.dll` (SHA-256 `2d9468c2137361075a996a7e4ac2da33052398017b9dbd4a6e6f08183572f14f`)
+- `libvlc/win-x64/plugins/video_filter/liboldmovie_plugin.dll` (SHA-256 `8e23a4f8bfbc0273acc30d8d4f3633890545a156638f76a853423a81d6b29bf5`)
+- `libvlc/win-x64/plugins/video_filter/libposterize_plugin.dll` (SHA-256 `8efc6f6b2c809216afbbf9e39270af97fd2823b199e25231ea39d887e0e6c82e`)
+- `libvlc/win-x64/plugins/video_filter/libpsychedelic_plugin.dll` (SHA-256 `464ddcc951c919b83b375df5c3e6e81a3353517eb4079070d0fd1b432134a3c2`)
+- `libvlc/win-x64/plugins/video_filter/libpuzzle_plugin.dll` (SHA-256 `efff6a825f0906c427c1101bb071fff26e788cf7f5e11a9a0904c63b563fa9e4`)
+- `libvlc/win-x64/plugins/video_filter/libripple_plugin.dll` (SHA-256 `ae3b1605465c67362b4d757f9ae1d045271629e5adeb334d2f179c5f8f728056`)
+- `libvlc/win-x64/plugins/video_filter/libscale_plugin.dll` (SHA-256 `8e67a8799ce3731313bac424c559b210995e34d2999d9737baca575f24d447e8`)
+- `libvlc/win-x64/plugins/video_filter/libscene_plugin.dll` (SHA-256 `d2c769ea7f4d0739ca81a1e9f9b3068e10e0673331251e4bf7908d04ffb03343`)
+- `libvlc/win-x64/plugins/video_filter/libsepia_plugin.dll` (SHA-256 `10eb19b7483da573525182cfd51f1ddea400d58168ffff6e3a0db9ca4c2ec614`)
+- `libvlc/win-x64/plugins/video_filter/libsharpen_plugin.dll` (SHA-256 `b75cf0ab97bd541b17b9a31348a15f9e0c50f3fd40990e98896077fbc21316eb`)
+- `libvlc/win-x64/plugins/video_filter/libtransform_plugin.dll` (SHA-256 `8e14b4c4c6939038cd606d6563e252448b65a463bd05b31a3078e01c7427a943`)
+- `libvlc/win-x64/plugins/video_filter/libvhs_plugin.dll` (SHA-256 `7a04a3eb73a314d7d7f49c04b3a1f23fa6d5c99aa61a0f39690b6627c31e088e`)
+- `libvlc/win-x64/plugins/video_filter/libwave_plugin.dll` (SHA-256 `c069ea93bd079d31ee473fd502a8f65171d23f0389a5f2b6717b9e757cca0281`)
+- `libvlc/win-x64/plugins/video_output/libdirect3d11_plugin.dll` (SHA-256 `ef0e985c6f29b8aedc49d1bebaef9349a96eb45e5544e615ccc8864aeead7820`)
+- `libvlc/win-x64/plugins/video_output/libdirect3d9_plugin.dll` (SHA-256 `2d24efd8525884d8501c5bd0fde448efe4b85fbb600de99dc841f534799ae429`)
+- `libvlc/win-x64/plugins/video_output/libdirectdraw_plugin.dll` (SHA-256 `92ea05215c99cc6d9d32018a2a34524851db9b78638671fe1252a17989d2f3c9`)
+- `libvlc/win-x64/plugins/video_output/libdrawable_plugin.dll` (SHA-256 `814adda66b8cc51573c268e0a05120ec0ec3574b50077faf0f1cd9dfcff74038`)
+- `libvlc/win-x64/plugins/video_output/libflaschen_plugin.dll` (SHA-256 `54367345fe29b23018ac312a32a51e800df65b0fd499f36c2c7d63d50fbbc509`)
+- `libvlc/win-x64/plugins/video_output/libgl_plugin.dll` (SHA-256 `e3e5af254b9572f58f5513c97171b516cc19487b91cba4cd87d2d113593b2bfc`)
+- `libvlc/win-x64/plugins/video_output/libglinterop_dxva2_plugin.dll` (SHA-256 `fe31f11b9d65175577f93f0e888ec1d8662756c2ef6ae419b97ff5e287f9cc8d`)
+- `libvlc/win-x64/plugins/video_output/libglwin32_plugin.dll` (SHA-256 `51f61f455ea6a54f8a920e540c905ea815b4e53dbd3683dea78c8bcda8f70c96`)
+- `libvlc/win-x64/plugins/video_output/libvdummy_plugin.dll` (SHA-256 `b4912bf8d6d729fed6d8170a47a8b0933e2f82b9fce163b9f599c7665a5c0919`)
+- `libvlc/win-x64/plugins/video_output/libvmem_plugin.dll` (SHA-256 `4c24859253d14a778d61fa96ec8cea876e4534b6b7dfdf4358959cb0b5e7d63e`)
+- `libvlc/win-x64/plugins/video_output/libwgl_plugin.dll` (SHA-256 `4b06ee17b40013e3d2977e407fbf0847c0d6cc513c234654fb792da1aeca7ecc`)
+- `libvlc/win-x64/plugins/video_output/libwingdi_plugin.dll` (SHA-256 `bc303243c86c213fe68779db7876c71b19971c2c14e62fb5a3f92e327fe51333`)
+- `libvlc/win-x64/plugins/video_output/libwinhibit_plugin.dll` (SHA-256 `241f0b382db3ce666b0b54bc0103d2f142de150b5a459a18a66966fd96fafd68`)
+- `libvlc/win-x64/plugins/video_output/libyuv_plugin.dll` (SHA-256 `9533480fa321c5cb46d71e21fa58d63279c9ed31449126f2cc48ed567e9cbd50`)
+- `libvlc/win-x64/plugins/video_splitter/libclone_plugin.dll` (SHA-256 `ece9de03ec2536af63d7020fee34d255225ff9aff8bd0e09ed79f249e1c5cc9e`)
+- `libvlc/win-x64/plugins/video_splitter/libwall_plugin.dll` (SHA-256 `3dd48ac502d7c5f005aef69e2e1c7fd62d5f4cf4bcde69a719e92218f2875242`)
+
+### Остальные компоненты
+
+- [AngleSharp/1.8.3](https://github.com/AngleSharp/AngleSharp/tree/e1b55c551fc74b7dde7ba1ee50c2703608da4e7f).
+- [Anime4K](https://raw.githubusercontent.com/bloc97/Anime4K/4029bf701ecaa15f163cdc49cffe5501c1acf410/LICENSE).
+- [Anime4K](https://raw.githubusercontent.com/bloc97/Anime4K/4029bf701ecaa15f163cdc49cffe5501c1acf410/glsl/Restore/Anime4K_Clamp_Highlights.glsl).
+- [Anime4K](https://raw.githubusercontent.com/bloc97/Anime4K/4029bf701ecaa15f163cdc49cffe5501c1acf410/glsl/Restore/Anime4K_Restore_CNN_Soft_VL.glsl).
+- [Anime4K](https://raw.githubusercontent.com/bloc97/Anime4K/4029bf701ecaa15f163cdc49cffe5501c1acf410/glsl/Upscale/Anime4K_AutoDownscalePre_x2.glsl).
+- [Anime4K](https://raw.githubusercontent.com/bloc97/Anime4K/4029bf701ecaa15f163cdc49cffe5501c1acf410/glsl/Upscale/Anime4K_AutoDownscalePre_x4.glsl).
+- [Anime4K](https://raw.githubusercontent.com/bloc97/Anime4K/4029bf701ecaa15f163cdc49cffe5501c1acf410/glsl/Upscale/Anime4K_Upscale_CNN_x2_M.glsl).
+- [Anime4K](https://raw.githubusercontent.com/bloc97/Anime4K/4029bf701ecaa15f163cdc49cffe5501c1acf410/glsl/Upscale/Anime4K_Upscale_CNN_x2_VL.glsl).
+- [Avalonia.Angle.Windows.Natives/2.1.25547.20250602](https://github.com/AvaloniaUI/angle/tree/cb8b4e1307a9d8f5ff56b8c5973bea4158ffead8).
+- [Avalonia.Desktop/11.3.22](https://github.com/AvaloniaUI/Avalonia/tree/627ae9ef921621e27e7aa58df2796fbadb50af88).
+- [Avalonia.FreeDesktop/11.3.22](https://github.com/AvaloniaUI/Avalonia/tree/627ae9ef921621e27e7aa58df2796fbadb50af88).
+- [Avalonia.Native/11.3.22](https://github.com/AvaloniaUI/Avalonia/tree/627ae9ef921621e27e7aa58df2796fbadb50af88).
+- [Avalonia.Remote.Protocol/11.3.22](https://github.com/AvaloniaUI/Avalonia/tree/627ae9ef921621e27e7aa58df2796fbadb50af88).
+- [Avalonia.Skia/11.3.22](https://github.com/AvaloniaUI/Avalonia/tree/627ae9ef921621e27e7aa58df2796fbadb50af88).
+- [Avalonia.Themes.Fluent/11.3.22](https://github.com/AvaloniaUI/Avalonia/tree/627ae9ef921621e27e7aa58df2796fbadb50af88).
+- [Avalonia.Win32/11.3.22](https://github.com/AvaloniaUI/Avalonia/tree/627ae9ef921621e27e7aa58df2796fbadb50af88).
+- [Avalonia.X11/11.3.22](https://github.com/AvaloniaUI/Avalonia/tree/627ae9ef921621e27e7aa58df2796fbadb50af88).
+- [Avalonia/11.3.22](https://github.com/AvaloniaUI/Avalonia/tree/627ae9ef921621e27e7aa58df2796fbadb50af88).
+- [BalsamiqSans](https://raw.githubusercontent.com/google/fonts/06bfe0d62a98375cb09c942fa18e68bd32cff057/ofl/balsamiqsans/BalsamiqSans-Regular.ttf).
+- [CommunityToolkit.Mvvm/8.4.0](https://github.com/CommunityToolkit/dotnet/tree/638b41dad30dffabb123a39aa38eabc7e3721371).
+- [HarfBuzzSharp.NativeAssets.Win32/8.3.1.1](https://github.com/mono/SkiaSharp/tree/64f24b1cddb68d30ec0ac6b661964178fc21d5ec).
+- [HarfBuzzSharp/8.3.1.1](https://www.nuget.org/packages/HarfBuzzSharp/8.3.1.1).
+- [Inno Setup](https://github.com/jrsoftware/issrc/tree/c7af86b4b2fd03371185df2b09a1dca8d472ab70).
+- [LibVLCSharp.Avalonia/3.10.1](https://github.com/videolan/libvlcsharp/tree/4896d0e06d19ac40b46802cf7dc167d432f3fd63).
+- [LibVLCSharp/3.10.1](https://github.com/videolan/libvlcsharp/tree/4896d0e06d19ac40b46802cf7dc167d432f3fd63).
+- [MicroCom.Runtime/0.11.0](https://www.nuget.org/packages/MicroCom.Runtime/0.11.0).
+- [Microsoft](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution).
+- [Microsoft.Data.Sqlite.Core/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.Configuration.Abstractions/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.Configuration.Binder/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.Configuration/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.DependencyInjection.Abstractions/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.DependencyInjection/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.Logging.Abstractions/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.Logging.Configuration/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.Logging.Console/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.Logging/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.Options.ConfigurationExtensions/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.Options/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Extensions.Primitives/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Microsoft.Web.WebView2/1.0.4258.31](https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.4258.31).
+- [Mono.Nat/3.0.0](https://github.com/mono/Mono.Nat/tree/04754b1e5f139559736c41bf23c1752564d178d9).
+- [MonoTorrent/3.0.2](https://github.com/alanmcgovern/monotorrent/tree/e78faebd0aec117146cffccaaea987ab0629eec0).
+- [ReusableTasks/4.0.0](https://github.com/alanmcgovern/ReusableTasks/tree/3c0c1929375b3b3ddc97ff84fe6c59b024f2e85b).
+- [SQLite/3.53.4](https://sqlite.org/releaselog/3_53_4.html).
+- [SQLitePCLRaw.config.e_sqlite3/3.0.5](https://github.com/ericsink/SQLitePCL.raw/tree/96043b8cff323f21919df86a431c136655d81b4a).
+- [SQLitePCLRaw.core/3.0.5](https://github.com/ericsink/SQLitePCL.raw/tree/ed046114d5a30534e13294d94d78eb73de896ad4).
+- [SQLitePCLRaw.provider.e_sqlite3/3.0.5](https://github.com/ericsink/SQLitePCL.raw/tree/ed046114d5a30534e13294d94d78eb73de896ad4).
+- [SkiaSharp.NativeAssets.Win32/2.88.9](https://github.com/mono/SkiaSharp/tree/9699cdf046a989423a5e5eca68e7fd813486d81c).
+- [SkiaSharp/2.88.9](https://github.com/mono/SkiaSharp/tree/9699cdf046a989423a5e5eca68e7fd813486d81c).
+- [Stick](https://raw.githubusercontent.com/google/fonts/06bfe0d62a98375cb09c942fa18e68bd32cff057/ofl/stick/Stick-Regular.ttf).
+- [System.Security.Cryptography.ProtectedData/10.0.0](https://github.com/dotnet/dotnet/tree/b0f34d51fccc69fd334253924abd8d6853fad7aa).
+- [Tmds.DBus.Protocol/0.21.3](https://github.com/tmds/Tmds.DBus/tree/8cb04f66c330b64244e996ff68f685f27f7381a0).
+- [runtimepack.Microsoft.NETCore.App.Runtime.win-x64/10.0.12](https://github.com/dotnet/dotnet/tree/95017c711e6afc1085133d440e42b4bd78155701).

@@ -1,0 +1,112 @@
+modules/audio_filter/spatializer/allpass.cpp
+// Allpass filter implementation
+//
+// Written by Jezar at Dreampoint, June 2000
+// http://www.dreampoint.co.uk
+// This code is public domain
+
+#include "allpass.hpp"
+#include <stddef.h>
+
+allpass::allpass()
+{
+    bufidx = 0;
+    buffer = NULL;
+}
+
+void allpass::setbuffer(float *buf, int size)
+{
+    buffer = buf;
+    bufsize = size;
+}
+
+void allpass::mute()
+{
+    for (int i=0; i<bufsize; i++)
+        buffer[i]=0;
+}
+
+void allpass::setfeedback(float val)
+
+modules/audio_filter/spatializer/comb.cpp
+// Comb filter implementation
+//
+// Written by Jezar at Dreampoint, June 2000
+// http://www.dreampoint.co.uk
+// This code is public domain
+
+#include "comb.hpp"
+#include <stddef.h>
+
+comb::comb()
+{
+    filterstore = 0;
+    bufidx = 0;
+    buffer = NULL;
+}
+
+void comb::setbuffer(float *buf, int size)
+{
+    buffer = buf;
+    bufsize = size;
+}
+
+void comb::mute()
+{
+    for (int i=0; i<bufsize; i++)
+        buffer[i]=0;
+}
+
+
+modules/audio_filter/spatializer/denormals.c
+// Macro for killing denormalled numbers
+//
+// Written by Jezar at Dreampoint, June 2000
+// http://www.dreampoint.co.uk
+// Based on IS_DENORMAL macro by Jon Watte
+// This code is public domain
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <math.h>
+#include "denormals.h"
+
+/* fpclassify() is C99, cannot be compiled into a C++90 file (on some systems) */
+float undenormalise( float f )
+{
+    if( fpclassify( f ) == FP_SUBNORMAL  )
+        return 0.0;
+    return f;
+}
+
+modules/audio_filter/spatializer/revmodel.cpp
+// Reverb model implementation
+//
+//
+// Google Summer of Code 2007
+//
+// Authors: Biodun Osunkunle <biodun@videolan.org>
+//
+// Mentor : Jean-Baptiste Kempf <jb@videolan.org>
+//
+// Original written by Jezar at Dreampoint, June 2000
+
+// This code is public domain
+
+#include "revmodel.hpp"
+#include "tuning.h"
+#include <stdlib.h>
+
+revmodel::revmodel() : roomsize(initialroom), damp(initialdamp),
+                       wet(initialwet), dry(initialdry), width(1.), mode(0.)
+{
+    // Tie the components to their buffers
+    combL[0].setbuffer(bufcombL1,combtuningL1);
+    combR[0].setbuffer(bufcombR1,combtuningR1);
+    combL[1].setbuffer(bufcombL2,combtuningL2);
+    combR[1].setbuffer(bufcombR2,combtuningR2);
+    combL[2].setbuffer(bufcombL3,combtuningL3);
+    combR[2].setbuffer(bufcombR3,combtuningR3);
+    combL[3].setbuffer(bufcombL4,combtuningL4);

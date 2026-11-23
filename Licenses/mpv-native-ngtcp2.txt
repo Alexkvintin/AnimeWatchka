@@ -1,0 +1,209 @@
+----- ngtcp2-9595a0dda799.tar.gz--AUTHORS -----
+
+Alexis La Goutte
+Amir Livneh
+Anna Henningsen
+Atle Solbakken
+Bas van den Berg
+Billy Robert O'Neal III
+Bruno S Marques
+Bryan Call
+Cheng Zhao
+Daan De Meyer
+Daiki Ueno
+Daniel Bevenius
+Daniel Stenberg
+Dave Reisner
+Don
+Don Olmstead
+Frank Osterfeld
+Frédéric Lécaille
+Félix Dagenais
+Irina Guberman
+James M Snell
+Jan Doskočil
+Jason Rhinelander
+Javier Blazquez
+Jay Satiro
+Jean-Philippe Boivin
+Jiawen Geng
+Jixinqi
+Junqi Wang
+Kai Pastor
+Karthik Das
+Karthikdasari0423
+Kazu Yamamoto
+Ken-ichi ICHINO
+Kenjiro Nakayama
+Khem Raj
+Lars Eggert
+Liang Ma
+Marin Rukavina
+Mark Chiou
+Marten Richter
+Martin Thomson
+Michael White
+Michal Kovac
+Michaël Zasso
+Mike L.
+Moritz Buhl
+NKTelnet
+Natris
+Niek Bouman
+Nishant Nori
+Patrick Griffis
+Pavel Otchertsov
+Peter Wu
+Petr Menšík
+Samuel Henrique
+Stefan Eissing
+Tal Regev
+Tatsuhiro Tsujikawa
+TheClockTwister
+Tim Gates
+Tim Perry
+Tomas Mraz
+Toni Uhlig
+Valère Plantevin
+Victor Loh
+Viktor Szakats
+Your Name
+Zizhong Zhang
+flx413
+hondaxiao
+hyunjic
+junqiw
+krant
+msoxzw
+nickfajones
+niekbouman
+rhoxn
+scw00
+shibin k v
+
+
+----- ngtcp2-9595a0dda799.tar.gz--COPYING -----
+
+The MIT License
+
+Copyright (c) 2016 ngtcp2 contributors
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+----- ngtcp2-9595a0dda799.tar.gz--third-party--http-parser--AUTHORS -----
+
+# Authors ordered by first contribution.
+Ryan Dahl <ry@tinyclouds.org>
+Jeremy Hinegardner <jeremy@hinegardner.org>
+Sergey Shepelev <temotor@gmail.com>
+Joe Damato <ice799@gmail.com>
+tomika <tomika_nospam@freemail.hu>
+Phoenix Sol <phoenix@burninglabs.com>
+Cliff Frey <cliff@meraki.com>
+Ewen Cheslack-Postava <ewencp@cs.stanford.edu>
+Santiago Gala <sgala@apache.org>
+Tim Becker <tim.becker@syngenio.de>
+Jeff Terrace <jterrace@gmail.com>
+Ben Noordhuis <info@bnoordhuis.nl>
+Nathan Rajlich <nathan@tootallnate.net>
+Mark Nottingham <mnot@mnot.net>
+Aman Gupta <aman@tmm1.net>
+Tim Becker <tim.becker@kuriositaet.de>
+Sean Cunningham <sean.cunningham@mandiant.com>
+Peter Griess <pg@std.in>
+Salman Haq <salman.haq@asti-usa.com>
+Cliff Frey <clifffrey@gmail.com>
+Jon Kolb <jon@b0g.us>
+Fouad Mardini <f.mardini@gmail.com>
+Paul Querna <pquerna@apache.org>
+Felix Geisendörfer <felix@debuggable.com>
+koichik <koichik@improvement.jp>
+Andre Caron <andre.l.caron@gmail.com>
+Ivo Raisr <ivosh@ivosh.net>
+James McLaughlin <jamie@lacewing-project.org>
+David Gwynne <loki@animata.net>
+Thomas LE ROUX <thomas@november-eleven.fr>
+Randy Rizun <rrizun@ortivawireless.com>
+Andre Louis Caron <andre.louis.caron@usherbrooke.ca>
+Simon Zimmermann <simonz05@gmail.com>
+Erik Dubbelboer <erik@dubbelboer.com>
+Martell Malone <martellmalone@gmail.com>
+Bertrand Paquet <bpaquet@octo.com>
+BogDan Vatra <bogdan@kde.org>
+Peter Faiman <peter@thepicard.org>
+Corey Richardson <corey@octayn.net>
+Tóth Tamás <tomika_nospam@freemail.hu>
+Cam Swords <cam.swords@gmail.com>
+Chris Dickinson <christopher.s.dickinson@gmail.com>
+Uli Köhler <ukoehler@btronik.de>
+Charlie Somerville <charlie@charliesomerville.com>
+Patrik Stutz <patrik.stutz@gmail.com>
+Fedor Indutny <fedor.indutny@gmail.com>
+runner <runner.mei@gmail.com>
+Alexis Campailla <alexis@janeasystems.com>
+David Wragg <david@wragg.org>
+Vinnie Falco <vinnie.falco@gmail.com>
+Alex Butum <alexbutum@linux.com>
+Rex Feng <rexfeng@gmail.com>
+Alex Kocharin <alex@kocharin.ru>
+Mark Koopman <markmontymark@yahoo.com>
+Helge Heß <me@helgehess.eu>
+Alexis La Goutte <alexis.lagoutte@gmail.com>
+George Miroshnykov <george.miroshnykov@gmail.com>
+Maciej Małecki <me@mmalecki.com>
+Marc O'Morain <github.com@marcomorain.com>
+Jeff Pinner <jpinner@twitter.com>
+Timothy J Fontaine <tjfontaine@gmail.com>
+Akagi201 <akagi201@gmail.com>
+Romain Giraud <giraud.romain@gmail.com>
+Jay Satiro <raysatiro@yahoo.com>
+Arne Steen <Arne.Steen@gmx.de>
+Kjell Schubert <kjell.schubert@gmail.com>
+Olivier Mengué <dolmen@cpan.org>
+
+
+----- ngtcp2-9595a0dda799.tar.gz--third-party--http-parser--LICENSE-MIT -----
+
+http_parser.c is based on src/http/ngx_http_parse.c from NGINX copyright
+Igor Sysoev.
+
+Additional changes are licensed under the same terms as NGINX and
+copyright Joyent, Inc. and other Node contributors. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE. 
+
+

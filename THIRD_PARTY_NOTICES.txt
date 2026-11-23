@@ -1,0 +1,198 @@
+AnimeWatchka 0.6.0 Beta — Уведомления о сторонних компонентах
+
+AnimeWatchka — бесплатное приложение для Windows. Сторонние компоненты распространяются на их собственных условиях.
+Полные тексты лицензий и уведомлений находятся в папке Licenses рядом с AnimeApp.exe.
+Соответствующие исходники, версии и процедура замены описаны в THIRD_PARTY_SOURCES.md.
+
+libmpv-2.dll | LGPL-3.0-or-later (combined multimedia library); see linked component terms | SHA-256 11fc46842a4f79deae6e53d37c5345f82ae6bc3b1ec3994fb58c69f710c7e7dc
+LibVLC 3.0.24 | LGPL-2.1-or-later (основные модули) и лицензии выбранных зависимостей.
+Модуль MPEG-TS содержит aribb24 на условиях LGPL-3.0-or-later.
+
+AngleSharp/1.8.3 | MIT | Licenses/AngleSharp.txt
+Anime4K | MIT | Licenses/Anime4K.txt
+Anime4K | MIT | Licenses/Anime4K.txt
+Anime4K | MIT | Licenses/Anime4K.txt
+Anime4K | MIT | Licenses/Anime4K.txt
+Anime4K | MIT | Licenses/Anime4K.txt
+Anime4K | MIT | Licenses/Anime4K.txt
+Anime4K | MIT | Licenses/Anime4K.txt
+Avalonia.Angle.Windows.Natives/2.1.25547.20250602 | LICENSE | Licenses/Avalonia.txt, Licenses/Avalonia.Angle.Windows.Natives-LICENSE.txt
+Avalonia.Desktop/11.3.22 | MIT | Licenses/Avalonia.txt
+Avalonia.FreeDesktop/11.3.22 | MIT | Licenses/Avalonia.txt
+Avalonia.Native/11.3.22 | MIT | Licenses/Avalonia.txt
+Avalonia.Remote.Protocol/11.3.22 | MIT | Licenses/Avalonia.txt
+Avalonia.Skia/11.3.22 | MIT | Licenses/Avalonia.txt
+Avalonia.Themes.Fluent/11.3.22 | MIT | Licenses/Avalonia.txt
+Avalonia.Win32/11.3.22 | MIT | Licenses/Avalonia.txt
+Avalonia.X11/11.3.22 | MIT | Licenses/Avalonia.txt
+Avalonia/11.3.22 | MIT | Licenses/Avalonia.txt
+BalsamiqSans | OFL-1.1 | Licenses/BalsamiqSans-Upstream-OFL.txt
+CommunityToolkit.Mvvm/8.4.0 | MIT | Licenses/CommunityToolkit.Mvvm-License.md.txt
+HarfBuzzSharp.NativeAssets.Win32/8.3.1.1 | MIT (SkiaSharp packaging); HarfBuzz Old MIT and upstream notices | Licenses/HarfBuzzSharp.NativeAssets.Win32-LICENSE.txt.txt, Licenses/HarfBuzzSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt.txt
+HarfBuzzSharp/8.3.1.1 | MIT | Licenses/HarfBuzzSharp-LICENSE.txt.txt
+Inno Setup | Inno Setup License | Licenses/Inno-Setup.txt
+LibVLCSharp.Avalonia/3.10.1 | LGPL-2.1-or-later | Licenses/LibVLCSharp.txt
+LibVLCSharp/3.10.1 | LGPL-2.1-or-later | Licenses/LibVLCSharp.txt
+MicroCom.Runtime/0.11.0 | MIT | Licenses/MicroCom.txt
+Microsoft | Microsoft Evergreen Bootstrapper redistribution terms | Licenses/WebView2-Bootstrapper-Distribution.html
+Microsoft.Data.Sqlite.Core/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt
+Microsoft.Extensions.Configuration.Abstractions/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.Configuration.Abstractions-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Extensions.Configuration.Binder/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.Configuration.Binder-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Extensions.Configuration/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.Configuration-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Extensions.DependencyInjection.Abstractions/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.DependencyInjection.Abstractions-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Extensions.DependencyInjection/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.DependencyInjection-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Extensions.Logging.Abstractions/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.Logging.Abstractions-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Extensions.Logging.Configuration/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.Logging.Configuration-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Extensions.Logging.Console/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.Logging.Console-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Extensions.Logging/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.Logging-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Extensions.Options.ConfigurationExtensions/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.Options.ConfigurationExtensions-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Extensions.Options/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.Options-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Extensions.Primitives/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/Microsoft.Extensions.Primitives-THIRD-PARTY-NOTICES.TXT.txt
+Microsoft.Web.WebView2/1.0.4258.31 | BSD-3-Clause (SDK); upstream third-party notices | Licenses/Microsoft.Web.WebView2-LICENSE.txt.txt, Licenses/Microsoft.Web.WebView2-NOTICE.txt.txt
+Mono.Nat/3.0.0 | MIT | Licenses/Mono.Nat-LICENSE.md.txt
+MonoTorrent/3.0.2 | MIT | Licenses/MonoTorrent-LICENSE.txt
+ReusableTasks/4.0.0 | MIT | Licenses/ReusableTasks-LICENSE.md.txt
+SQLite/3.53.4 | Public Domain | Licenses/SQLite-LICENSE.txt.txt
+SQLitePCLRaw.config.e_sqlite3/3.0.5 | Apache-2.0 | Licenses/SQLitePCLRaw-config.txt, Licenses/SQLitePCLRaw-config-NOTICE.txt
+SQLitePCLRaw.core/3.0.5 | Apache-2.0 | Licenses/SQLitePCLRaw.txt, Licenses/SQLitePCLRaw-NOTICE.txt
+SQLitePCLRaw.provider.e_sqlite3/3.0.5 | Apache-2.0 | Licenses/SQLitePCLRaw.txt, Licenses/SQLitePCLRaw-NOTICE.txt
+SkiaSharp.NativeAssets.Win32/2.88.9 | MIT (SkiaSharp packaging); Skia BSD and upstream notices | Licenses/SkiaSharp.NativeAssets.Win32-LICENSE.txt.txt, Licenses/SkiaSharp.NativeAssets.Win32-THIRD-PARTY-NOTICES.txt.txt
+SkiaSharp/2.88.9 | MIT | Licenses/SkiaSharp-LICENSE.txt.txt, Licenses/SkiaSharp-THIRD-PARTY-NOTICES.txt.txt
+Stick | OFL-1.1 | Licenses/Stick-Upstream-OFL.txt
+System.Security.Cryptography.ProtectedData/10.0.0 | MIT | Licenses/dotnet-10.0.0.txt, Licenses/System.Security.Cryptography.ProtectedData-THIRD-PARTY-NOTICES.TXT.txt
+Tmds.DBus.Protocol/0.21.3 | MIT | Licenses/Tmds.DBus.txt
+runtimepack.Microsoft.NETCore.App.Runtime.win-x64/10.0.12 | MIT; upstream third-party notices | Licenses/Microsoft.NETCore.App.Runtime.win-x64-LICENSE.TXT.txt, Licenses/Microsoft.NETCore.App.Runtime.win-x64-THIRD-PARTY-NOTICES.TXT.txt
+
+libmpv — лицензии библиотек из состава сборки
+FFmpeg 9ced9e345c0408e190ebb18387fb7fbc2db69422 | LGPL-3.0-or-later | Licenses/mpv-native-ffmpeg.txt
+GCC runtime 16.2.0 | GPL-3.0-or-later WITH GCC-exception-3.1 | Licenses/mpv-native-gcc-runtime.txt
+LuaJIT 96f7b297326e9fd454b7186c6858b2773f94a0dc | MIT | Licenses/mpv-native-luajit.txt
+MinGW-w64 CRT and Windows imports v14.0.0 | MinGW-w64 CRT upstream terms | Licenses/mpv-native-mingw-w64-crt-and-windows-imports.txt
+aom aac27b8f291ed449fac576bcce0ad0ca189be851 | BSD-2-Clause; upstream patent notices | Licenses/mpv-native-aom.txt
+brotli 3dce8720b74194027c7b4cf42dee5bd159786df5 | MIT | Licenses/mpv-native-brotli.txt
+chromaprint 3b38c100022bdfb49be7797c4828a476f1621d55 | LGPL-2.1-or-later | Licenses/mpv-native-chromaprint.txt
+dav1d 6c7bee685677fd997a431302be4fea8ea4017606 | BSD-2-Clause; upstream patent notices | Licenses/mpv-native-dav1d.txt
+fontconfig bb21be622280981392c0335fc22202fbba46d247 | MIT | Licenses/mpv-native-fontconfig.txt
+freetype dbb00e529e69a2be629a9ef98498e4f9b188aab1 | FTL (FreeType Project License option) | Licenses/mpv-native-freetype.txt
+fribidi 15393e4937aa95bcf865d92143735746aeb654fa | LGPL-2.1-or-later | Licenses/mpv-native-fribidi.txt
+gme 8238afd9503a59ffcec0e2685584d5ce819ad7c6 | LGPL-2.1-or-later (linked library objects) | Licenses/mpv-native-gme.txt
+gmp f9095918ead819c0a2340232891b5acac24b8085 | LGPL-3.0-or-later (LGPL option) | Licenses/mpv-native-gmp.txt
+harfbuzz 8f1a4e0634a35182e5dd04401edcf57acf5eb12e | HarfBuzz Old MIT; upstream notices | Licenses/mpv-native-harfbuzz.txt
+highway 457c891775a7397bdb0376bb1031e6e027af1c48 | Apache-2.0 OR BSD-3-Clause | Licenses/mpv-native-highway.txt
+kvazaar ec7562da7f5971f9fa3f984db358371e74bf3c7d | BSD-3-Clause | Licenses/mpv-native-kvazaar.txt
+lame SVN r7153 | LGPL-2.0-or-later | Licenses/mpv-native-lame.txt
+lcevcdec e295d8438ba554bc541fb269baa9cbd567b626a8 | BSD-3-Clause-Clear | Licenses/mpv-native-lcevcdec.txt
+lcms2 ed288c301bd85eaabcb9e1ae0f73540c5f129e1e | MIT | Licenses/mpv-native-lcms2.txt
+libarchive dd64c2f9d2421bca6061ade4f7887245f27655ab | BSD-2-Clause; upstream file-level notices | Licenses/mpv-native-libarchive.txt
+libaribb24 5e9be272f96e00f15a2f3c5f8ba7e124862aec38 | LGPL-3.0-or-later | Licenses/mpv-native-libaribb24.txt
+libaribcaption d59c9d6403645dd7e8098b02b887a6723b15259b | MIT | Licenses/mpv-native-libaribcaption.txt
+libass 21b5a54fceff49c126c201d4b51c6445287a5072 | ISC | Licenses/mpv-native-libass.txt
+libbluray 4613535451af402c6d72665e8cd88be1b29c9158 | LGPL-2.1-or-later | Licenses/mpv-native-libbluray.txt
+libcurl d999cc6c6bb1f73ca60593355e522f97240317ad | curl license | Licenses/mpv-native-libcurl.txt
+libiconv baaba39736e3b498e1597bf0e5e899b1f753fb01 | LGPL library; upstream libcharset notices | Licenses/mpv-native-libiconv.txt
+libjxl a14f4e0ff32c07cbd19eae144c850e8bbfee2261 | BSD-3-Clause; upstream patent grant | Licenses/mpv-native-libjxl.txt
+libogg 06a5e0262cdc28aa4ae6797627a783b5010440f0 | BSD-3-Clause | Licenses/mpv-native-libogg.txt
+libopus f1afc4222aff7c5456d27581ec618ae64158fbe1 | BSD-3-Clause; upstream patent notices | Licenses/mpv-native-libopus.txt
+libplacebo e608e5b799b6515af2689fddbbed66ffae7b724c | LGPL-2.1-or-later | Licenses/mpv-native-libplacebo.txt
+libpng 5408ee7a2e56555cc4b0acc4051ae241fee38cf3 | libpng-2.0 | Licenses/mpv-native-libpng.txt
+libpsl 88331dae18f1824ab033f7e77880cf65814fc21a | MIT; chromium attribution retained | Licenses/mpv-native-libpsl.txt
+librist a911bee8904d88beb1ccd3349ff9a3de1cadc1a6 | BSD-2-Clause | Licenses/mpv-native-librist.txt
+libsamplerate 0844c208f683527c08ea8a80acc13b398aa9c8bf | BSD-2-Clause | Licenses/mpv-native-libsamplerate.txt
+libsixel 72ed7d6b4a2252a6245567908c32c4e8e8c226ea | MIT; bundled code upstream terms | Licenses/mpv-native-libsixel.txt
+libssh 5138d46fd3b844d525b05938bf55a6d0d924c8d2 | LGPL-2.1-or-later | Licenses/mpv-native-libssh.txt
+libtheora 28fd5ec77f0ad0e07a371cef1047828116f6bd8a | BSD-3-Clause; upstream patent notices | Licenses/mpv-native-libtheora.txt
+libudfread b0bc6957e7e07d5f35391f210596d9eb71cffdd9 | LGPL-2.1-or-later | Licenses/mpv-native-libudfread.txt
+libunibreak ff24f284a567a006c183b3507b6c650d6ec68b94 | Zlib | Licenses/mpv-native-libunibreak.txt
+libva f052e984e0c8bf10784198cc311b23c567b1367f | MIT | Licenses/mpv-native-libva.txt
+libvorbis 1b75110b5a2754ba1931d82dd83cb822b266a21d | BSD-3-Clause | Licenses/mpv-native-libvorbis.txt
+libvpx 7e000a41a7727d5b9477dbbe5727431560d6a16c | BSD-3-Clause; upstream patent notices | Licenses/mpv-native-libvpx.txt
+libwebp 67b8354c37d21f36d6d5cdd027ca0bcf94d3243d | BSD-3-Clause; upstream patent notices | Licenses/mpv-native-libwebp.txt
+libxml2 21c8223ac091b81d5914c52eb20b1b063e29cb92 | MIT | Licenses/mpv-native-libxml2.txt
+libzmq 46493370217ac135246617fa2f6ac819d8b61bfc | MPL-2.0 | Licenses/mpv-native-libzmq.txt
+lilv 4b8f30055fa5cb4134a2eb45fc1555bc04289314 | ISC | Licenses/mpv-native-lilv.txt
+mujs 1.3.8 | ISC | Licenses/mpv-native-mujs.txt
+nghttp2 c785bf23f9d77966085ae1b32717f3e8c8d12090 | MIT | Licenses/mpv-native-nghttp2.txt
+nghttp3 e06a63ac6a0267149b480cd7fe04c8ea9a366d9e | MIT | Licenses/mpv-native-nghttp3.txt
+ngtcp2 9595a0dda7990b95cc2ff728d2524d7db0a8b7f3 | MIT | Licenses/mpv-native-ngtcp2.txt
+onevpl 412c5cffe3022d5ebb8a955c3b30afe7bd2e3929 | MIT | Licenses/mpv-native-onevpl.txt
+openapv 3f0291391dbb1fbc27229b2543aad4ce778b0d72 | BSD-3-Clause | Licenses/mpv-native-openapv.txt
+opencl 82f60316cc142e7b21dc1d8983b26de18858fbd9 | Apache-2.0 | Licenses/mpv-native-opencl.txt
+opencore-amr 7dba8c32238418ce0b316a852b2224df586ca896 | Apache-2.0; upstream notices | Licenses/mpv-native-opencore-amr.txt
+openh264 1bca62311e447fd9c39fc93de2c4b96cd5ce971c | BSD-2-Clause; upstream terms | Licenses/mpv-native-openh264.txt
+openjpeg 8314119b067c0fc77834731168daaebd379fdb12 | BSD-2-Clause | Licenses/mpv-native-openjpeg.txt
+openmpt ad7ba02b3fd1212e65cca02c41476af4368491ce | BSD-3-Clause; upstream third-party notices | Licenses/mpv-native-openmpt.txt
+openssl openssl-3.6.5 | Apache-2.0 | Licenses/mpv-native-openssl.txt
+sdl fe30456e94e89ef2cab50172121bffb7f7f50830 | Zlib | Licenses/mpv-native-sdl.txt
+serd b621b0bc790d1e8102d3138ead16b974ddda8432 | ISC | Licenses/mpv-native-serd.txt
+shaderc 05814952134d09f8b54ae925afe578fc341cf6c1 | Apache-2.0; Glslang and SPIRV-Tools notices | Licenses/mpv-native-shaderc.txt
+snappy 946606459314e55d029c85f9a8c46f8809467f0f | BSD-3-Clause | Licenses/mpv-native-snappy.txt
+sord 4b5232bb91e7f2f1b84df384494d073fabbcd312 | ISC | Licenses/mpv-native-sord.txt
+soxr 945b592b70470e29f917f4de89b4281fbbd540c0 | LGPL-2.1-or-later | Licenses/mpv-native-soxr.txt
+spirv-cross 57e4efcc84112abcd426dc5ec248b5339bee04f2 | Apache-2.0 | Licenses/mpv-native-spirv-cross.txt
+srt 23af65f7dafb0f65b80312b859f80aeece557924 | MPL-2.0 | Licenses/mpv-native-srt.txt
+subrandr 5a3e258128bb93cb88613f239e3058f46d5261e3 | MPL-2.0; Rust runtime and linked crate terms | Licenses/mpv-native-subrandr.txt
+svtav1 5fdf6b2f373bd96256bb6b45f892077b1b4431d9 | BSD-2-Clause-Patent | Licenses/mpv-native-svtav1.txt
+twolame 6fced852d4d5cfad58cf9dbe3ea619b08e87d398 | LGPL-2.1-or-later | Licenses/mpv-native-twolame.txt
+uavs3d 0e20d2c291853f196c68922a264bcd8471d75b68 | BSD-3-Clause | Licenses/mpv-native-uavs3d.txt
+uchardet 0.0.8 | MPL-1.1 OR GPL-2.0-or-later OR LGPL-2.1-or-later; LGPL option | Licenses/mpv-native-uchardet.txt
+vmaf cf677baaa039723876fff8c2677164f25102e684 | BSD-2-Clause-Patent | Licenses/mpv-native-vmaf.txt
+vulkan-loader 65b3936528cd92eb4ea3de485d03f858a3850484 | Apache-2.0 | Licenses/mpv-native-vulkan-loader.txt
+vvenc 7804c92e133983e5d81c88d0ae642201d73ee457 | BSD-3-Clause-Clear | Licenses/mpv-native-vvenc.txt
+xz f54febc540607b3bdee0a0e6793355df2a7e9f61 | 0BSD and public domain liblzma; upstream notices | Licenses/mpv-native-xz.txt
+zimg 67e0603271c080e22c8429856dd4a8a56587e61e | WTFPL-2.0; public-domain portions | Licenses/mpv-native-zimg.txt
+zix 17d632393f5addb6fa24dda2927b96515407cca7 | ISC | Licenses/mpv-native-zix.txt
+zlib 99623ef7097352da7993ba614161fd6a311e046e | Zlib | Licenses/mpv-native-zlib.txt
+zstd de6359d7ea2949afa1407ed2fc2423777ebf1e23 | BSD-3-Clause (BSD option) | Licenses/mpv-native-zstd.txt
+
+LibVLC — лицензии библиотек из состава сборки
+Broadcom CrystalHD headers v1 | LGPL-2.1-or-later (headers) | Licenses/VLC-crystalhd-header-notices.txt
+GCC runtime 6.4.0 | GPL-3.0-or-later WITH GCC-exception-3.1 | Licenses/GCC-GPL-3.txt, Licenses/GCC-Runtime-Exception.txt
+MinGW-w64 CRT 14.0.0 | MinGW-w64 CRT upstream terms | Licenses/COPYING.MinGW-w64-runtime.txt, Licenses/COPYING.MinGW-w64.txt
+aom 3.15.0 | BSD-2-Clause; upstream patent notices | Licenses/VLC-aom-LICENSE.txt, Licenses/VLC-aom-AUTHORS.txt, Licenses/VLC-aom-PATENTS.txt
+aribb24 1.0.3 | LGPL-3.0-or-later (corrected upstream notice) | Licenses/VLC-aribb24-upstream-notices.txt
+dav1d 1.5.4 | BSD-2-Clause | Licenses/VLC-dav1d-COPYING.txt
+ebml 1.4.6 | LGPL-2.1-or-later | Licenses/VLC-ebml-LICENSE.LGPL.txt
+ffmpeg 8.1.2 | LGPL-2.1-or-later; linked permissive source notices | Licenses/VLC-ffmpeg-COPYING.LGPLv2.1.txt, Licenses/VLC-ffmpeg-LICENSE.md.txt, Licenses/VLC-FFmpeg-linked-permissive-notices.txt
+flac 1.4.2 | BSD-3-Clause (libFLAC) | Licenses/VLC-flac-COPYING.Xiph.txt, Licenses/VLC-flac-AUTHORS.txt
+fluidlite b0f187b404e393ee0a495b277154d55d7d03cbeb | LGPL-2.1-or-later | Licenses/VLC-fluidlite-LICENSE.txt
+fontconfig 2.12.3 | MIT | Licenses/VLC-fontconfig-COPYING.txt, Licenses/VLC-fontconfig-AUTHORS.txt
+freetype 2.14.3 | FTL (FreeType Project License option) | Licenses/VLC-freetype-LICENSE.TXT.txt, Licenses/VLC-freetype-FTL.TXT.txt
+fribidi 1.0.12 | LGPL-2.1-or-later | Licenses/VLC-fribidi-COPYING.txt, Licenses/VLC-fribidi-AUTHORS.txt
+game-music-emu 0.6.5 | LGPL-2.1-or-later (linked library); emu2413 MIT | Licenses/VLC-game-music-emu-license.txt.txt, Licenses/VLC-game-music-emu-gme--ext--LICENSE.txt
+gcrypt 1.12.2 | LGPL-2.1-or-later; upstream notices | Licenses/VLC-gcrypt-COPYING.LIB.txt, Licenses/VLC-gcrypt-LICENSES.txt
+gettext 0.26 | LGPL-2.1-or-later; upstream notices | Licenses/VLC-gettext-gettext-runtime--intl--COPYING.LIB.txt, Licenses/VLC-gettext-gettext-runtime--intl--AUTHORS.txt
+gmp 6.3.0 | LGPL-3.0-or-later (LGPL option) | Licenses/VLC-gmp-COPYING.LESSERv3.txt, Licenses/VLC-gmp-AUTHORS.txt
+gnutls 3.8.13 | LGPL-2.1-or-later (library); upstream notices | Licenses/VLC-gnutls-COPYING.LESSERv2.txt, Licenses/VLC-gnutls-AUTHORS.txt, Licenses/VLC-gnutls-lib--inih--LICENSE.txt.txt, Licenses/VLC-gnutls-lib--crau--LICENSE.txt
+gsm 1.0.23 | TU Berlin permissive license | Licenses/VLC-gsm-COPYRIGHT.txt
+harfbuzz 14.2.1 | HarfBuzz Old MIT; upstream notices | Licenses/VLC-harfbuzz-COPYING.txt, Licenses/VLC-harfbuzz-AUTHORS.txt, Licenses/VLC-harfbuzz-src--ms-use--COPYING.txt
+iconv 1.17 | LGPL-2.1-or-later; upstream notices | Licenses/VLC-iconv-COPYING.LIB.txt, Licenses/VLC-iconv-libcharset--COPYING.LIB.txt
+jpeg 10 | Independent JPEG Group license | Licenses/VLC-jpeg-README.txt
+lame 3.100 | LGPL-2.0-or-later | Licenses/VLC-lame-COPYING.txt, Licenses/VLC-lame-LICENSE.txt, Licenses/VLC-lame-mpglib--AUTHORS.txt
+libarchive 3.8.9 | BSD-2-Clause; upstream file-level notices | Licenses/VLC-libarchive-COPYING.txt
+libass 0.17.5 | ISC | Licenses/VLC-libass-COPYING.txt
+libdvbpsi 1.3.3 | LGPL-2.1-or-later | Licenses/VLC-libdvbpsi-COPYING.txt, Licenses/VLC-libdvbpsi-AUTHORS.txt
+libgpg-error 1.61 | LGPL-2.1-or-later; upstream notices | Licenses/VLC-libgpg-error-COPYING.LIB.txt
+libkate 0.4.1 | BSD-3-Clause | Licenses/VLC-libkate-COPYING.txt, Licenses/VLC-libkate-AUTHORS.txt
+libmodplug 0.8.9.0 | Public domain | Licenses/VLC-libmodplug-COPYING.txt
+libogg 1.3.6 | BSD-3-Clause | Licenses/VLC-libogg-COPYING.txt, Licenses/VLC-libogg-AUTHORS.txt
+libplacebo 0.2.1 | LGPL-2.1-or-later | Licenses/VLC-libplacebo-LICENSE.txt
+libtheora 1.1.1 | BSD-3-Clause | Licenses/VLC-libtheora-COPYING.txt, Licenses/VLC-libtheora-LICENSE.txt, Licenses/VLC-libtheora-AUTHORS.txt
+libvorbis 1.3.7 | BSD-3-Clause | Licenses/VLC-libvorbis-COPYING.txt, Licenses/VLC-libvorbis-AUTHORS.txt
+libvpx 1.16.0 | BSD-3-Clause with upstream patent terms | Licenses/VLC-libvpx-LICENSE.txt, Licenses/VLC-libvpx-AUTHORS.txt, Licenses/libvpx-PATENTS.txt
+libxml2 2.15.3 | MIT | Licenses/VLC-libxml2-Copyright.txt
+matroska 1.7.2 | LGPL-2.1-or-later | Licenses/VLC-matroska-LICENSE.LGPL.txt
+microdns 0.2.0 | LGPL-2.1-or-later | Licenses/VLC-microdns-COPYING.txt, Licenses/VLC-microdns-AUTHORS.txt
+mpg123 1.33.6 | LGPL-2.1-or-later (library) | Licenses/VLC-mpg123-COPYING.txt, Licenses/VLC-mpg123-doc--LICENSE.txt, Licenses/VLC-mpg123-AUTHORS.txt
+mysofa 1.2.1 | BSD-3-Clause | Licenses/VLC-mysofa-LICENSE.txt
+nettle 3.10.2 | LGPL-3.0-or-later (LGPL option) | Licenses/VLC-nettle-COPYING.LESSERv3.txt, Licenses/VLC-nettle-AUTHORS.txt
+openjpeg 2.5.4 | BSD-2-Clause | Licenses/VLC-openjpeg-LICENSE.txt, Licenses/VLC-openjpeg-AUTHORS.md.txt
+opus 1.6.1 | BSD-3-Clause | Licenses/VLC-opus-COPYING.txt, Licenses/VLC-opus-AUTHORS.txt
+png 1.6.58 | libpng-2.0 | Licenses/VLC-png-LICENSE.txt, Licenses/VLC-png-AUTHORS.txt
+spatialaudio 0.3.0 | LGPL-2.1-or-later | Licenses/VLC-spatialaudio-LICENSE.txt
+speex 1.2.1 | BSD-3-Clause | Licenses/VLC-speex-COPYING.txt, Licenses/VLC-speex-AUTHORS.txt
+speexdsp 1.2.1 | BSD-3-Clause | Licenses/VLC-speexdsp-COPYING.txt, Licenses/VLC-speexdsp-AUTHORS.txt
+ssh2 1.11.1 | BSD-3-Clause | Licenses/VLC-ssh2-COPYING.txt
+taglib 1.13.1 | LGPL-2.1-or-later (dual license; LGPL option) | Licenses/VLC-taglib-COPYING.LGPL.txt, Licenses/VLC-taglib-AUTHORS.txt
+twolame 0.4.0 | LGPL-2.1-or-later | Licenses/VLC-twolame-COPYING.txt, Licenses/VLC-twolame-AUTHORS.txt
+vpl 2.13.0 | MIT | Licenses/VLC-vpl-LICENSE.txt
+zlib 1.3.2 | Zlib | Licenses/VLC-zlib-LICENSE.txt
