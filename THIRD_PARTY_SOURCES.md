@@ -1,4 +1,4 @@
-# Сторонние компоненты AnimeWatchka 0.6.0 Beta
+# Сторонние компоненты AnimeWatchka 0.6.0 и 0.7.0 Beta
 
 Уведомления из THIRD_PARTY_NOTICES.txt и полные тексты из папки Licenses поставляются с приложением.
 
@@ -7,7 +7,7 @@
 - [libmpv и FFmpeg](https://github.com/Alexkvintin/AnimeWatchka/releases/download/v0.6.0/AnimeWatchka-0.6.0-libmpv-corresponding-source.zip) — SHA-256 `8894a4ed80fe4cdc4fcb053a17861f88ce7910fef1a210c5ac8870bd52b73525`.
 - [LibVLC и включённые зависимости](https://github.com/Alexkvintin/AnimeWatchka/releases/download/v0.6.0/AnimeWatchka-0.6.0-LibVLC-corresponding-source.zip) — SHA-256 `a1c3169a6e7070ddf750067cd0f8655805f8aa9436ad90b9d54f9e322d8234fd`.
 
-В архивах указаны версии, контрольные суммы, применённые патчи и инструкции по сборке.
+В архивах указаны версии, контрольные суммы, применённые патчи и инструкции по сборке. В 0.7.0 Beta используются те же сборки libmpv, FFmpeg и LibVLC.
 
 ## Замена мультимедийных библиотек
 
